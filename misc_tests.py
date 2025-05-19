@@ -6,24 +6,45 @@ import inkex
 
 class MiscTests(inkex.EffectExtension):
 
+    def all_objects(self):
+        tags = [
+            "path", "circle", "rect", "line", "polyline", "polygon", "ellipse",
+            "text", "image", "use"
+        ]
+        xpath_expr = " | ".join([f"//svg:{tag}" for tag in tags])
+        elems = self.svg.xpath(xpath_expr, namespaces=inkex.NSS)
+        ignore = [inkex.addNS('defs', 'svg'), inkex.addNS('marker', 'svg'),
+                  inkex.addNS('script', 'svg'), inkex.addNS('style', 'svg')]
+        return (el for el in elems
+                if el.getparent() is not None and el.getparent().tag not in ignore)
+
     def init_error(self):
-        error_layer = self.svg.getElementById("ErrorLayer")
-
-        if error_layer is not None and error_layer.get('inkscape:groupmode') == 'layer':
-            self.error_layer = error_layer
-            self.error_layer.clear()     # remove all elements in error layer (and layer itself!)
-
         root = self.document.getroot()
 
+        error_layer = self.svg.getElementById("ErrorLayer")
+        error_group = self.svg.getElementById("ErrorGroup")
+
+        if error_group is not None:
+            error_group.clear()
+            error_group.getparent().remove(error_group)
+
+        if error_layer is not None:
+            error_layer.clear()
+            error_layer.getparent().remove(error_layer)
+
         # Create a new layer (group with groupmode 'layer')
-        error_layer = inkex.Group.new('ERRORS')
+        error_layer = inkex.Group.new('ErrorLayer')
         error_layer.set('inkscape:groupmode', 'layer')
-        error_layer.set('inkscape:label', 'ERRORS')
+        error_layer.set('inkscape:label', 'ErrorLayer')
         error_layer.set("id", "ErrorLayer")
         root.add(error_layer)
-        self.error_layer = error_layer
 
-        # and define the arrow marker
+        # and create Inkscape group inside
+        self.error_group = inkex.Group()
+        self.error_group.set("id", "ErrorGroup")
+        error_layer.add(self.error_group)
+
+        # define the arrow marker
         defs = self.svg.defs
         if defs.find(".//svg:marker[@id='ErrorArrow']", namespaces=inkex.NSS) is not None:
             # if it already exists, do nothing
@@ -59,7 +80,7 @@ class MiscTests(inkex.EffectExtension):
         arrow.path = f"M {x-25},{y-25} L {x},{y}"
 
         # Add the line to the current layer
-        self.error_layer.add(arrow)
+        self.error_group.add(arrow)
 
     def add_arguments(self, pars):
         pass    # We don't need arguments for this extension
@@ -71,18 +92,18 @@ class MiscTests(inkex.EffectExtension):
         self.init_error()
 
         # mark the selected elements
-        for elem in self.svg.selection:
-            if elem is None:
+        for elem in self.svg.selection or self.all_objects():
+            try:
+                bb = elem.bounding_box()
+                self.new_error(bb.left, bb.top)
+            except AttributeError:
                 # error elements (in the error layer) that could have been
                 # selected have been cleared by the init_error method
-                # they don't have a bounding box and we shouldn't tag them
-                # anyway!
+                # they don't have a bounding box (elem.bounding_box() returns
+                # None, so that bb.left / bb.top raises the AttributeError
+                # exception)
+                # and we shouldn't tag error objects anyway!
                 continue
-            bb = elem.bounding_box()
-            if bb is None:
-                # see above
-                continue
-            self.new_error(bb.left, bb.top)
 
 
 if __name__ == '__main__':
