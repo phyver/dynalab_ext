@@ -2,6 +2,7 @@
 # coding=utf-8
 
 import inkex
+from inkex.paths import Move, Line
 
 
 class MiscTests(inkex.EffectExtension):
@@ -51,15 +52,13 @@ class MiscTests(inkex.EffectExtension):
             return
 
         marker = inkex.Marker(id='ErrorArrow',
-                              orient='auto-start-reverse',
-                              refX='0',
-                              refY='0',
+                              orient='auto',    # orient='auto-start-reverse',
                               markerWidth='3',
                               markerHeight='3',
-                              viewBox='0 0 3 3')
+                              )
 
         arrow = inkex.PathElement()
-        arrow.path = "M -3,3 L 0,0 L -3,-3"
+        arrow.path = [Move(-3, 3), Line(0, 0), Line(-3, -3)]
         arrow.style = inkex.Style({
             "stroke": "#f00",
             "stroke-width": "1",
@@ -71,13 +70,13 @@ class MiscTests(inkex.EffectExtension):
     def new_error(self, x, y, msg=None):
         # Create a line from point (10, 10) to (100, 100)
         arrow = inkex.PathElement()
+        arrow.path = [Move(x-25, y-25), Line(x, y)]
         arrow.style = inkex.Style({
             "stroke": "#f00",
             "stroke-width": "3",
             "fill": "none",
             "marker-end": "url(#ErrorArrow)",
         })
-        arrow.path = f"M {x-25},{y-25} L {x},{y}"
 
         if msg is not None:
             desc = inkex.elements.Desc()
