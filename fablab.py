@@ -45,13 +45,25 @@ class FablabExtension(inkex.EffectExtension):
         self.error_group.set("id", "ErrorGroup")
         error_layer.add(self.error_group)
 
-        # define the arrow marker
+        # define the arrow markers
         defs = self.svg.defs
         if defs.find(".//svg:marker[@id='ErrorArrow']", namespaces=inkex.NSS) is not None:
             # if it already exists, do nothing
             return
+        self.define_marker("ErrorArrow", "#f00")
 
-        marker = inkex.Marker(id='ErrorArrow',
+        if defs.find(".//svg:marker[@id='WarningArrow']", namespaces=inkex.NSS) is not None:
+            # if it already exists, do nothing
+            return
+        self.define_marker("WarningArrow", inkex.Color("orange"))
+
+        if defs.find(".//svg:marker[@id='NoteArrow']", namespaces=inkex.NSS) is not None:
+            # if it already exists, do nothing
+            return
+        self.define_marker("NoteArrow", "#0f0")
+
+    def define_marker(self, id, color):
+        marker = inkex.Marker(id=id,
                               orient='auto',    # orient='auto-start-reverse',
                               markerWidth='3',
                               markerHeight='3',
@@ -60,22 +72,20 @@ class FablabExtension(inkex.EffectExtension):
         arrow = inkex.PathElement()
         arrow.path = [Move(-3, 3), Line(0, 0), Line(-3, -3)]
         arrow.style = inkex.Style({
-            "stroke": "#f00",
-            "stroke-width": "1",
+            "stroke": color,
+            "stroke-width": 1,
             "fill": "none",
         })
         marker.append(arrow)
-        defs.append(marker)
+        self.svg.defs.append(marker)
 
-    def new_error(self, x, y, msg=None):
+    def new_arrow(self, x, y, width=2, msg=None):
         # Create a line from point (10, 10) to (100, 100)
         arrow = inkex.PathElement()
-        arrow.path = [Move(x-25, y-25), Line(x, y)]
+        arrow.path = [Move(x-20, y-20), Line(x, y)]
         arrow.style = inkex.Style({
-            "stroke": "#f00",
-            "stroke-width": "3",
+            "stroke-width": width,
             "fill": "none",
-            "marker-end": "url(#ErrorArrow)",
         })
 
         if msg is not None:
@@ -85,6 +95,38 @@ class FablabExtension(inkex.EffectExtension):
 
         # Add the line to the current layer
         self.error_group.add(arrow)
+
+        return arrow
+
+    def new_error_arrow(self, x, y, width=2, msg=None):
+        arrow = self.new_arrow(x, y, width=width, msg=msg)
+        arrow.style["stroke"] = "#f00"
+        arrow.style["marker-end"] = "url(#ErrorArrow)"
+
+    def new_warning_arrow(self, x, y, width=2, msg=None):
+        arrow = self.new_arrow(x, y, width=width, msg=msg)
+        arrow.style["stroke"] = inkex.Color("orange")
+        arrow.style["marker-end"] = "url(#WarningArrow)"
+
+    def new_note_arrow(self, x, y, width=2, msg=None):
+        arrow = self.new_arrow(x, y, width=width, msg=msg)
+        arrow.style["stroke"] = "#0f0"
+        arrow.style["marker-end"] = "url(#NoteArrow)"
+
+    def outline_bounding_box(self, elem, width=1, color="#f00", msg=None, margin=1):
+        try:
+            bb = elem.bounding_box(transform=True)
+            rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
+                                   width=str(bb.width+2*margin),
+                                   height=str(bb.height+2*margin))
+            rect.style = inkex.Style({
+                "fill": "none",
+                "stroke": color,
+                "stroke-width": width,
+            })
+            self.error_group.add(rect)
+        except AttributeError:
+            pass
 
     def clean(self):
         error_layer = self.svg.getElementById("ErrorLayer")
@@ -100,5 +142,11 @@ class FablabExtension(inkex.EffectExtension):
 
         defs = self.svg.defs
         marker = defs.find(".//svg:marker[@id='ErrorArrow']", namespaces=inkex.NSS)
+        if marker is not None:
+            marker.getparent().remove(marker)
+        marker = defs.find(".//svg:marker[@id='WarningArrow']", namespaces=inkex.NSS)
+        if marker is not None:
+            marker.getparent().remove(marker)
+        marker = defs.find(".//svg:marker[@id='NoteArrow']", namespaces=inkex.NSS)
         if marker is not None:
             marker.getparent().remove(marker)
