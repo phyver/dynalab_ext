@@ -68,7 +68,7 @@ class MiscTests(inkex.EffectExtension):
         marker.append(arrow)
         defs.append(marker)
 
-    def new_error(self, x, y):
+    def new_error(self, x, y, msg=None):
         # Create a line from point (10, 10) to (100, 100)
         arrow = inkex.PathElement()
         arrow.style = inkex.Style({
@@ -78,6 +78,11 @@ class MiscTests(inkex.EffectExtension):
             "marker-end": "url(#ErrorArrow)",
         })
         arrow.path = f"M {x-25},{y-25} L {x},{y}"
+
+        if msg is not None:
+            desc = inkex.elements.Desc()
+            desc.text = msg
+            arrow.append(desc)
 
         # Add the line to the current layer
         self.error_group.add(arrow)
@@ -95,7 +100,7 @@ class MiscTests(inkex.EffectExtension):
         for elem in self.svg.selection or self.all_objects():
             try:
                 bb = elem.bounding_box()
-                self.new_error(bb.left, bb.top)
+                self.new_error(bb.left, bb.top, "lorem")
             except AttributeError:
                 # error elements (in the error layer) that could have been
                 # selected have been cleared by the init_error method
