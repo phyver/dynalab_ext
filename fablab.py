@@ -5,21 +5,64 @@ import inkex
 from inkex.paths import Move, Line
 
 
+skip_tags = {       # TODO: wouldn't it be better to have a white list instead of a black list?
+    inkex.addNS('defs', 'svg'),
+    inkex.addNS('desc', 'svg'),
+    inkex.addNS('metadata', 'svg'),
+    inkex.addNS('namedview', 'sodipodi'),
+    inkex.addNS('script', 'svg'),
+    inkex.addNS('style', 'svg'),
+}
+
+
+def iter_elements(
+    elem,                       # current element
+    recurse=True,               # should we recurse inside groups?
+    skip_groups=False,          # should we return group elements?
+    global_transform=None,      # current transformation wrt root, accumulate transformation while going inside groups
+    limit=None,                 # current limit for total number of returned elements
+                                # if None, there is no limit; otherwise, limit should be a list with a single element
+                                # that decreases each time we "yield" an element
+):
+    global_transform = global_transform or inkex.transforms.Transform()
+    if limit is not None and limit[0] <= 0:
+        return
+
+    # skip error layer
+    if elem.get("id") == "ErrorLayer":
+        return
+
+    # skip non SVG elements
+    if elem.tag in skip_tags:
+        return
+
+    if elem.tag != inkex.addNS('g', 'svg') or not skip_groups:
+        yield elem, global_transform
+        if limit is not None:
+            limit[0] -= 1
+
+    # don't recurse in non-groups, or if recurse is False
+    if elem.tag != inkex.addNS('g', 'svg') or not recurse:
+        return
+
+    for e in elem:
+        yield from iter_elements(e,
+                                 recurse=recurse,
+                                 skip_groups=skip_groups,
+                                 global_transform=global_transform @ elem.transform,
+                                 limit=limit,
+                                 )
+
+
 class FablabExtension(inkex.EffectExtension):
 
-    def all_objects(self):
-        tags = [
-            "path", "circle", "rect", "line", "polyline", "polygon", "ellipse",
-            "text", "image", "use"
-        ]
-        xpath_expr = " | ".join([f"//svg:{tag}" for tag in tags])
-        elems = self.svg.xpath(xpath_expr, namespaces=inkex.NSS)
-        ignore = [inkex.addNS('defs', 'svg'), inkex.addNS('marker', 'svg'),
-                  inkex.addNS('script', 'svg'), inkex.addNS('style', 'svg')]
-        return (el for el in elems
-                if el.getparent() is not None and el.getparent().tag not in ignore)
+    def all_elements(self, recurse=False, skip_groups=False, limit=None):
+        if limit is not None:
+            limit = [limit]
+        for elem in self.svg:
+            yield from iter_elements(elem, recurse=recurse, skip_groups=skip_groups, limit=limit)
 
-    def init_error(self):
+    def init_error_layer(self):
         root = self.document.getroot()
 
         error_layer = self.svg.getElementById("ErrorLayer")
@@ -47,22 +90,16 @@ class FablabExtension(inkex.EffectExtension):
 
         # define the arrow markers
         defs = self.svg.defs
-        if defs.find(".//svg:marker[@id='ErrorArrow']", namespaces=inkex.NSS) is not None:
-            # if it already exists, do nothing
-            return
-        self.define_marker("ErrorArrow", "#f00")
+        if defs.find(".//svg:marker[@id='ErrorArrow']", namespaces=inkex.NSS) is None:
+            self._define_marker("ErrorArrow", "#f00")
 
-        if defs.find(".//svg:marker[@id='WarningArrow']", namespaces=inkex.NSS) is not None:
-            # if it already exists, do nothing
-            return
-        self.define_marker("WarningArrow", inkex.Color("orange"))
+        if defs.find(".//svg:marker[@id='WarningArrow']", namespaces=inkex.NSS) is None:
+            self._define_marker("WarningArrow", inkex.Color("orange"))
 
-        if defs.find(".//svg:marker[@id='NoteArrow']", namespaces=inkex.NSS) is not None:
-            # if it already exists, do nothing
-            return
-        self.define_marker("NoteArrow", "#0f0")
+        if defs.find(".//svg:marker[@id='NoteArrow']", namespaces=inkex.NSS) is None:
+            self._define_marker("NoteArrow", "#0f0")
 
-    def define_marker(self, id, color):
+    def _define_marker(self, id, color):
         marker = inkex.Marker(id=id,
                               orient='auto',    # orient='auto-start-reverse',
                               markerWidth='3',
@@ -79,10 +116,14 @@ class FablabExtension(inkex.EffectExtension):
         marker.append(arrow)
         self.svg.defs.append(marker)
 
-    def new_arrow(self, x, y, width=2, msg=None):
-        # Create a line from point (10, 10) to (100, 100)
+    def _new_arrow(self, elem, global_transform, width=2, msg=None):
+        if elem.tag == inkex.addNS('text', 'svg'):
+            x, y = elem.x, elem.y
+        else:
+            bb = elem.shape_box(transform=global_transform)
+            x, y = bb.left, bb.bottom
         arrow = inkex.PathElement()
-        arrow.path = [Move(x-20, y-20), Line(x, y)]
+        arrow.path = [Move(x-20, y+20), Line(x, y)]
         arrow.style = inkex.Style({
             "stroke-width": width,
             "fill": "none",
@@ -98,35 +139,38 @@ class FablabExtension(inkex.EffectExtension):
 
         return arrow
 
-    def new_error_arrow(self, x, y, width=2, msg=None):
-        arrow = self.new_arrow(x, y, width=width, msg=msg)
+    def new_error_arrow(self, elem, global_transform, width=2, msg=None):
+        arrow = self._new_arrow(elem, global_transform, width=width, msg=msg)
         arrow.style["stroke"] = "#f00"
         arrow.style["marker-end"] = "url(#ErrorArrow)"
 
-    def new_warning_arrow(self, x, y, width=2, msg=None):
-        arrow = self.new_arrow(x, y, width=width, msg=msg)
+    def new_warning_arrow(self, elem, global_transform, width=2, msg=None):
+        arrow = self._new_arrow(elem, global_transform, width=width, msg=msg)
         arrow.style["stroke"] = inkex.Color("orange")
         arrow.style["marker-end"] = "url(#WarningArrow)"
 
-    def new_note_arrow(self, x, y, width=2, msg=None):
-        arrow = self.new_arrow(x, y, width=width, msg=msg)
+    def new_note_arrow(self, elem, global_transform, width=2, msg=None):
+        arrow = self._new_arrow(elem, global_transform, width=width, msg=msg)
         arrow.style["stroke"] = "#0f0"
         arrow.style["marker-end"] = "url(#NoteArrow)"
 
-    def outline_bounding_box(self, elem, width=1, color="#f00", msg=None, margin=1):
-        try:
-            bb = elem.bounding_box(transform=True)
-            rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
-                                   width=str(bb.width+2*margin),
-                                   height=str(bb.height+2*margin))
-            rect.style = inkex.Style({
-                "fill": "none",
-                "stroke": color,
-                "stroke-width": width,
-            })
-            self.error_group.add(rect)
-        except AttributeError:
-            pass
+    def outline_bounding_box(self, elem, global_transform, width=1, color="#f00", msg=None, margin=1):
+        if elem.tag == inkex.addNS('text', 'svg'):
+            # text don't have real bounding box! even making a robust rough
+            # estimation is non trivial
+            return
+        else:
+            bb = elem.shape_box(transform=global_transform)
+
+        rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
+                               width=str(bb.width+2*margin),
+                               height=str(bb.height+2*margin))
+        rect.style = inkex.Style({
+            "fill": "none",
+            "stroke": color,
+            "stroke-width": width,
+        })
+        self.error_group.add(rect)
 
     def clean(self):
         error_layer = self.svg.getElementById("ErrorLayer")
