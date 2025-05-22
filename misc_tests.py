@@ -12,13 +12,13 @@ class MiscTests(fablab.FablabExtension):
         pass    # We don't need arguments for this extension
 
     def effect(self):
-        # make sure the unit is "mm"
-        self.svg.namedview.set(inkex.addNS('document-units', 'inkscape'), 'mm')
-
+        self.init()
         self.init_error_layer()
 
         # mark the selected elements
-        for elem, tr in self.svg.selection or self.all_elements(recurse=True, skip_groups=True, limit=5):
+        for elem, tr in self.selected_or_all(recurse=True,
+                                             skip_groups=True,
+                                             limit=None):
             r = random.randrange(0, 6)
             if r == 0:
                 self.new_error_arrow(elem, tr, msg="lorem")
@@ -32,7 +32,6 @@ class MiscTests(fablab.FablabExtension):
                 self.outline_bounding_box(elem, tr, color=inkex.Color("orange"), msg="lorem")
             elif r == 5:
                 self.outline_bounding_box(elem, tr, color="#0f0", msg="lorem")
-
 
 
 if __name__ == '__main__':

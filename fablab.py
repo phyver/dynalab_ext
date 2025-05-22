@@ -45,6 +45,8 @@ def iter_elements(
     if elem.tag != inkex.addNS('g', 'svg') or not recurse:
         return
 
+    # TODO: I shouldn't update global_transform on layers???
+
     for e in elem:
         yield from iter_elements(e,
                                  recurse=recurse,
@@ -56,11 +58,30 @@ def iter_elements(
 
 class FablabExtension(inkex.EffectExtension):
 
+    def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
+        if limit is not None:
+            limit = [limit]
+        if not self.svg.selected:
+            for elem in self.svg:
+                yield from iter_elements(elem, recurse=recurse, skip_groups=skip_groups, limit=limit)
+        else:
+            for elem in self.svg.selected:
+                if elem.tag != inkex.addNS('g', 'svg'):
+                    tr = elem.getparent().composed_transform()
+                else:
+                    tr = elem.composed_transform()
+                yield from iter_elements(elem, recurse=recurse,
+                                         skip_groups=skip_groups,
+                                         global_transform=tr,
+                                         limit=limit)
+
     def all_elements(self, recurse=False, skip_groups=False, limit=None):
         if limit is not None:
             limit = [limit]
-        for elem in self.svg:
-            yield from iter_elements(elem, recurse=recurse, skip_groups=skip_groups, limit=limit)
+
+    def init(self):
+        # make sure the unit is "mm"
+        self.svg.namedview.set(inkex.addNS('document-units', 'inkscape'), 'mm')
 
     def init_error_layer(self):
         root = self.document.getroot()
@@ -154,13 +175,15 @@ class FablabExtension(inkex.EffectExtension):
         arrow.style["stroke"] = "#0f0"
         arrow.style["marker-end"] = "url(#NoteArrow)"
 
-    def outline_bounding_box(self, elem, global_transform, width=1, color="#f00", msg=None, margin=1):
+    def outline_bounding_box(self, elem, global_transform, width=1, color="#f00", msg=None, margin=3):
         if elem.tag == inkex.addNS('text', 'svg'):
             # text don't have real bounding box! even making a robust rough
             # estimation is non trivial
+            # bb = elem.get_inkscape_bbox() # very slow!!!
             return
         else:
             bb = elem.shape_box(transform=global_transform)
+            # bb = elem.shape_box()
 
         rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
                                width=str(bb.width+2*margin),
