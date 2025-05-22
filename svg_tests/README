@@ -1,0 +1,11 @@
+some ad-hoc svg files used for running tests
+(Since using the extension on those will modify them, they are listed in the
+.gitignore file so that those changes are not commited, and restoring them is
+as easy as running git -restore ...)
+
+
+groups.svg     => several nested groups, with non trivial transforms
+layers.svg     => several layers
+misc.svg       => some misc. elements
+100_texts.svg  => 100 text elements (complexity testing)
+4096_rect.svg  => 4096 small random rectangles (complexity testing)

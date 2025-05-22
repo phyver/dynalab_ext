@@ -1,4 +1,6 @@
+svg_tests/*.svg
 Makefile
 _attic
 .envrc
 test*.svg
+__pycache__
