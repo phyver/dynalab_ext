@@ -217,3 +217,28 @@ class FablabExtension(inkex.EffectExtension):
         marker = defs.find(".//svg:marker[@id='NoteArrow']", namespaces=inkex.NSS)
         if marker is not None:
             marker.getparent().remove(marker)
+
+
+class ChangeStyle(FablabExtension):
+
+    def __init__(self, color="#000", fill="none", width="0.1mm"):
+        super().__init__()
+        self.color = color
+        self.fill = fill
+        self.width = width
+
+    def add_arguments(self, pars):
+        pass    # We don't need arguments for this extension
+
+    def effect(self):
+        self.init()
+        self.init_error_layer()
+
+        # TODO should I apply to all elements if the selection is empty?
+        # TODO should I tag text blocks
+        for elem, tr in self.selected_or_all(recurse=True,
+                                             skip_groups=True,
+                                             limit=None):
+            elem.style["stroke"] = self.color
+            elem.style["stroke-width"] = self.width
+            elem.style["fill"] = self.fill

@@ -5,4 +5,9 @@ install:
 restore_svg:
 	git restore svg_tests/*.svg
 
-.PHONY: install restore_test_svg
+clean:
+	rm -rf __pycache__
+	rm -rf "$(HOME)"/.config/inkscape/extensions/FablabExt/__pycache__
+	rm -f "$(HOME)"/.config/inkscape/extensions/FablabExt/*
+
+.PHONY: clean install restore_test_svg
