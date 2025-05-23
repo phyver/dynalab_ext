@@ -4,7 +4,9 @@
   <id>fablabext.make_contour</id>
   <effect>
     <effects-menu>
-      <submenu name="00 Fablab Extension"/>
+      <submenu name="00 Fablab Extension">
+        <submenu name="actions"/>
+      </submenu>
     </effects-menu>
   </effect>
   <script>
