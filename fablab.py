@@ -4,6 +4,9 @@
 import inkex
 from inkex.paths import Move, Line
 
+# TODO
+# TextPath
+
 
 skip_tags = {       # TODO: wouldn't it be better to have a white list instead of a black list?
     inkex.addNS('defs', 'svg'),
@@ -36,13 +39,13 @@ def iter_elements(
     if elem.tag in skip_tags:
         return
 
-    if elem.tag != inkex.addNS('g', 'svg') or not skip_groups:
+    if not isinstance(elem, inkex.Group) or not skip_groups:
         yield elem, global_transform
         if limit is not None:
             limit[0] -= 1
 
     # don't recurse in non-groups, or if recurse is False
-    if elem.tag != inkex.addNS('g', 'svg') or not recurse:
+    if not isinstance(elem, inkex.Group) or not recurse:
         return
 
     # TODO: I shouldn't update global_transform on layers???
@@ -66,7 +69,7 @@ class FablabExtension(inkex.EffectExtension):
                 yield from iter_elements(elem, recurse=recurse, skip_groups=skip_groups, limit=limit)
         else:
             for elem in self.svg.selected:
-                if elem.tag != inkex.addNS('g', 'svg'):
+                if not isinstance(elem, inkex.Group):
                     tr = elem.getparent().composed_transform()
                 else:
                     tr = elem.composed_transform()
@@ -138,7 +141,7 @@ class FablabExtension(inkex.EffectExtension):
         self.svg.defs.append(marker)
 
     def _new_arrow(self, elem, global_transform, width=2, msg=None):
-        if elem.tag == inkex.addNS('text', 'svg'):
+        if isinstance(elem, inkex.TextElement):
             x, y = elem.x, elem.y
         else:
             bb = elem.shape_box(transform=global_transform)
@@ -176,7 +179,7 @@ class FablabExtension(inkex.EffectExtension):
         arrow.style["marker-end"] = "url(#NoteArrow)"
 
     def outline_bounding_box(self, elem, global_transform, width=1, color="#f00", msg=None, margin=3):
-        if elem.tag == inkex.addNS('text', 'svg'):
+        if isinstance(elem, inkex.TextElement):
             # text don't have real bounding box! even making a robust rough
             # estimation is non trivial
             # bb = elem.get_inkscape_bbox() # very slow!!!
