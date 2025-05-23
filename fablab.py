@@ -144,7 +144,7 @@ class FablabExtension(inkex.EffectExtension):
             bb = elem.shape_box(transform=global_transform)
             x, y = bb.left, bb.bottom
         arrow = inkex.PathElement()
-        arrow.path = [Move(x-20, y+20), Line(x, y)]
+        arrow.path = [Move(x-20, y+20), Line(x-1, y+1)]
         arrow.style = inkex.Style({
             "stroke-width": width,
             "fill": "none",
