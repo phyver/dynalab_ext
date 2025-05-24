@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>fablabext.config</id>
+
+    <effect needs-live-preview="false" needs-document="false">
+        <effects-menu>
+            <submenu name="00 Fablab Extension">
+                <submenu name="configuration"/>
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>00 - load configuration</name>
+
+    <label>HEADER</label>
+    <param name="config-file" type="path" mode="file" gui-text="Load config file:" />
+    <label>FOOTER</label>
+
+    <script>
+        <command location="inx" interpreter="python">00_load_config.py</command>
+    </script>
+</inkscape-extension>

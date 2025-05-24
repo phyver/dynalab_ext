@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>fablabext.test</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <object-type>path</object-type>
+        <effects-menu>
+            <submenu name="00 Fablab Extension">
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>TEST</name>
+
+    <script>
+        <command location="inx" interpreter="python">misc_tests.py</command>
+    </script>
+</inkscape-extension>
