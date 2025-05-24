@@ -15,6 +15,7 @@ DEFAULT_CONFIG = {
     "laser_mode_cut_color": "#ff0000",
     "laser_mode_fill_color": "#0000ff",
     "laser_mode_line_color": "#000000",
+    "size_tiny_element": 0.5,
 }
 
 
@@ -76,6 +77,8 @@ laser diameter: {misc_laser_diameter:.2f}mm
 cut color: \t{laser_mode_cut_color:s}
 fill color: \t{laser_mode_fill_color:s}
 line color: \t{laser_mode_line_color:s}
+
+size under which an element is tagged "tiny": {size_tiny_element}
 
 
 """.format(**self.config))

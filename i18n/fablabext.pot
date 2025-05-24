@@ -7,7 +7,7 @@
 msgid   ""
 msgstr  "Project-Id-Version: PACKAGE VERSION\n"
         "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-05-24 21:12+0200\n"
+        "POT-Creation-Date: 2025-05-24 21:31+0200\n"
         "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
         "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
         "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,6 +50,9 @@ msgid   "line engraving color (#RGB)"
 msgstr  ""
 
 msgid   "lorem"
+msgstr  ""
+
+msgid   "size for tiny elements (mm)"
 msgstr  ""
 
 msgid   "tiny element"

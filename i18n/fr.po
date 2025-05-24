@@ -1,6 +1,6 @@
 msgid   ""
 msgstr  "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-05-24 21:12+0200\n"
+        "POT-Creation-Date: 2025-05-24 21:31+0200\n"
         "Content-Type: text/plain; charset=UTF-8\n"
         "Content-Transfer-Encoding: 8bit\n"
 
@@ -40,5 +40,8 @@ msgstr  "coulour pour le mode contour (#RVB)"
 msgid   "lorem"
 msgstr  ""
 
+msgid   "size for tiny elements (mm)"
+msgstr  "taille pour les éléments minuscules (mm)"
+
 msgid   "tiny element"
-msgstr  "élément tout petit"
+msgstr  "élément minuscule"

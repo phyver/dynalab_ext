@@ -14,10 +14,12 @@ class DetectTiny(fablab.Ext):
     """
 
     def add_arguments(self, pars):
-        pass
+        pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
+                          help=_("size for tiny elements (mm)"))
 
     def effect(self):
         self.init_error_layer()
+        tiny = self.options.size_tiny_element or self.config["size_tiny_element"]
 
         # mark the selected elements
         for elem, tr in self.selected_or_all(recurse=True,
@@ -27,7 +29,7 @@ class DetectTiny(fablab.Ext):
                 # TODO do something???
                 continue
             bb = elem.shape_box()
-            if units.convert_unit(bb.width, "mm") < 2 and units.convert_unit(bb.height, "mm") < 2:
+            if units.convert_unit(bb.width, "mm") < tiny and units.convert_unit(bb.height, "mm") < tiny:
                 desc = f"{_('tiny element')} (id: {elem.get_id()})"
                 self.new_error_arrow(elem, tr, msg=desc)
                 self.outline_bounding_box(elem, tr, color="#f00", msg=desc)

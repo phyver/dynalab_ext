@@ -26,6 +26,9 @@ class SaveConfig(config.Ext, i18n.Ext):
         pars.add_argument("--line-color", type=str, dest="laser_mode_line_color",
                           help=_("line engraving color (#RGB)"))
 
+        pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
+                          help=_("size for tiny elements (mm)"))
+
         pars.add_argument("--config-dir", dest="config_dir",
                           help=_("Save directory"))
         pars.add_argument("--config-file", dest="config_file",
