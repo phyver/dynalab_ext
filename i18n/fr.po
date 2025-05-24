@@ -1,8 +1,44 @@
 msgid   ""
 msgstr  "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-05-24 19:23+0200\n"
+        "POT-Creation-Date: 2025-05-24 21:12+0200\n"
         "Content-Type: text/plain; charset=UTF-8\n"
         "Content-Transfer-Encoding: 8bit\n"
 
+msgid   "ERROR READING FILE:"
+msgstr  "ERREUR DE LECTURE DE FICHIER :"
+
+msgid   "FILE NOT FOUND:"
+msgstr  "FICHIER NON TROUVÉ :"
+
+msgid   "INVALID CONFIG FILE:"
+msgstr  "FICHIER DE CONFIGURATION INVALIDE : "
+
+msgid   "Load file"
+msgstr  "Charger le fichier"
+
+msgid   "Save directory"
+msgstr  "Répertoire de sauvegarde"
+
+msgid   "YOU MUST SELECT AT LEAST ONE ELEMENT"
+msgstr  "IL FAUT SÉLECTIONNER AU MOINS UN ÉLÉMENT"
+
+msgid   "config filename"
+msgstr  "nom du fichier"
+
+msgid   "cutting color (#RGB)"
+msgstr  "couleur pour le mode découpe (#RVB)"
+
+msgid   "fill engraving color (#RGB)"
+msgstr  "couleur pour le mode gravure (#RVB)"
+
+msgid   "laser diameter (mm)"
+msgstr  "diamètre du laser (mm)"
+
+msgid   "line engraving color (#RGB)"
+msgstr  "coulour pour le mode contour (#RVB)"
+
 msgid   "lorem"
-msgstr  "LOREM..."
+msgstr  ""
+
+msgid   "tiny element"
+msgstr  "élément tout petit"

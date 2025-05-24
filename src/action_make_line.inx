@@ -12,6 +12,6 @@
     <name>2 - make line</name>
 
     <script>
-        <command location="inx" interpreter="python">make_line.py</command>
+        <command location="inx" interpreter="python">action_make_line.py</command>
     </script>
 </inkscape-extension>

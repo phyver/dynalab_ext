@@ -3,7 +3,10 @@
 from lib import config
 
 
-class ShowConfig(config.ConfigExt):
+class ShowConfig(config.Ext):
+    """
+    display the current configuration options
+    """
 
     def add_arguments(self, pars):
         pass

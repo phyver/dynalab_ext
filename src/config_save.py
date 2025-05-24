@@ -1,20 +1,35 @@
 #!/usr/bin/env python
 
-from lib import config
 import os
+from gettext import gettext as _
+
+from lib import config, i18n
 
 
-class SaveConfig(config.ConfigExt):
+class SaveConfig(config.Ext, i18n.Ext):
+    """
+    save a new configuration file in a user chosen location
+    All configuration options that aren"t given are taken from the current
+    configuration file.
+    Note that due to the way extensions are run, it is not possible to display
+    the current values inside the form (inx file).
+    """
 
     def add_arguments(self, pars):
-        pars.add_argument('--laser-diameter', type=float, help='diametre du laser (mm)', dest="misc_laser_diameter")
+        pars.add_argument("--laser-diameter", type=float, dest="misc_laser_diameter",
+                          help=_("laser diameter (mm)"))
 
-        pars.add_argument('--cut-color', type=str, help='cutting color (#RGB)', dest="laser_mode_cut_color")
-        pars.add_argument('--fill-color', type=str, help='fill engraving color (#RGB)', dest="laser_mode_fill_color")
-        pars.add_argument('--line-color', type=str, help='line engraving color (#RGB)', dest="laser_mode_line_color")
+        pars.add_argument("--cut-color", type=str, dest="laser_mode_cut_color",
+                          help=_("cutting color (#RGB)"))
+        pars.add_argument("--fill-color", type=str, dest="laser_mode_fill_color",
+                          help=_("fill engraving color (#RGB)"))
+        pars.add_argument("--line-color", type=str, dest="laser_mode_line_color",
+                          help=_("line engraving color (#RGB)"))
 
-        pars.add_argument("--config-dir", help="Save directory", dest="config_dir")
-        pars.add_argument("--config-file", help="config filename", dest="config_file")
+        pars.add_argument("--config-dir", dest="config_dir",
+                          help=_("Save directory"))
+        pars.add_argument("--config-file", dest="config_file",
+                          help=_("config filename"))
 
     def effect(self):
 
@@ -29,5 +44,5 @@ class SaveConfig(config.ConfigExt):
         self.show_config()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     SaveConfig().run()

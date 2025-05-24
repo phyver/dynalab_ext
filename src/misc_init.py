@@ -4,12 +4,14 @@ from lib import fablab
 
 
 class Init(fablab.Ext):
+    """
+    initialize the error layer
+    """
 
     def add_arguments(self, pars):
-        pass    # We don't need arguments for this extension
+        pass
 
     def effect(self):
-        self.init()
         self.init_error_layer()
 
 

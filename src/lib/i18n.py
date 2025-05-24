@@ -15,9 +15,5 @@ class Ext(inkex.EffectExtension):
         # Set up gettext
         locale_dir = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "locales"))
         domain = GETTEXT_DOMAIN
-
-        self.msg(locale_dir)
-        self.msg(domain)
-
         gettext.bindtextdomain(domain, locale_dir)
         gettext.textdomain(domain)

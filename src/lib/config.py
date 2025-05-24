@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-import inkex
 import json
 import os
+
+from gettext import gettext as _
+
+import inkex
 
 DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
@@ -38,15 +41,18 @@ class Ext(inkex.EffectExtension):
 
             self.save_config(DEFAULT_CONFIG_FILE)
 
-        except FileNotFoundError:
+        except FileNotFoundError as err:
             if os.path.realpath(filename) == DEFAULT_CONFIG_FILE:
                 self.config = DEFAULT_CONFIG.copy()
             else:
-                raise inkex.AbortExtension(f"FILE NOT FOUND: {filename}")
-        except (IOError, OSError):
-            raise inkex.AbortExtension(f"ERROR READING FILE: {filename}")
-        except json.JSONDecodeError:
-            raise inkex.AbortExtension(f"INVALID CONFIG FILE: {filename}")
+                msg = _("FILE NOT FOUND:")
+                raise inkex.AbortExtension(f"\n\n{msg} {filename}\n{err}\n\n")
+        except (IOError, OSError) as err:
+            msg = _("ERROR READING FILE:")
+            raise inkex.AbortExtension(f"\n\n{msg} {filename}\n{err}\n\n")
+        except json.JSONDecodeError as err:
+            msg = _("INVALID CONFIG FILE:")
+            raise inkex.AbortExtension(f"\n\n{msg} {filename}\n{err}\n\n")
 
     def save_config(self, filename, **kwargs):
         filename = os.path.realpath(filename)
@@ -65,7 +71,7 @@ class Ext(inkex.EffectExtension):
         self.msg("""
 
 
-laser diameter: {misc_laser_diameter:f}mm
+laser diameter: {misc_laser_diameter:.2f}mm
 
 cut color: \t{laser_mode_cut_color:s}
 fill color: \t{laser_mode_fill_color:s}
