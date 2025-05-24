@@ -2,7 +2,7 @@
 # coding=utf-8
 
 import inkex
-import fablab
+from lib import fablab
 import random
 
 

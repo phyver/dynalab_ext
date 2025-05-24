@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.init</id>
+    <id>fablabext.tiny_elements</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="misc"/>
+                <submenu name="diagnostics"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>05 - initialize</name>
+    <name>tiny elements</name>
 
     <script>
-        <command location="inx" interpreter="python">05_init.py</command>
+        <command location="inx" interpreter="python">diagnostic_tiny_elements.py</command>
     </script>
 </inkscape-extension>

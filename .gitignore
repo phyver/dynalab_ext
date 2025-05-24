@@ -1,4 +1,4 @@
-svg_tests/*.svg
+svg_testfiles/*.svg
 Makefile
 _attic
 .envrc

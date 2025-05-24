@@ -2,10 +2,8 @@
 # coding=utf-8
 
 import inkex
+from lib import config
 from inkex.paths import Move, Line
-
-# TODO
-# TextPath
 
 
 skip_tags = {       # TODO: wouldn't it be better to have a white list instead of a black list?
@@ -51,15 +49,23 @@ def iter_elements(
     # TODO: I shouldn't update global_transform on layers???
 
     for e in elem:
+        if isinstance(e, inkex.Group):
+            # tr = global_transform
+            tr = global_transform @ elem.transform
+            # tr = global_transform @ elem.getparent().transform
+        else:
+            # tr = global_transform
+            tr = global_transform @ elem.transform
+            # tr = global_transform @ elem.getparent().transform
         yield from iter_elements(e,
                                  recurse=recurse,
                                  skip_groups=skip_groups,
-                                 global_transform=global_transform @ elem.transform,
+                                 global_transform=tr,
                                  limit=limit,
                                  )
 
 
-class FablabExtension(inkex.EffectExtension):
+class FablabExtension(config.ConfigExt):
 
     def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
         if limit is not None:
@@ -101,10 +107,9 @@ class FablabExtension(inkex.EffectExtension):
             error_layer.getparent().remove(error_layer)
 
         # Create a new layer (group with groupmode 'layer')
-        error_layer = inkex.Group.new('ErrorLayer')
-        error_layer.set('inkscape:groupmode', 'layer')
-        error_layer.set('inkscape:label', 'ErrorLayer')
+        error_layer = inkex.Layer.new('ErrorLayer')
         error_layer.set("id", "ErrorLayer")
+        error_layer.set_sensitive(False)
         root.add(error_layer)
 
         # and create Inkscape group inside
@@ -142,8 +147,21 @@ class FablabExtension(inkex.EffectExtension):
 
     def _new_arrow(self, elem, global_transform, width=2, msg=None):
         if isinstance(elem, inkex.TextElement):
-            x, y = elem.x, elem.y
+            # check if it contains a textpath, and compute the x,y values if
+            # so
+            for e in elem:
+                if isinstance(e, inkex.TextPath):
+                    href = e.get('xlink:href')
+                    path = self.svg.getElementById(href[1:])
+                    bb = path.shape_box(transform=global_transform)
+                    v = elem.transform.apply_to_point(inkex.Vector2d(bb.left, bb.bottom))
+                    x, y = v.x, v.y
+                    break
+            else:
+                # otherwise, just use the text's x,y values
+                x, y = elem.x, elem.y
         else:
+            # for other elements, use the bottom left corner of the bounding box
             bb = elem.shape_box(transform=global_transform)
             x, y = bb.left, bb.bottom
         arrow = inkex.PathElement()
@@ -198,42 +216,45 @@ class FablabExtension(inkex.EffectExtension):
         })
         self.error_group.add(rect)
 
-    def clean(self):
+    def clean(self, force=False):
         error_layer = self.svg.getElementById("ErrorLayer")
         error_group = self.svg.getElementById("ErrorGroup")
 
-        if error_group is not None:
+        if error_group is not None and (force or len(error_group) == 0):
             error_group.clear()
             error_group.getparent().remove(error_group)
 
-        if error_layer is not None:
+        if error_layer is not None and (force or len(error_layer) == 0):
             error_layer.clear()
             error_layer.getparent().remove(error_layer)
 
-        defs = self.svg.defs
-        marker = defs.find(".//svg:marker[@id='ErrorArrow']", namespaces=inkex.NSS)
-        if marker is not None:
-            marker.getparent().remove(marker)
-        marker = defs.find(".//svg:marker[@id='WarningArrow']", namespaces=inkex.NSS)
-        if marker is not None:
-            marker.getparent().remove(marker)
-        marker = defs.find(".//svg:marker[@id='NoteArrow']", namespaces=inkex.NSS)
-        if marker is not None:
-            marker.getparent().remove(marker)
+        if force or len(error_layer) == 0:
+            defs = self.svg.defs
+            marker = defs.find(".//svg:marker[@id='ErrorArrow']", namespaces=inkex.NSS)
+            if marker is not None:
+                marker.getparent().remove(marker)
+            marker = defs.find(".//svg:marker[@id='WarningArrow']", namespaces=inkex.NSS)
+            if marker is not None:
+                marker.getparent().remove(marker)
+            marker = defs.find(".//svg:marker[@id='NoteArrow']", namespaces=inkex.NSS)
+            if marker is not None:
+                marker.getparent().remove(marker)
 
 
 class ChangeStyle(FablabExtension):
 
-    def __init__(self, color="#000", fill="none", width="0.1mm"):
+    def __init__(self, mode="line", color=None, fill=None, width=None):
         super().__init__()
-        self.color = color
-        self.fill = fill
-        self.width = width
+        self.new_color = color or self.config.get(f"laser_mode_{mode}_color")
+        self.new_fill = fill or "none"
+        self.new_width = width or self.config.get("misc_laser_diameter")
 
     def add_arguments(self, pars):
         pass    # We don't need arguments for this extension
 
     def effect(self):
+        if not self.svg.selected:
+            raise inkex.AbortExtension("YOU MUST SELECT AT LEAST ONE ELEMENT")
         self.init()
         self.init_error_layer()
 
@@ -242,6 +263,9 @@ class ChangeStyle(FablabExtension):
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=True,
                                              limit=None):
-            elem.style["stroke"] = self.color
-            elem.style["stroke-width"] = self.width
-            elem.style["fill"] = self.fill
+            if self.new_color:
+                elem.style["stroke"] = self.new_color
+            if self.new_width:
+                elem.style["stroke-width"] = self.new_width
+            if self.new_fill:
+                elem.style["fill"] = self.new_fill

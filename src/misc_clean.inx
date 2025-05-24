@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.make_contour</id>
+    <id>fablabext.clean</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="actions"/>
+                <submenu name="misc"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>12 - make line</name>
+    <name>9 - clean</name>
 
     <script>
-        <command location="inx" interpreter="python">12_make_line.py</command>
+        <command location="inx" interpreter="python">misc_clean.py</command>
     </script>
 </inkscape-extension>

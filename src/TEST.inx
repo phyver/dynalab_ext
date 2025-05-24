@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.make_cut</id>
+    <id>fablabext.TEST</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="actions"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>10 - make cut</name>
+    <name>TEST</name>
 
     <script>
-        <command location="inx" interpreter="python">10_make_cut.py</command>
+        <command location="inx" interpreter="python">TEST.py</command>
     </script>
 </inkscape-extension>

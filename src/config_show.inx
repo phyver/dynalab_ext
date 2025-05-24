@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.test</id>
+    <id>fablabext.show_config</id>
 
-    <effect needs-live-preview="false" needs-document="true">
-        <object-type>path</object-type>
+    <effect needs-live-preview="false">
         <effects-menu>
             <submenu name="00 Fablab Extension">
+                <submenu name="configuration"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>TEST</name>
+    <name>3 - show configuration</name>
 
     <script>
-        <command location="inx" interpreter="python">misc_tests.py</command>
+        <command location="inx" interpreter="python">config_show.py</command>
     </script>
 </inkscape-extension>

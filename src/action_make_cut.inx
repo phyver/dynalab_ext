@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.make_fill</id>
+    <id>fablabext.make_cut</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
@@ -9,9 +9,9 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>11 - make fill</name>
+    <name>1 - make cut</name>
 
     <script>
-        <command location="inx" interpreter="python">11_make_fill.py</command>
+        <command location="inx" interpreter="python">action_make_cut.py</command>
     </script>
 </inkscape-extension>
