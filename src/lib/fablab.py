@@ -1,8 +1,7 @@
 #!/usr/bin/env python
-# coding=utf-8
 
 import inkex
-from lib import config
+from lib import config, i18n
 from inkex.paths import Move, Line
 
 
@@ -65,7 +64,7 @@ def iter_elements(
                                  )
 
 
-class FablabExtension(config.ConfigExt):
+class Ext(i18n.Ext, config.Ext):
 
     def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
         if limit is not None:
@@ -247,7 +246,7 @@ class FablabExtension(config.ConfigExt):
                 marker.getparent().remove(marker)
 
 
-class ChangeStyle(FablabExtension):
+class ChangeStyle(Ext):
 
     def __init__(self, mode="line", color=None, fill=None, width=None):
         super().__init__()

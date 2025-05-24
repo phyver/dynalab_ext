@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-# coding=utf-8
 
 import inkex
 from inkex import units
 from lib import fablab
 
 
-class MiscTests(fablab.FablabExtension):
+class MiscTests(fablab.Ext):
 
     def add_arguments(self, pars):
         pass    # We don't need arguments for this extension

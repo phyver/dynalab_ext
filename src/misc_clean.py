@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-# coding=utf-8
 
 from lib import fablab
 
 
-class Clean(fablab.FablabExtension):
+class Clean(fablab.Ext):
 
     def add_arguments(self, pars):
         pass    # We don't need arguments for this extension

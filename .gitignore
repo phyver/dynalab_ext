@@ -1,4 +1,5 @@
 svg_testfiles/*.svg
+i18n/*~
 Makefile
 _attic
 .envrc

@@ -15,7 +15,7 @@ DEFAULT_CONFIG = {
 }
 
 
-class ConfigExt(inkex.EffectExtension):
+class Ext(inkex.EffectExtension):
 
     config = None
 
@@ -50,10 +50,6 @@ class ConfigExt(inkex.EffectExtension):
 
     def save_config(self, filename, **kwargs):
         filename = os.path.realpath(filename)
-
-        # TODO keep???
-        # if filename == DEFAULT_CONFIG_FILE:
-        #     raise inkex.AbortExtension("Don't save configuration to the default configuration file: it is overwritten")
 
         try:
             with open(filename, mode="wt") as f:

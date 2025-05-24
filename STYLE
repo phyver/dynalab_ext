@@ -1,1 +1,25 @@
-TODO
+Language
+========
+
+The code (variable names, comments, etc.) must be written in English.
+
+User messages, etc. should be in English.
+Use gettext to translate them to French or some other language.
+
+I don't know how to localize the inx files! Write them in English during
+developpment and translate them to <EXTENSION>_fr.inx when it works.
+
+
+Python
+======
+
+Try to conform to the PEP 8 style guide.
+
+That includes:
+
+  - using 4 spaces for indentation (no tabs)
+  - only ASCII identifiers
+  - all files UTF-8 encoded
+
+Lines up to 120 caracters long are OK.
+

@@ -1,0 +1,8 @@
+msgid   ""
+msgstr  "Report-Msgid-Bugs-To: \n"
+        "POT-Creation-Date: 2025-05-24 19:23+0200\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+
+msgid   "lorem"
+msgstr  "LOREM..."
