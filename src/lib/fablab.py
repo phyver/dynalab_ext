@@ -240,6 +240,12 @@ class Ext(i18n.Ext, config.Ext):
         })
         self.error_group.add(rect)
 
+        # add the message in the description
+        if msg is not None:
+            desc = inkex.elements.Desc()
+            desc.text = msg
+            rect.append(desc)
+
     def clean(self, force=False):
         """remove the error layer / error group if it is empty
         If force is true, remove it even if it is not empty"""
