@@ -75,8 +75,14 @@ class FablabExtension(config.ConfigExt):
                 yield from iter_elements(elem, recurse=recurse, skip_groups=skip_groups, limit=limit)
         else:
             for elem in self.svg.selected:
+                parent = elem.getparent()
+                if parent is None:
+                    # this can happen if the user selected an object in the
+                    # error layer, which is removed before running a new
+                    # extension
+                    continue
                 if not isinstance(elem, inkex.Group):
-                    tr = elem.getparent().composed_transform()
+                    tr = parent.composed_transform()
                 else:
                     tr = elem.composed_transform()
                 yield from iter_elements(elem, recurse=recurse,
@@ -109,7 +115,7 @@ class FablabExtension(config.ConfigExt):
         # Create a new layer (group with groupmode 'layer')
         error_layer = inkex.Layer.new('ErrorLayer')
         error_layer.set("id", "ErrorLayer")
-        error_layer.set_sensitive(False)
+        # error_layer.set_sensitive(False)
         root.add(error_layer)
 
         # and create Inkscape group inside
