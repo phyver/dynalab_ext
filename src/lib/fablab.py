@@ -17,6 +17,7 @@ def _iter_elements(
     elem,                       # current element
     recurse=True,               # should we recurse inside groups?
     skip_groups=False,          # should we return group elements?
+    skip_artefacts=True,        # should we skip artefacts?
     limit=None,                 # current limit for total number of returned elements
                                 # if None, there is no limit; otherwise, limit should be a list with a single element
                                 # that decreases each time we "yield" an element
@@ -31,7 +32,7 @@ def _iter_elements(
         return
 
     # skip artefacts
-    if artefacts.ARTEFACT_CLASS == elem.get("class"):
+    if skip_artefacts and artefacts.ARTEFACT_CLASS == elem.get("class"):
         return
 
     # skip non SVG elements
@@ -51,6 +52,7 @@ def _iter_elements(
         yield from _iter_elements(e,
                                   recurse=recurse,
                                   skip_groups=skip_groups,
+                                  skip_artefacts=skip_artefacts,
                                   limit=limit,
                                   _global_transform=elem.transform @ _global_transform)
 
@@ -67,7 +69,13 @@ class Ext(artefacts.Ext, i18n.Ext, config.Ext):
         i18n.Ext.__init__(self)
         config.Ext.__init__(self)
 
-    def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
+    def init_artefact_layer(self):
+        """move the non-artefact elements out of the artefact layer before
+        calling init_artefact_layer from artefacts.Ext"""
+        self.clean()
+        super().init_artefact_layer()
+
+    def selected_or_all(self, recurse=False, skip_groups=False, skip_artefacts=True, limit=None):
         """iterates over the selected elements (recursively if needs be), or
         all the element if the selection is empty"""
         if limit is not None:
@@ -77,6 +85,7 @@ class Ext(artefacts.Ext, i18n.Ext, config.Ext):
                 yield from _iter_elements(elem,
                                           recurse=recurse,
                                           skip_groups=skip_groups,
+                                          skip_artefacts=skip_artefacts,
                                           limit=limit)
         else:
             for elem in self.svg.selected:
@@ -92,5 +101,29 @@ class Ext(artefacts.Ext, i18n.Ext, config.Ext):
                     tr = elem.composed_transform()
                 yield from _iter_elements(elem, recurse=recurse,
                                           skip_groups=skip_groups,
+                                          skip_artefacts=skip_artefacts,
                                           limit=limit,
                                           _global_transform=tr)
+
+    def clean(self, force=False):
+        """loop through all elements of the artefact layer and move elements
+        that don't have the ARTEFACT_CLASS class outside before calling
+        the parent clean method."""
+        svg = self.svg
+
+        artefact_layer = svg.getElementById(artefacts.ARTEFACT_LAYER_ID)
+        if artefact_layer is None:
+            return
+
+        for elem, tr in _iter_elements(artefact_layer, recurse=True,
+                                       skip_groups=False,
+                                       skip_artefacts=False):
+            cl = elem.get("class")
+            if cl and artefacts.ARTEFACT_CLASS in cl:
+                continue
+            self.msg(f"element #{elem.get_id()} moved out of the artefact layer")
+            elem.getparent().remove(elem)
+            elem.transform = tr
+            svg.add(elem)
+
+        super().clean(force=force)

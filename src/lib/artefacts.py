@@ -27,7 +27,7 @@ class Ext(inkex.EffectExtension):
     def __init__(self, group_artefacts=True, lock_artefacts=False, reset_artefacts=True):
         super().__init__()
         self.group_artefacts = group_artefacts
-        self.lock_artefacts = group_artefacts
+        self.lock_artefacts = lock_artefacts
         self.reset_artefacts = reset_artefacts
 
     def init_artefact_layer(self):
