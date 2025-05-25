@@ -19,7 +19,7 @@ DEFAULT_CONFIG = {
 }
 
 
-class Ext(inkex.EffectExtension):
+class Ext():
 
     config = None
 

@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
-import inkex
 import os
 import gettext
 
 GETTEXT_DOMAIN = "fablabext"
 
 
-class Ext(inkex.EffectExtension):
+class Ext():
 
     def __init__(self):
         super().__init__()
