@@ -218,7 +218,7 @@ class Ext(i18n.Ext, config.Ext):
         arrow.style["stroke"] = "#0f0"
         arrow.style["marker-end"] = "url(#NoteArrow)"
 
-    def outline_bounding_box(self, elem, global_transform, width=1, color="#f00", msg=None, margin=3):
+    def outline_bounding_box(self, elem, global_transform, msg=None, margin=3, **kwargs):
         """outline the bounding box of elem,global_transform"""
         if isinstance(elem, inkex.TextElement):
             # text don't have real bounding box! even making a robust rough
@@ -229,15 +229,18 @@ class Ext(i18n.Ext, config.Ext):
             return
         else:
             bb = elem.shape_box(transform=global_transform)
+            # bb = elem.get_inkscape_bbox()
 
         rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
                                width=str(bb.width+2*margin),
                                height=str(bb.height+2*margin))
         rect.style = inkex.Style({
             "fill": "none",
-            "stroke": color,
-            "stroke-width": width,
+            "stroke": "#000",
+            "stroke-width": "0.1mm",
         })
+        for k in kwargs:
+            rect.style[k.replace("_", "-")] = kwargs[k]
         self.error_group.add(rect)
 
         # add the message in the description
