@@ -55,7 +55,8 @@ class MiscTests(fablab.Ext):
                 continue
 
             if isinstance(elem, inkex.Group):
-                self.outline_bounding_box(elem, tr, stroke="#aaa", stroke_width="1mm", msg=desc)
+                self.outline_bounding_box(elem, tr, margin=0, stroke="#f00",
+                                          stroke_width=".1mm", msg=desc)
                 continue
 
             if isinstance(elem, inkex.TextElement):
