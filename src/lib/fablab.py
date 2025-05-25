@@ -2,19 +2,15 @@
 
 import inkex
 from lib import config, i18n, artefacts
-from inkex.paths import Move, Line
 
 
 # TODO: I should look for a list of valid tags, to check what I am missing!
 # TODO: it might be better to use a white list of tags rather than a black list
-skip_tags = {
-    inkex.addNS('defs', 'svg'),
-    inkex.addNS('desc', 'svg'),
-    inkex.addNS('metadata', 'svg'),
-    inkex.addNS('namedview', 'sodipodi'),
-    inkex.addNS('script', 'svg'),
-    inkex.addNS('style', 'svg'),
-}
+def _skip(elem):
+    """return true if the elem should be skipped as part of metadata"""
+    return any((isinstance(elem, cls) for cls in
+                [inkex.Defs, inkex.Desc, inkex.Metadata,
+                 inkex.NamedView, inkex.Script, inkex.Style]))
 
 
 def _iter_elements(
@@ -34,12 +30,12 @@ def _iter_elements(
     if limit is not None and limit[0] <= 0:
         return
 
-    # skip error layer
-    if elem.get("id") == "ErrorLayer":
+    # skip artefacts
+    if artefacts.ARTEFACT_CLASS == elem.get("class"):
         return
 
     # skip non SVG elements
-    if elem.tag in skip_tags:
+    if _skip(elem):
         return
 
     if not isinstance(elem, inkex.Group) or not skip_groups:
@@ -63,11 +59,11 @@ class Ext(artefacts.Ext, i18n.Ext, config.Ext):
     """main class for our extension with methods
       - to iterate over elements
       - to tag (either using arrows or bounding box boundaries) other elements
-        by adding artefacts in a special "error layer"
+        by adding artefacts in a special "artefact layer"
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         i18n.Ext.__init__(self)
         config.Ext.__init__(self)
 

@@ -28,8 +28,6 @@ from lib import fablab
 # inkex.ClipPath
 
 
-
-
 class MiscTests(fablab.Ext):
     """
     constantly changing dummy extension to test features for upcoming
@@ -41,7 +39,7 @@ class MiscTests(fablab.Ext):
         pass
 
     def effect(self):
-        self.init_error_layer()
+        self.init_artefact_layer()
 
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=False,
@@ -61,8 +59,8 @@ class MiscTests(fablab.Ext):
 
             if isinstance(elem, inkex.TextElement):
                 # self.new_error_arrow(elem, tr, msg=desc)
-                self.clone_text_to_error(elem, tr, msg=desc, stroke="#ff0000",
-                                         stroke_width=".5mm", fill="#ff0000")
+                self.clone_text_to_artefact(elem, tr, msg=desc, stroke="#ff0000",
+                                            stroke_width=".5mm", fill="#ff0000")
                 continue
             elif isinstance(elem, inkex.Use) or isinstance(elem, inkex.Image):
                 self.outline_bounding_box(elem, tr, stroke="#f00", stroke_width="1mm", msg=desc)
@@ -102,7 +100,6 @@ class MiscTests(fablab.Ext):
 
             else:
                 self.msg("UNKWNOW: " + desc)
-
 
             # r = random.randrange(0, 1)
             # if r == 0:

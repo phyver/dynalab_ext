@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.shapes</id>
+    <id>fablabext.tiny</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
@@ -9,11 +9,9 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>shapes</name>
-
-    <!-- <param name="outline-texts" type="bool" gui-text="outline texts (slow)">true</param> -->
+    <name>tiny elements</name>
 
     <script>
-        <command location="inx" interpreter="python">diagnostic_shapes.py</command>
+        <command location="inx" interpreter="python">diagnostic_tiny.py</command>
     </script>
 </inkscape-extension>

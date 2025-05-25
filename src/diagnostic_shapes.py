@@ -20,10 +20,12 @@ class MarkShapes(fablab.Ext):
     """
 
     def add_arguments(self, pars):
-        pass
+        pars.add_argument("--outline-texts", type=inkex.Boolean,
+                          default=False, help="outline texts as well (slow) instead of cloning them in red",
+                          dest="outline_texts")
 
-    def effect(self):
-        self.init_error_layer()
+    def effect(self, clean=True):
+        self.init_artefact_layer()
 
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=False,
@@ -38,9 +40,15 @@ class MarkShapes(fablab.Ext):
 
             # clone texts to the error layers, in red
             if isinstance(elem, inkex.TextElement):
-                self.clone_text_to_error(elem, tr, msg=desc + " => not vectorized",
-                                         stroke="#ff0000", stroke_width=".5mm", fill="#ff0000")
-                self.new_error_arrow(elem, tr)
+                if self.options.outline_texts:
+                    self.outline_bounding_box(elem, tr, msg=desc,
+                                              stroke="#f00", stroke_width="1mm",
+                                              accept_text=True)
+                else:
+                    self.clone_text_to_artefact(elem, tr, msg=desc + " => not vectorized",
+                                                stroke="#ff0000", stroke_width=".5mm", fill="#ff0000")
+                    self.new_error_arrow(elem, tr)
+
                 continue
 
             # add red bounding box around image
@@ -103,6 +111,9 @@ class MarkShapes(fablab.Ext):
 
             else:   # just in case I missed something
                 self.msg("UNKWNOW: " + desc)
+
+        if clean:
+            self.clean(force=False)
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ from inkex import units
 from lib import fablab
 
 
-class DetectTiny(fablab.Ext):
+class MarkTiny(fablab.Ext):
     """
     tags the "tiny" elements found in the document
     """
@@ -17,8 +17,8 @@ class DetectTiny(fablab.Ext):
         pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
                           help=_("size for tiny elements (mm)"))
 
-    def effect(self):
-        self.init_error_layer()
+    def effect(self, clean=True):
+        self.init_artefact_layer()
         tiny = self.options.size_tiny_element or self.config["size_tiny_element"]
 
         # mark the selected elements
@@ -34,8 +34,9 @@ class DetectTiny(fablab.Ext):
                 self.new_error_arrow(elem, tr, msg=desc)
                 self.outline_bounding_box(elem, tr, color="#f00", msg=desc)
 
-        self.clean(force=False)
+        if clean:
+            self.clean(force=False)
 
 
 if __name__ == '__main__':
-    DetectTiny().run()
+    MarkTiny().run()

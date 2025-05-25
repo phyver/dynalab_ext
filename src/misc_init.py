@@ -12,7 +12,7 @@ class Init(fablab.Ext):
         pass
 
     def effect(self):
-        self.init_error_layer()
+        self.init_artefact_layer()
 
 
 if __name__ == '__main__':
