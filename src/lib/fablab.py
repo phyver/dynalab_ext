@@ -56,7 +56,7 @@ def _iter_elements(
                                   recurse=recurse,
                                   skip_groups=skip_groups,
                                   limit=limit,
-                                  _global_transform=_global_transform @ elem.transform)
+                                  _global_transform=elem.transform @ _global_transform)
 
 
 class Ext(artefacts.Ext, i18n.Ext, config.Ext):

@@ -60,7 +60,9 @@ class MiscTests(fablab.Ext):
                 continue
 
             if isinstance(elem, inkex.TextElement):
-                self.new_error_arrow(elem, tr, msg=desc)
+                # self.new_error_arrow(elem, tr, msg=desc)
+                self.clone_text_to_error(elem, tr, msg=desc, stroke="#ff0000",
+                                         stroke_width=".5mm", fill="#ff0000")
                 continue
             elif isinstance(elem, inkex.Use) or isinstance(elem, inkex.Image):
                 self.outline_bounding_box(elem, tr, stroke="#f00", stroke_width="1mm", msg=desc)

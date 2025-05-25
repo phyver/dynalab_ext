@@ -1,7 +1,20 @@
 #!/usr/bin/env python
 
+import copy
+
 import inkex
 from inkex.paths import Move, Line
+
+
+def set_text_error(elem, **kwargs):
+    elem.style = inkex.Style(elem.attrib.get("style", ""))
+    for k in kwargs:
+        elem.style[k.replace("_", "-")] = kwargs[k]
+        elem.attrib[k.replace("_", "-")] = kwargs[k]
+
+    # Recurse into child nodes (tspan, textPath, etc.)
+    for e in elem:
+        set_text_error(e, **kwargs)
 
 
 class Ext(inkex.EffectExtension):
@@ -31,7 +44,8 @@ class Ext(inkex.EffectExtension):
         error_layer = inkex.Layer.new('ErrorLayer')
         error_layer.set("id", "ErrorLayer")
         # error_layer.set_sensitive(False)
-        root.add(error_layer)
+        root.add(error_layer)           # insert last, ie at top
+        # root.insert(0, error_layer)     # insert first, ie at bottom
 
         # and create Inkscape group inside
         self.error_group = inkex.Group()
@@ -82,7 +96,7 @@ class Ext(inkex.EffectExtension):
                     break
             else:
                 # otherwise, just use the text's x,y values
-                x, y = elem.x, elem.y
+                x, y = global_transform.apply_to_point(inkex.Vector2d(elem.x, elem.y))
         else:
             # for other elements, use the bottom left corner of the bounding box
             bb = elem.shape_box(transform=global_transform)
@@ -123,8 +137,20 @@ class Ext(inkex.EffectExtension):
         arrow.style["stroke"] = "#0f0"
         arrow.style["marker-end"] = "url(#NoteArrow)"
 
+    def clone_text_to_error(self, elem, global_transform, msg=None, **kwargs):
+        clone = copy.deepcopy(elem)
+        clone.transform = clone.transform @ global_transform
+        set_text_error(clone, **kwargs)
+        # add the message in the description
+        if msg is not None:
+            desc = inkex.elements.Desc()
+            desc.text = msg
+            clone.append(desc)
+        self.error_group.add(clone)
+
     def outline_bounding_box(self, elem, global_transform, msg=None, margin=3, **kwargs):
         """outline the bounding box of elem,global_transform"""
+        # TODO: add argument to use get_inkscape_bbox on TextElements
         if isinstance(elem, inkex.TextElement):
             # text don't have real bounding box! even making a robust rough
             # estimation is non trivial
