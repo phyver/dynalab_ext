@@ -5,10 +5,10 @@ from gettext import gettext as _
 import inkex
 from inkex import units
 
-from lib import fablab
+from lib import artefacts
 
 
-class MarkTiny(fablab.Ext):
+class MarkTiny(artefacts.Ext):
     """
     tags the "tiny" elements found in the document
     """

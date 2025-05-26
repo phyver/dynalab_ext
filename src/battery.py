@@ -2,7 +2,7 @@
 
 import inkex
 
-from lib import fablab
+from lib import artefacts
 
 from diagnostic_tiny import MarkTiny
 from diagnostic_shapes import MarkShapes
@@ -16,7 +16,7 @@ EXTENSIONS = {
 }
 
 
-class Battery(fablab.Ext):
+class Battery(artefacts.Ext):
     """
     constantly changing dummy extension to test features for upcoming
     extensions

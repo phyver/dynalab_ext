@@ -2,10 +2,10 @@
 
 import inkex
 
-from lib import fablab
+from lib import artefacts
 
 
-class MarkGroups(fablab.Ext):
+class MarkGroups(artefacts.Ext):
     """
     show the bounding boxes of groups and layers found in the document
     """

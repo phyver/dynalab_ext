@@ -3,10 +3,10 @@
 from gettext import gettext as _
 import inkex
 
-from lib import fablab
+from lib import artefacts
 
 
-class ChangeStyle(fablab.Ext):
+class ChangeStyle(artefacts.Ext):
     """
     apply some new style (stroke-width, color and fill-color) to the selection
     """

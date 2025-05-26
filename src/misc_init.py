@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from lib import fablab
+from lib import artefacts
 
 
-class Init(fablab.Ext):
+class Init(artefacts.Ext):
     """
     initialize the error layer
     """

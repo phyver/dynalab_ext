@@ -3,10 +3,10 @@
 import re
 import inkex
 
-from lib import fablab
+from lib import artefacts
 
 
-class MarkShapes(fablab.Ext):
+class MarkShapes(artefacts.Ext):
     """
     mark shapes from the document:
       - path in green
@@ -45,8 +45,8 @@ class MarkShapes(fablab.Ext):
                                               stroke="#f00", stroke_width="1mm",
                                               accept_text=True)
                 else:
-                    self.clone_text_to_artefact(elem, tr, msg=desc + " => not vectorized",
-                                                stroke="#ff0000", stroke_width=".5mm", fill="#ff0000")
+                    self.outline_text(elem, tr, msg=desc + " => not vectorized",
+                                      stroke="#ff0000", stroke_width=".5mm", fill="#ff0000")
                     self.new_error_arrow(elem, tr)
 
                 continue

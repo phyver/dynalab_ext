@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from lib import fablab
+from lib import artefacts
 
 
-class Clean(fablab.Ext):
+class Clean(artefacts.Ext):
     """
     remove the error layer
     """

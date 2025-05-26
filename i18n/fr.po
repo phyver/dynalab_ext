@@ -1,6 +1,6 @@
 msgid   ""
 msgstr  "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-05-24 21:31+0200\n"
+        "POT-Creation-Date: 2025-05-26 17:05+0200\n"
         "Content-Type: text/plain; charset=UTF-8\n"
         "Content-Transfer-Encoding: 8bit\n"
 
@@ -12,6 +12,9 @@ msgstr  "FICHIER NON TROUVÉ :"
 
 msgid   "INVALID CONFIG FILE:"
 msgstr  "FICHIER DE CONFIGURATION INVALIDE : "
+
+msgid   "LANG"
+msgstr  "French"
 
 msgid   "Load file"
 msgstr  "Charger le fichier"

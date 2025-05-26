@@ -5,11 +5,11 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="actions"/>
+                <submenu name="Change selection"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - make fill</name>
+    <name>3 - fill engraving</name>
 
     <script>
         <command location="inx" interpreter="python">action_make_fill.py</command>

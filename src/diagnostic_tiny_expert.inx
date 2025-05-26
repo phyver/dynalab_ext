@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>tiny elements</name>
+    <name>tiny elements - expert</name>
 
     <param name="size-tiny-element" type="float" min="0.01" gui-text="size of tiny elements (mm):">0.5</param>
 

@@ -8,7 +8,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>TEST</name>
+    <name> TEST</name>
 
     <script>
         <command location="inx" interpreter="python">TEST.py</command>

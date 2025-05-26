@@ -5,11 +5,10 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="misc"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>9 - clean</name>
+    <name>clean</name>
 
     <script>
         <command location="inx" interpreter="python">misc_clean.py</command>

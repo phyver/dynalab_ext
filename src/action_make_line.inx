@@ -5,11 +5,11 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="actions"/>
+                <submenu name="Change selection"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>2 - make line</name>
+    <name>2 - contour engraving</name>
 
     <script>
         <command location="inx" interpreter="python">action_make_line.py</command>

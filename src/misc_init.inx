@@ -5,11 +5,11 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="misc"/>
+                <submenu name="expert"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - initialize</name>
+    <name>initialize</name>
 
     <script>
         <command location="inx" interpreter="python">misc_init.py</command>

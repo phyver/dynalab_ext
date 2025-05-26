@@ -4,7 +4,7 @@ import re
 from gettext import gettext as _
 import inkex
 
-from lib import fablab
+from lib import artefacts
 
 # inkex.Group
 # inkex.Layer (instance of inkex.Group)
@@ -28,7 +28,7 @@ from lib import fablab
 # inkex.ClipPath
 
 
-class MiscTests(fablab.Ext):
+class MiscTests(artefacts.Ext):
     """
     constantly changing dummy extension to test features for upcoming
     extensions
@@ -46,7 +46,8 @@ class MiscTests(fablab.Ext):
                                              limit=None):
 
             tag = re.sub(r'^\{.*\}', '', elem.tag)
-            desc = f"{tag} => #{elem.get_id()}"
+            LANG = _("LANG")
+            desc = f"{LANG} => {tag} => #{elem.get_id()}"
 
             if isinstance(elem, inkex.Layer):
                 self.msg(f"Layer => {desc}")
@@ -59,8 +60,8 @@ class MiscTests(fablab.Ext):
 
             if isinstance(elem, inkex.TextElement):
                 # self.new_error_arrow(elem, tr, msg=desc)
-                self.clone_text_to_artefact(elem, tr, msg=desc, stroke="#ff0000",
-                                            stroke_width=".5mm", fill="#ff0000")
+                self.outline_text(elem, tr, msg=desc, stroke="#ff0000",
+                                  stroke_width=".5mm", fill="#ff0000")
                 continue
             elif isinstance(elem, inkex.Use) or isinstance(elem, inkex.Image):
                 self.outline_bounding_box(elem, tr, stroke="#f00", stroke_width="1mm", msg=desc)

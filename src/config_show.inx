@@ -5,7 +5,9 @@
     <effect needs-live-preview="false">
         <effects-menu>
             <submenu name="00 Fablab Extension">
-                <submenu name="configuration"/>
+                <submenu name="expert">
+                    <submenu name="configuration"/>
+                </submenu>
             </submenu>
         </effects-menu>
     </effect>

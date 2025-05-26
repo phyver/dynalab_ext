@@ -8,7 +8,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>battery</name>
+    <name>Diagnostics</name>
 
     <param name="tiny" type="bool" gui-text="mark tiny elements">true</param>
     <param name="shapes" type="bool" gui-text="mark shapes">true</param>
