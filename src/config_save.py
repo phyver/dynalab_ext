@@ -18,7 +18,9 @@ class SaveConfig(artefacts.Ext):
     """
 
     def add_arguments(self, pars):
-        pars.add_argument("--laser-diameter", type=float, dest="misc_laser_diameter",
+        pars.add_argument("--tabs")      # to ignore the dummy parameter used for tabs
+
+        pars.add_argument("--laser-diameter", type=float, dest="laser_diameter",
                           help=_("laser diameter (mm)"))
 
         pars.add_argument("--cut-color", type=str, dest="laser_mode_cut_color",
@@ -48,9 +50,14 @@ class SaveConfig(artefacts.Ext):
             if options[k] is not None:
                 self.config[k] = options[k]
 
-        filename = os.path.join(self.options.config_dir, self.options.config_file)
-        self.save_config(filename)
-        self.load_config(filename)
+        if self.options.config_dir and self.options.config_file:
+            filename = os.path.join(self.options.config_dir, self.options.config_file)
+            self.save_config(filename)
+            self.msg(f"""
+The following configuration was saved to {filename}
+                     """)
+
+        self.save_config(config.DEFAULT_CONFIG_FILE)
         self.show_config()
 
 

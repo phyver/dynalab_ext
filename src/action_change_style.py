@@ -21,14 +21,14 @@ class ChangeStyle(artefacts.Ext):
         super().__init__()
         self.new_color = color or self.config.get(f"laser_mode_{mode}_color")
         self.new_fill = fill or "none"
-        self.new_stroke_width = stroke_width or self.config.get("misc_laser_diameter")
+        self.new_stroke_width = f"{stroke_width or self.config.get('laser_diameter')}mm"
 
     def add_arguments(self, pars):
         pass    # We don't need arguments for this extension
 
     def effect(self):
         if not self.svg.selected:
-            raise inkex.AbortExtension("\n\n" + _("YOU MUST SELECT AT LEAST ONE ELEMENT") + "\n\n")
+            raise inkex.AbortExtension("\n\n" + _("You must select at least one element.") + "\n\n")
         self.init_artefact_layer()
 
         # TODO should I apply to all elements if the selection is empty?

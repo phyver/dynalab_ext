@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.show_config</id>
+    <id>fablabext.reset_config</id>
 
     <effect needs-live-preview="false">
         <effects-menu>
@@ -11,9 +11,11 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - show configuration</name>
+    <name>4 - reset to default configuration</name>
+
+    <param name="config-file" type="path" mode="file" gui-text="Load config file:" />
 
     <script>
-        <command location="inx" interpreter="python">config_show.py</command>
+        <command location="inx" interpreter="python">config_default.py</command>
     </script>
 </inkscape-extension>
