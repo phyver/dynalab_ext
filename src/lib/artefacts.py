@@ -129,22 +129,11 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         # make sure the unit is "mm"
         svg.namedview.set(inkex.addNS('document-units', 'inkscape'), 'mm')
 
-        # look through the artefact layer and move all non-artefact outside
-        artefact_layer = svg.getElementById(ARTEFACT_LAYER_ID)
-        if artefact_layer is not None:
-            for elem, tr in _iter_elements(artefact_layer, recurse=True,
-                                           skip_groups=False,
-                                           skip_artefacts=False,
-                                           ):
-                cl = elem.get("class")
-                if cl and ARTEFACT_CLASS in cl:
-                    continue
-                self.msg(f"element #{elem.get_id()} moved out of the artefact layer")
-                elem.getparent().remove(elem)
-                elem.transform = tr
-                svg.add(elem)
+        # extract non-artefacts from the artefact layer
+        self.extract_non_artefacts()
 
         # re-initialise existing artefact layer / group
+        artefact_layer = svg.getElementById(ARTEFACT_LAYER_ID)
         artefact_group = svg.getElementById(ARTEFACT_GROUP_ID)
         if artefact_group is not None and self.reset_artefacts:
             artefact_group.clear()
@@ -215,28 +204,49 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             if marker is not None:
                 marker.getparent().remove(marker)
 
-    def new_error_arrow(self, elem, global_transform, stroke_width=2, msg=None):
+    def extract_non_artefacts(self):
+        # look through the artefact layer and move all non-artefact outside
+        artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
+        if artefact_layer is None:
+            return
+
+        for elem, tr in _iter_elements(artefact_layer, recurse=True,
+                                       skip_groups=False,
+                                       skip_artefacts=False,
+                                       ):
+            cl = elem.get("class")
+            if cl and ARTEFACT_CLASS in cl:
+                continue
+            self.msg(f"element #{elem.get_id()} moved out of the artefact layer")
+            elem.getparent().remove(elem)
+            elem.transform = tr
+            self.svg.add(elem)
+
+    def new_error_arrow(self, elem, global_transform, stroke_width=None, msg=None):
         """add an _error_ arrow (in red)"""
         arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
         arrow.style["stroke"] = "#f00"
         arrow.style["marker-end"] = "url(#ErrorArrowheadMarker)"
 
-    def new_warning_arrow(self, elem, global_transform, stroke_width=2, msg=None):
+    def new_warning_arrow(self, elem, global_transform, stroke_width=None, msg=None):
         """add a _warning_ arrow (in orange)"""
         arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
         arrow.style["stroke"] = inkex.Color("orange")
         arrow.style["marker-end"] = "url(#WarningArrowheadMarker)"
 
-    def new_note_arrow(self, elem, global_transform, stroke_width=2, msg=None):
+    def new_note_arrow(self, elem, global_transform, stroke_width=None, msg=None):
         """add a _note_ arrow (in green)"""
         arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
         arrow.style["stroke"] = "#0f0"
         arrow.style["marker-end"] = "url(#NoteArrowheadMarker)"
 
-    def outline_text(self, elem, global_transform, msg=None, **kwargs):
+    def outline_text(self, elem, global_transform, msg=None, stroke_width=None, **kwargs):
         clone = copy.deepcopy(elem)
         clone.set("class", ARTEFACT_CLASS)
         clone.transform = clone.transform @ global_transform
+        if stroke_width is None:
+            stroke_width = self.config["artefacts_stroke_width"]/3
+        kwargs["stroke-width"] = inkex.units.convert_unit(f"{stroke_width}mm", "px")
         _set_text_style(clone, **kwargs)
         # add the message in the description
         if msg is not None:
@@ -246,7 +256,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self.artefact_group.add(clone)
 
     def outline_bounding_box(self, elem, global_transform, msg=None,
-                             margin=3, accept_text=False, **kwargs):
+                             margin=3, accept_text=False, stroke_width=None, **kwargs):
         """outline the bounding box of elem,global_transform
         Fails on text elements (whose bounding box cannot be computed easily)
         except when parameter accepts_text is true. In this case, the
@@ -258,8 +268,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             # very slow!!!
             bb = elem.get_inkscape_bbox()   # no need to apply the global transform
         else:
-            bb = elem.shape_box(transform=global_transform)
+            bb = elem.bounding_box(transform=global_transform)
 
+        # convert width
+        if stroke_width is None:
+            stroke_width = self.config["artefacts_stroke_width"]
+        stroke_width = inkex.units.convert_unit(f"{stroke_width}mm", "px")
         rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
                                width=str(bb.width+2*margin),
                                height=str(bb.height+2*margin))
@@ -267,7 +281,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         rect.style = inkex.Style({
             "fill": "none",
             "stroke": "#000",
-            "stroke-width": "0.1mm",
+            "stroke-width": stroke_width,
         })
         for k in kwargs:
             rect.style[k.replace("_", "-")] = kwargs[k]
@@ -299,17 +313,21 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         marker.append(arrow)
         self.svg.defs.append(marker)
 
-    def _new_artefact_arrow(self, elem, global_transform, length=20, stroke_width=2, msg=None):
+    def _new_artefact_arrow(self, elem, global_transform, stroke_width=None, length=None, msg=None):
         """add an artefact arrow in the error layer
            elem, global_transform is the element the arrow should be pointing to
         """
+        if stroke_width is None:
+            stroke_width = self.config["artefacts_stroke_width"]
+        if length is None:
+            length = 15*stroke_width
         if isinstance(elem, inkex.TextElement):
             # check if it contains a textpath, and compute the corresponding x,y values
             for e in elem:
                 if isinstance(e, inkex.TextPath):
                     href = e.get('xlink:href')
                     path = self.svg.getElementById(href[1:])
-                    bb = path.shape_box(transform=global_transform)
+                    bb = path.bounding_box(transform=global_transform)
                     x, y = elem.transform.apply_to_point(inkex.Vector2d(bb.left, bb.bottom))
                     break
             else:
@@ -317,8 +335,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 x, y = global_transform.apply_to_point(inkex.Vector2d(elem.x, elem.y))
         else:
             # for other elements, use the bottom left corner of the bounding box
-            bb = elem.shape_box(transform=global_transform)
+            bb = elem.bounding_box(transform=global_transform)
             x, y = bb.left, bb.bottom
+
+        # convert distances to mm
+        length = inkex.units.convert_unit(f"{length}mm", "px")
+        stroke_width = inkex.units.convert_unit(f"{stroke_width}mm", "px")
 
         length = length / 2**.5
         arrow = inkex.PathElement()

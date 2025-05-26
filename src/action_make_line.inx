@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>2 - contour engraving</name>
+    <name>2 - line engraving mode</name>
 
     <script>
         <command location="inx" interpreter="python">action_make_line.py</command>

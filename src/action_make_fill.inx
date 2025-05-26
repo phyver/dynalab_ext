@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - fill engraving</name>
+    <name>3 - fill engraving mode</name>
 
     <script>
         <command location="inx" interpreter="python">action_make_fill.py</command>

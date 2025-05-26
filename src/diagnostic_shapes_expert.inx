@@ -13,7 +13,7 @@
     </effect>
     <name>mark non vectorized shapes</name>
 
-    <param name="outline-texts" type="bool" value="true" gui-text="outline texts (slower)"/>
+    <param name="color-texts" type="bool" value="false" gui-text="color texts (faster)"/>
     <param name="outline-shapes" type="bool" value="false" gui-text="outline simple non vectorized shapes"/>
 
     <script>

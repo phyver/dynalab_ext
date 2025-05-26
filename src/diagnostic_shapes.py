@@ -23,9 +23,9 @@ class MarkShapes(artefacts.Ext):
         pars.add_argument("--outline-shapes", type=inkex.Boolean,
                           default=False, help="outline simple shapes (rect, circles, etc.) that are not path",
                           dest="outline_shapes")
-        pars.add_argument("--outline-texts", type=inkex.Boolean,
-                          default=True, help="outline texts as well (slow) instead of cloning them in red",
-                          dest="outline_texts")
+        pars.add_argument("--color-texts", type=inkex.Boolean,
+                          default=True, help="use color to highlight text elements(faster)",
+                          dest="color_texts")
 
     def effect(self, clean=True):
         self.init_artefact_layer()
@@ -43,22 +43,23 @@ class MarkShapes(artefacts.Ext):
 
             # mark non vectorized texts
             if isinstance(elem, inkex.TextElement):
-                if self.options.outline_texts:
-                    self.outline_bounding_box(elem, tr, msg=desc + " => not vectorized",
-                                              stroke=inkex.Color("orange"), stroke_width="1mm",
-                                              accept_text=True)
-                else:
+                if self.options.color_texts:
                     # clone texts to the error layers, in red
                     self.outline_text(elem, tr, msg=desc + " => not vectorized",
-                                      stroke=inkex.Color("orange"), stroke_width=".5mm", fill="#ff0000")
-                    self.new_error_arrow(elem, tr)
+                                      stroke=inkex.Color("orange"))
+                    self.new_warning_arrow(elem, tr)
+                else:
+                    # use the slow (accept_text=True) outline method
+                    self.outline_bounding_box(elem, tr, msg=desc + " => not vectorized",
+                                              stroke=inkex.Color("orange"),
+                                              accept_text=True)
 
                 continue
 
             # add red bounding box around image
             if isinstance(elem, inkex.Image):
                 self.outline_bounding_box(elem, tr, msg=desc,
-                                          stroke="#f00", stroke_width="1mm")
+                                          stroke="#f00")
                 continue
 
             # add orange arrow pointing to use elements (clones)
@@ -99,15 +100,15 @@ class MarkShapes(artefacts.Ext):
             # at this points, all elements should have well defined bounding
             # box
             if with_extra_feature:
-                self.outline_bounding_box(elem, tr, stroke="#f00", stroke_width="1mm", msg=desc)
+                self.outline_bounding_box(elem, tr, stroke="#f00", msg=desc)
                 continue
 
-            # standard shapes that are not path should cause any problem, put
-            # an orange bounding box
+            # standard shapes that are not path should not cause any problem
             if any((isinstance(elem, E) for E in [inkex.Line, inkex.Polyline, inkex.Polygon,
                                                   inkex.Rectangle, inkex.Ellipse, inkex.Circle])):
                 if self.options.outline_shapes:
-                    self.outline_bounding_box(elem, tr, stroke="#00ff00", stroke_width="1mm", msg=desc)
+                    self.outline_bounding_box(elem, tr, stroke="#00ff00",
+                                              stroke_width=self.config["artefacts_stroke_width"]/2, msg=desc)
                 continue
 
             # standard path elements: do nothing

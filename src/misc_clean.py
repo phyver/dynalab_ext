@@ -12,6 +12,7 @@ class Clean(artefacts.Ext):
         pass
 
     def effect(self):
+        self.extract_non_artefacts()
         self.clean(force=True)
 
 

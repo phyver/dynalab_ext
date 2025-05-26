@@ -8,7 +8,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>clean</name>
+    <name>remove artefacts</name>
 
     <script>
         <command location="inx" interpreter="python">misc_clean.py</command>

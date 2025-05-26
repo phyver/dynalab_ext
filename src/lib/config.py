@@ -13,8 +13,9 @@ DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.real
 DEFAULT_CONFIG = {
     "lock_artefacts": False,
     "group_artefacts": True,
-    "laser_diameter": 0.1,
+    "artefacts_stroke_width": 1,
     #
+    "laser_diameter": 0.1,
     "laser_mode_cut_color": "#ff0000",
     "laser_mode_fill_color": "#0000ff",
     "laser_mode_line_color": "#000000",
@@ -89,4 +90,6 @@ class Ext():
 
   - artefacts layer is locked (non selectable): {lock_artefacts}
   - artefacts are put in a single group: {group_artefacts}
+  - stroke width for artefacts: {artefacts_stroke_width}mm
+
 """.format(**self.config))

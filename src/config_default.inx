@@ -13,8 +13,6 @@
     </effect>
     <name>4 - reset to default configuration</name>
 
-    <param name="config-file" type="path" mode="file" gui-text="Load config file:" />
-
     <script>
         <command location="inx" interpreter="python">config_default.py</command>
     </script>

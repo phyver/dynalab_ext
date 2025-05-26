@@ -37,6 +37,8 @@ class SaveConfig(artefacts.Ext):
                           help=_("lock artefacts layer"))
         pars.add_argument("--group-artefacts", type=inkex.Boolean, dest="group_artefacts",
                           help=_("group artefacts"))
+        pars.add_argument("--artefacts-stroke-width", type=float, dest="artefacts_stroke_width",
+                          help=_("stroke width for artefacts (mm)"))
 
         pars.add_argument("--config-dir", dest="config_dir",
                           help=_("Save directory"))

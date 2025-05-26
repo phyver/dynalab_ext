@@ -32,6 +32,7 @@
         <page name="artefact-tab" gui-text="artefacts related options">
             <param name="lock-artefacts" type="bool" value="false" gui-text="lock layer artefacts"/>
             <param name="group-artefacts" type="bool" value="true" gui-text="group artefacts"/>
+            <param name="artefacts-stroke-width" type="string" gui-text="stroke width for artefacts (mm)"/>
         </page>
 
         <page name="save-tab" gui-text="save file">
