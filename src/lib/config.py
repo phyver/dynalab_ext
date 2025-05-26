@@ -11,10 +11,14 @@ import inkex
 DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
 DEFAULT_CONFIG = {
+    "lock_artefacts": False,
+    "group_artefacts": True,
     "misc_laser_diameter": 0.1,
+    #
     "laser_mode_cut_color": "#ff0000",
     "laser_mode_fill_color": "#0000ff",
     "laser_mode_line_color": "#000000",
+    #
     "size_tiny_element": 0.5,
 }
 
@@ -74,11 +78,14 @@ class Ext():
 
 laser diameter: {misc_laser_diameter:.2f}mm
 
-cut color: \t{laser_mode_cut_color:s}
-fill color: \t{laser_mode_fill_color:s}
-line color: \t{laser_mode_line_color:s}
+cut mode color: \t{laser_mode_cut_color:s}
+fill mode color: \t{laser_mode_fill_color:s}
+line mode color: \t{laser_mode_line_color:s}
 
 size under which an element is tagged "tiny": {size_tiny_element}
 
+=====
+artefacts layer is locked (non selectable): {lock_artefacts}
+artefacts are put in a single group: {group_artefacts}
 
 """.format(**self.config))

@@ -3,10 +3,12 @@
 import os
 from gettext import gettext as _
 
-from lib import config, i18n
+import inkex
+
+from lib import artefacts, config
 
 
-class SaveConfig(config.Ext, i18n.Ext):
+class SaveConfig(artefacts.Ext):
     """
     save a new configuration file in a user chosen location
     All configuration options that aren"t given are taken from the current
@@ -29,6 +31,11 @@ class SaveConfig(config.Ext, i18n.Ext):
         pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
                           help=_("size for tiny elements (mm)"))
 
+        pars.add_argument("--lock-artefacts", type=inkex.Boolean, dest="lock_artefacts",
+                          help=_("lock artefacts layer"))
+        pars.add_argument("--group-artefacts", type=inkex.Boolean, dest="group_artefacts",
+                          help=_("group artefacts"))
+
         pars.add_argument("--config-dir", dest="config_dir",
                           help=_("Save directory"))
         pars.add_argument("--config-file", dest="config_file",
@@ -38,7 +45,7 @@ class SaveConfig(config.Ext, i18n.Ext):
 
         options = vars(self.options)
         for k in config.DEFAULT_CONFIG:
-            if options[k]:
+            if options[k] is not None:
                 self.config[k] = options[k]
 
         filename = os.path.join(self.options.config_dir, self.options.config_file)

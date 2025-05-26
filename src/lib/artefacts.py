@@ -79,13 +79,13 @@ def _set_text_style(elem, **kwargs):
 
 class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
-    def __init__(self, group_artefacts=True, lock_artefacts=False, reset_artefacts=True):
+    def __init__(self, reset_artefacts=True):
         super().__init__()
-        self.group_artefacts = group_artefacts
-        self.lock_artefacts = lock_artefacts
-        self.reset_artefacts = reset_artefacts
-        config.Ext.__init__(self)
         i18n.Ext.__init__(self)
+        config.Ext.__init__(self)
+        self.group_artefacts = self.config["group_artefacts"]
+        self.lock_artefacts = self.config["lock_artefacts"]
+        self.reset_artefacts = reset_artefacts
 
     def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
         """iterates over the selected elements (recursively if needs be), or
@@ -173,7 +173,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 self.artefact_group.set("class", ARTEFACT_CLASS)
                 artefact_layer.add(self.artefact_group)
             else:
-                self.artefact_group = self.artefact_layer
+                self.artefact_group = artefact_layer
         else:
             self.artefact_group = artefact_group
 

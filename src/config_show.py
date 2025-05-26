@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from lib import config
+from lib import artefacts
 
 
-class ShowConfig(config.Ext):
+class ShowConfig(artefacts.Ext):
     """
     display the current configuration options
     """

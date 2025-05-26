@@ -3,10 +3,10 @@
 import os
 from gettext import gettext as _
 
-from lib import config, i18n
+from lib import artefacts
 
 
-class LoadConfig(config.Ext, i18n.Ext):
+class LoadConfig(artefacts.Ext):
     """
     load an existing config file (json) and use it as the new default
     configuration

@@ -15,10 +15,15 @@
 
     <label>HEADER</label>
     <param name="laser-diameter" type="float" min="0.01" max="1" gui-text="diametre laser (mm):">0.1</param>
+
     <param name="cut-color" type="string" gui-text="color for cutting">#ff0000</param>
     <param name="fill-color" type="string" gui-text="color for fill engraving">#0000ff</param>
     <param name="line-color" type="string" gui-text="color for line engraving">#000000</param>
+
     <param name="size-tiny-element" type="float" min="0.01" gui-text="size of tiny elements (mm):">0.5</param>
+
+    <param name="lock-artefacts" type="bool" value="false" gui-text="lock layer artefacts"/>
+    <param name="group-artefacts" type="bool" value="true" gui-text="group artefacts"/>
 
     <param name="config-dir" type="path" mode="folder" gui-text="Save values in directory:" />
     <param name="config-file" type="string" gui-text="Save values to file:" />
