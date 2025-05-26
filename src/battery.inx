@@ -11,7 +11,7 @@
     <name>Diagnostics</name>
 
     <param name="tiny" type="bool" gui-text="mark tiny elements">true</param>
-    <param name="shapes" type="bool" gui-text="mark shapes">true</param>
+    <param name="shapes" type="bool" gui-text="mark non vectorized shapes">true</param>
     <param name="groups" type="bool" gui-text="mark groups">true</param>
 
     <script>

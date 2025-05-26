@@ -70,7 +70,8 @@ def _set_text_style(elem, **kwargs):
     elem.style = inkex.Style(elem.attrib.get("style", ""))
     for k in kwargs:
         elem.style[k.replace("_", "-")] = kwargs[k]
-        elem.attrib[k.replace("_", "-")] = kwargs[k]
+        # since values could be inkex objects (like Color), I need to transform the value to a string
+        elem.attrib[k.replace("_", "-")] = str(kwargs[k])
 
     # Recurse into child nodes (tspan, textPath, etc.)
     for e in elem:

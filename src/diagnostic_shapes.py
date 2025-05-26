@@ -20,8 +20,11 @@ class MarkShapes(artefacts.Ext):
     """
 
     def add_arguments(self, pars):
+        pars.add_argument("--outline-shapes", type=inkex.Boolean,
+                          default=False, help="outline simple shapes (rect, circles, etc.) that are not path",
+                          dest="outline_shapes")
         pars.add_argument("--outline-texts", type=inkex.Boolean,
-                          default=False, help="outline texts as well (slow) instead of cloning them in red",
+                          default=True, help="outline texts as well (slow) instead of cloning them in red",
                           dest="outline_texts")
 
     def effect(self, clean=True):
@@ -38,15 +41,16 @@ class MarkShapes(artefacts.Ext):
                 # ignore groups and layers (but recurse into them)
                 continue
 
-            # clone texts to the error layers, in red
+            # mark non vectorized texts
             if isinstance(elem, inkex.TextElement):
                 if self.options.outline_texts:
-                    self.outline_bounding_box(elem, tr, msg=desc,
-                                              stroke="#f00", stroke_width="1mm",
+                    self.outline_bounding_box(elem, tr, msg=desc + " => not vectorized",
+                                              stroke=inkex.Color("orange"), stroke_width="1mm",
                                               accept_text=True)
                 else:
+                    # clone texts to the error layers, in red
                     self.outline_text(elem, tr, msg=desc + " => not vectorized",
-                                      stroke="#ff0000", stroke_width=".5mm", fill="#ff0000")
+                                      stroke=inkex.Color("orange"), stroke_width=".5mm", fill="#ff0000")
                     self.new_error_arrow(elem, tr)
 
                 continue
@@ -57,11 +61,11 @@ class MarkShapes(artefacts.Ext):
                                           stroke="#f00", stroke_width="1mm")
                 continue
 
-            # add red arrow pointing to use elements (clones)
+            # add orange arrow pointing to use elements (clones)
             # because the element could be anything, including a text whose
             # bounding box is difficult to compute, we just use the arrow
             if isinstance(elem, inkex.Use):
-                self.new_error_arrow(elem, tr, msg=desc + f" => cloned element {elem.get('xlink:href')}")
+                self.new_warning_arrow(elem, tr, msg=desc + f" => cloned element {elem.get('xlink:href')}")
                 continue
 
             # we check if the element is masked, clipped or filtered
@@ -102,15 +106,16 @@ class MarkShapes(artefacts.Ext):
             # an orange bounding box
             if any((isinstance(elem, E) for E in [inkex.Line, inkex.Polyline, inkex.Polygon,
                                                   inkex.Rectangle, inkex.Ellipse, inkex.Circle])):
-                self.outline_bounding_box(elem, tr, stroke=inkex.Color("orange"), stroke_width="0.3mm", msg=desc)
+                if self.options.outline_shapes:
+                    self.outline_bounding_box(elem, tr, stroke="#00ff00", stroke_width="1mm", msg=desc)
+                continue
 
-            # the final case: put a green bounding box around standard path
-            # elements
-            elif isinstance(elem, inkex.PathElement):
-                self.outline_bounding_box(elem, tr, stroke="#0f0", stroke_width="0.3mm", msg=desc)
+            # standard path elements: do nothing
+            if isinstance(elem, inkex.PathElement):
+                continue
 
-            else:   # just in case I missed something
-                self.msg("UNKWNOW: " + desc)
+            # just in case I missed something
+            self.msg("UNKWNOW: " + desc)
 
         if clean:
             self.clean(force=False)

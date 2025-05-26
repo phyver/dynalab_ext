@@ -50,7 +50,6 @@ class Battery(artefacts.Ext):
                 c += 1
         if inst:
             inst.clean(force=False)
-        self.msg(f"{c} extensions were run")
 
 
 if __name__ == '__main__':

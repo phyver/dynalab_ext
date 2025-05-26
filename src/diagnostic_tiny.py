@@ -32,7 +32,7 @@ class MarkTiny(artefacts.Ext):
             if units.convert_unit(bb.width, "mm") < tiny and units.convert_unit(bb.height, "mm") < tiny:
                 desc = f"{_('tiny element')} (id: {elem.get_id()})"
                 self.new_error_arrow(elem, tr, msg=desc)
-                self.outline_bounding_box(elem, tr, color="#f00", msg=desc)
+                self.outline_bounding_box(elem, tr, stroke="#f00", msg=desc)
 
         if clean:
             self.clean(force=False)
