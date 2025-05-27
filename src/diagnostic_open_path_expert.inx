@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>fablabext.open_path_expert</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <effects-menu>
+            <submenu name="00 Fablab Extension">
+                <submenu name="expert">
+                    <submenu name="diagnostics"/>
+                </submenu>
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>mark path containing open components</name>
+
+    <param name="all-path" type="bool" value="false" gui-text="don't restrict to path with 'fill mode' color"/>
+
+    <script>
+        <command location="inx" interpreter="python">diagnostic_open_path.py</command>
+    </script>
+</inkscape-extension>
