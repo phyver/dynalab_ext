@@ -6,6 +6,7 @@ import inkex
 from inkex import units
 
 from lib import artefacts
+from lib.artefacts import ERROR
 
 
 class MarkTiny(artefacts.Ext):
@@ -31,8 +32,8 @@ class MarkTiny(artefacts.Ext):
             bb = elem.bounding_box()
             if units.convert_unit(bb.width, "mm") < tiny and units.convert_unit(bb.height, "mm") < tiny:
                 desc = f"{_('tiny element')} (id: {elem.get_id()})"
-                self.new_error_arrow(elem, tr, msg=desc)
-                self.outline_bounding_box(elem, tr, stroke="#f00", msg=desc)
+                self.outline_arrow(ERROR, elem, tr, msg=desc)
+                self.outline_bounding_box(ERROR, elem, tr, stroke_width=0.1, msg=desc)
 
         if clean:
             self.clean(force=False)

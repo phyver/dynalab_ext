@@ -12,6 +12,16 @@ ARTEFACT_CLASS = "artefact"
 ARTEFACT_LAYER_ID = "ArtefactLayer"
 ARTEFACT_GROUP_ID = "ArtefactGroup"
 
+# error levels
+OK = 0
+NOTE = 1
+WARNING = 2
+ERROR = 3
+
+NOTE_COLOR = "#00ff00"      # green
+WARNING_COLOR = "#ffa500"   # orange
+ERROR_COLOR = "#ff0000"     # red
+
 
 # TODO: I should look for a list of valid tags, to check what I am missing!
 # TODO: it might be better to use a white list of tags rather than a black list
@@ -171,11 +181,11 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         # define the arrow markers
         if svg.getElementById("ErrorArrowheadMarker") is None:
-            self._new_marker("ErrorArrowheadMarker", inkex.Color("red"))
+            self._new_marker("ErrorArrowheadMarker", ERROR_COLOR)
         if svg.getElementById("WarningArrowheadMarker") is None:
-            self._new_marker("WarningArrowheadMarker", inkex.Color("orange"))
+            self._new_marker("WarningArrowheadMarker", WARNING_COLOR)
         if svg.getElementById("NoteArrowheadMarker") is None:
-            self._new_marker("NoteArrowheadMarker", inkex.Color("green"))
+            self._new_marker("NoteArrowheadMarker", NOTE_COLOR)
 
     def clean(self, force=False):
         """remove the artefact layer / group if it is empty
@@ -205,7 +215,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 marker.getparent().remove(marker)
 
     def extract_non_artefacts(self):
-        # look through the artefact layer and move all non-artefact outside
+        """look through the artefact layer and move all non-artefact outside"""
         artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
         if artefact_layer is None:
             return
@@ -222,41 +232,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             elem.transform = tr
             self.svg.add(elem)
 
-    def new_error_arrow(self, elem, global_transform, stroke_width=None, msg=None):
-        """add an _error_ arrow (in red)"""
-        arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
-        arrow.style["stroke"] = "#f00"
-        arrow.style["marker-end"] = "url(#ErrorArrowheadMarker)"
-
-    def new_warning_arrow(self, elem, global_transform, stroke_width=None, msg=None):
-        """add a _warning_ arrow (in orange)"""
-        arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
-        arrow.style["stroke"] = inkex.Color("orange")
-        arrow.style["marker-end"] = "url(#WarningArrowheadMarker)"
-
-    def new_note_arrow(self, elem, global_transform, stroke_width=None, msg=None):
-        """add a _note_ arrow (in green)"""
-        arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
-        arrow.style["stroke"] = "#0f0"
-        arrow.style["marker-end"] = "url(#NoteArrowheadMarker)"
-
-    def outline_text(self, elem, global_transform, msg=None, stroke_width=None, **kwargs):
-        clone = copy.deepcopy(elem)
-        clone.set("class", ARTEFACT_CLASS)
-        clone.transform = clone.transform @ global_transform
-        if stroke_width is None:
-            stroke_width = self.config["artefacts_stroke_width"]/3
-        kwargs["stroke-width"] = inkex.units.convert_unit(f"{stroke_width}mm", "px")
-        _set_text_style(clone, **kwargs)
-        # add the message in the description
-        if msg is not None:
-            desc = inkex.elements.Desc()
-            desc.text = msg
-            clone.append(desc)
-        self.artefact_group.add(clone)
-
-    def outline_bounding_box(self, elem, global_transform, msg=None,
-                             margin=3, accept_text=False, stroke_width=None, **kwargs):
+    def outline_bounding_box(self, level, elem, global_transform, msg=None,
+                             margin=3, accept_text=False, **kwargs):
         """outline the bounding box of elem,global_transform
         Fails on text elements (whose bounding box cannot be computed easily)
         except when parameter accepts_text is true. In this case, the
@@ -271,8 +248,19 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             bb = elem.bounding_box(transform=global_transform)
 
         # convert width
-        if stroke_width is None:
-            stroke_width = self.config["artefacts_stroke_width"]
+        stroke_width = self.config["artefacts_stroke_width"]
+        if level == OK:
+            stroke = NOTE_COLOR  # green
+            stroke_width = stroke_width/2
+        elif level == NOTE:
+            stroke = NOTE_COLOR
+        elif level == WARNING:
+            stroke = WARNING_COLOR
+        elif level == ERROR:
+            stroke = ERROR_COLOR
+        else:
+            assert False    # FIXME
+
         stroke_width = inkex.units.convert_unit(f"{stroke_width}mm", "px")
         rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
                                width=str(bb.width+2*margin),
@@ -280,7 +268,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         rect.set("class", ARTEFACT_CLASS)
         rect.style = inkex.Style({
             "fill": "none",
-            "stroke": "#000",
+            "stroke": stroke,
             "stroke-width": stroke_width,
         })
         for k in kwargs:
@@ -292,6 +280,56 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             desc = inkex.elements.Desc()
             desc.text = msg
             rect.append(desc)
+
+    def outline_arrow(self, level, elem, global_transform, msg=None):
+        stroke_width = self.config["artefacts_stroke_width"]
+        if level == OK:
+            stroke = NOTE_COLOR
+            stroke_width = stroke_width/2
+            marker = "#NoteArrowheadMarker"
+        elif level == NOTE:
+            stroke = NOTE_COLOR
+            marker = "#NoteArrowheadMarker"
+        elif level == WARNING:
+            stroke = WARNING_COLOR
+            marker = "#WarningArrowheadMarker"
+        elif level == ERROR:
+            stroke = ERROR_COLOR  # red
+            marker = "#ErrorArrowheadMarker"
+        else:
+            assert False    # FIXME
+
+        arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
+        arrow.style["stroke"] = stroke
+        arrow.style["marker-end"] = f"url({marker})"
+
+    def outline_text(self, level, elem, global_transform, msg=None, **kwargs):
+        stroke_width = self.config["artefacts_stroke_width"]/3
+        if level == OK:
+            stroke = NOTE_COLOR  # green
+            stroke_width = stroke_width/2
+        elif level == NOTE:
+            stroke = NOTE_COLOR
+        elif level == WARNING:
+            stroke = WARNING_COLOR
+        elif level == ERROR:
+            stroke = ERROR_COLOR
+        else:
+            assert False    # FIXME
+        if "stroke" not in kwargs:
+            kwargs["stroke"] = stroke
+
+        clone = copy.deepcopy(elem)
+        clone.set("class", ARTEFACT_CLASS)
+        clone.transform = clone.transform @ global_transform
+        kwargs["stroke-width"] = inkex.units.convert_unit(f"{stroke_width}mm", "px")
+        _set_text_style(clone, **kwargs)
+        # add the message in the description
+        if msg is not None:
+            desc = inkex.elements.Desc()
+            desc.text = msg
+            clone.append(desc)
+        self.artefact_group.add(clone)
 
     def _new_marker(self, id, color):
         """define an arrowhead marker for the arrow artefacts"""

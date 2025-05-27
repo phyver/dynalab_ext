@@ -3,6 +3,7 @@
 import inkex
 
 from lib import artefacts
+from lib.artefacts import WARNING
 
 
 class MarkGroups(artefacts.Ext):
@@ -27,15 +28,15 @@ class MarkGroups(artefacts.Ext):
 
             if isinstance(elem, inkex.Layer):
                 if self.show_layers:
-                    self.outline_bounding_box(elem, tr, margin=0,
-                                              stroke="#f00", stroke_width=".3mm",
-                                              stroke_dasharray=".3mm, .3mm",
+                    self.outline_bounding_box(WARNING, elem, tr, margin=0,
+                                              stroke_width=".7mm",
+                                              stroke_dasharray=".7mm, .7mm",
                                               msg=f"#{elem.get_id()}")
 
             elif isinstance(elem, inkex.Group):
                 if self.show_groups:
-                    self.outline_bounding_box(elem, tr, margin=0,
-                                              stroke="#f00", stroke_width=".1mm",
+                    self.outline_bounding_box(WARNING, elem, tr, margin=0,
+                                              stroke_width=".3mm",
                                               msg=f"#{elem.get_id()}")
 
         if clean:

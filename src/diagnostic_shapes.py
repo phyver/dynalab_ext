@@ -4,6 +4,7 @@ import re
 import inkex
 
 from lib import artefacts
+from lib.artefacts import OK, WARNING, ERROR
 
 
 class MarkShapes(artefacts.Ext):
@@ -45,28 +46,25 @@ class MarkShapes(artefacts.Ext):
             if isinstance(elem, inkex.TextElement):
                 if self.options.color_texts:
                     # clone texts to the error layers, in red
-                    self.outline_text(elem, tr, msg=desc + " => not vectorized",
-                                      stroke=inkex.Color("orange"))
-                    self.new_warning_arrow(elem, tr)
+                    self.outline_text(WARNING, elem, tr, msg=desc + " => not vectorized")
+                    self.outline_arrow(WARNING, elem, tr)
                 else:
                     # use the slow (accept_text=True) outline method
-                    self.outline_bounding_box(elem, tr, msg=desc + " => not vectorized",
-                                              stroke=inkex.Color("orange"),
+                    self.outline_bounding_box(WARNING, elem, tr, msg=desc + " => not vectorized",
                                               accept_text=True)
 
                 continue
 
             # add red bounding box around image
             if isinstance(elem, inkex.Image):
-                self.outline_bounding_box(elem, tr, msg=desc,
-                                          stroke="#f00")
+                self.outline_bounding_box(ERROR, elem, tr, msg=desc)
                 continue
 
             # add orange arrow pointing to use elements (clones)
             # because the element could be anything, including a text whose
             # bounding box is difficult to compute, we just use the arrow
             if isinstance(elem, inkex.Use):
-                self.new_warning_arrow(elem, tr, msg=desc + f" => cloned element {elem.get('xlink:href')}")
+                self.outline_arrow(WARNING, elem, tr, msg=desc + f" => cloned element {elem.get('xlink:href')}")
                 continue
 
             # we check if the element is masked, clipped or filtered
@@ -100,15 +98,14 @@ class MarkShapes(artefacts.Ext):
             # at this points, all elements should have well defined bounding
             # box
             if with_extra_feature:
-                self.outline_bounding_box(elem, tr, stroke="#f00", msg=desc)
+                self.outline_bounding_box(ERROR, elem, tr, msg=desc)
                 continue
 
             # standard shapes that are not path should not cause any problem
             if any((isinstance(elem, E) for E in [inkex.Line, inkex.Polyline, inkex.Polygon,
                                                   inkex.Rectangle, inkex.Ellipse, inkex.Circle])):
                 if self.options.outline_shapes:
-                    self.outline_bounding_box(elem, tr, stroke="#00ff00",
-                                              stroke_width=self.config["artefacts_stroke_width"]/2, msg=desc)
+                    self.outline_bounding_box(OK, elem, tr, msg=desc)
                 continue
 
             # standard path elements: do nothing
