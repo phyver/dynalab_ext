@@ -233,7 +233,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             self.svg.add(elem)
 
     def outline_bounding_box(self, level, elem, global_transform, msg=None,
-                             margin=3, accept_text=False, **kwargs):
+                             margin=1, accept_text=False, **kwargs):
         """outline the bounding box of elem,global_transform
         Fails on text elements (whose bounding box cannot be computed easily)
         except when parameter accepts_text is true. In this case, the
@@ -261,15 +261,16 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         else:
             assert False    # FIXME
 
-        stroke_width = inkex.units.convert_unit(f"{stroke_width}mm", "px")
-        rect = inkex.Rectangle(x=str(bb.left-margin), y=str(bb.top-margin),
-                               width=str(bb.width+2*margin),
-                               height=str(bb.height+2*margin))
+        x, y = self.svg_to_mm(bb.left), self.svg_to_mm(bb.top)
+        w, h = self.svg_to_mm(bb.width), self.svg_to_mm(bb.height)
+        rect = inkex.Rectangle.new(self.mm_to_svg(x-margin), self.mm_to_svg(y-margin),
+                                   self.mm_to_svg(w+2*margin), self.mm_to_svg(h+2*margin))
+
         rect.set("class", ARTEFACT_CLASS)
         rect.style = inkex.Style({
             "fill": "none",
             "stroke": stroke,
-            "stroke-width": stroke_width,
+            "stroke-width": self.mm_to_svg(stroke_width),
         })
         for k in kwargs:
             rect.style[k.replace("_", "-")] = kwargs[k]
@@ -322,7 +323,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         clone = copy.deepcopy(elem)
         clone.set("class", ARTEFACT_CLASS)
         clone.transform = clone.transform @ global_transform
-        kwargs["stroke-width"] = inkex.units.convert_unit(f"{stroke_width}mm", "px")
+        kwargs["stroke-width"] = self.mm_to_svg(stroke_width)
         _set_text_style(clone, **kwargs)
         # add the message in the description
         if msg is not None:
@@ -330,6 +331,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             desc.text = msg
             clone.append(desc)
         self.artefact_group.add(clone)
+
+    def mm_to_svg(self, d):
+        return inkex.units.convert_unit(self.svg.viewport_to_unit(d), "", "mm")
+
+    def svg_to_mm(self, d):
+        return self.svg.unit_to_viewport(inkex.units.convert_unit(d, "mm"))
 
     def _new_marker(self, id, color):
         """define an arrowhead marker for the arrow artefacts"""
@@ -376,16 +383,16 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             bb = elem.bounding_box(transform=global_transform)
             x, y = bb.left, bb.bottom
 
-        # convert distances to mm
-        length = inkex.units.convert_unit(f"{length}mm", "px")
-        stroke_width = inkex.units.convert_unit(f"{stroke_width}mm", "px")
+        x, y = self.svg_to_mm(x), self.svg_to_mm(y)
 
-        length = length / 2**.5
+        # convert distances to mm
+        side = length / 2**.5
         arrow = inkex.PathElement()
         arrow.set("class", ARTEFACT_CLASS)
-        arrow.path = [Move(x-length, y+length), Line(x-stroke_width/2, y+stroke_width/2)]
+        arrow.path = [Move(self.mm_to_svg(x-side), self.mm_to_svg(y+side)),
+                      Line(self.mm_to_svg(x-stroke_width/2), self.mm_to_svg(y+stroke_width/2))]
         arrow.style = inkex.Style({
-            "stroke-width": stroke_width,
+            "stroke-width": self.mm_to_svg(stroke_width),
             "fill": "none",
         })
 

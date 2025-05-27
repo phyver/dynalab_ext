@@ -3,7 +3,6 @@
 from gettext import gettext as _
 
 import inkex
-from inkex import units
 
 from lib import artefacts
 from lib.artefacts import ERROR
@@ -30,7 +29,7 @@ class MarkTiny(artefacts.Ext):
                 # TODO do something???
                 continue
             bb = elem.bounding_box()
-            if units.convert_unit(bb.width, "mm") < tiny and units.convert_unit(bb.height, "mm") < tiny:
+            if self.svg_to_mm(bb.width) < tiny and self.svg_to_mm(bb.height) < tiny:
                 desc = f"{_('tiny element')} (id: {elem.get_id()})"
                 self.outline_arrow(ERROR, elem, tr, msg=desc)
                 self.outline_bounding_box(ERROR, elem, tr, stroke_width=0.1, msg=desc)
