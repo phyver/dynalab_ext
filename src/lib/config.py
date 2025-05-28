@@ -16,7 +16,7 @@ DEFAULT_CONFIG = {
     "group_artefacts": True,
     "artefacts_stroke_width": 1,
     #
-    "laser_diameter": 0.1,
+    "laser_diameter": 0.2,
     "laser_mode_cut_color": "#ff0000",
     "laser_mode_fill_color": "#0000ff",
     "laser_mode_line_color": "#000000",

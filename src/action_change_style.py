@@ -10,35 +10,43 @@ class ChangeStyle(artefacts.Ext):
     """
     apply some new style (stroke-width, color and fill-color) to the selection
     """
-    # TODO: I could store a dictionary self.new_style and pass arbitrary style
-    # attributes.
-
-    def __init__(self, mode="line", color=None, fill=None, stroke_width=None):
-        """if specific attributes are not given, color is taken from the
-        current configuration mode-color, as is stroke-width (laser diameter);
-        fill is set to "none".
-        """
-        super().__init__()
-        self.new_color = color or self.config.get(f"laser_mode_{mode}_color")
-        self.new_fill = fill or "none"
-        self.new_stroke_width = f"{stroke_width or self.config.get('laser_diameter')}mm"
 
     def add_arguments(self, pars):
-        pass    # We don't need arguments for this extension
+        # TODO: add opacity argument
+        pars.add_argument("--stroke-width", type=float,
+                          default=-1, dest="stroke_width",
+                          help=_("stroke width (mm)"))
+        pars.add_argument("--stroke", type=str, default="#000000", help=_("stroke color"))
+        pars.add_argument("--fill", type=str, default="none", help=_("fill color"))
 
     def effect(self):
         if not self.svg.selected:
             raise inkex.AbortExtension("\n\n" + _("You must select at least one element.") + "\n\n")
-        self.init_artefact_layer()
+
+        if self.options.stroke_width < 0:
+            self.options.stroke_width = self.config.get("laser_diameter", 0.2)
+        if not self.options.stroke:
+            self.options.stroke = "none"
+        if not self.options.fill:
+            self.options.fill = "none"
+
+        if self.options.stroke == "CUT_MODE":
+            self.options.stroke = self.config.get("laser_mode_cut_color", "#ff0000")
+        elif self.options.stroke == "FILL_MODE":
+            self.options.stroke = self.config.get("laser_mode_fill_color", "#0000ff")
+        elif self.options.stroke == "LINE_MODE":
+            self.options.stroke = self.config.get("laser_mode_line_color", "#000000")
 
         # TODO should I apply to all elements if the selection is empty?
         # TODO should I tag text blocks
+        self.options.stroke_width = self.mm_to_svg(self.options.stroke_width)
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=True,
                                              limit=None):
-            if self.new_color:
-                elem.style["stroke"] = self.new_color
-            if self.new_stroke_width:
-                elem.style["stroke-width"] = self.new_stroke_width
-            if self.new_fill:
-                elem.style["fill"] = self.new_fill
+            elem.style["stroke"] = self.options.stroke
+            elem.style["stroke-width"] = self.options.stroke_width
+            elem.style["fill"] = self.options.fill
+
+
+if __name__ == '__main__':
+    ChangeStyle().run()

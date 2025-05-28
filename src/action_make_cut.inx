@@ -11,7 +11,11 @@
     </effect>
     <name>1 - cut mode</name>
 
+    <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
+    <param name="stroke" type="string" gui-hidden="true">CUT_MODE</param>
+    <param name="fill" type="string" gui-hidden="true">none</param>
+
     <script>
-        <command location="inx" interpreter="python">action_make_cut.py</command>
+        <command location="inx" interpreter="python">action_change_style.py</command>
     </script>
 </inkscape-extension>

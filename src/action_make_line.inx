@@ -11,7 +11,11 @@
     </effect>
     <name>2 - line engraving mode</name>
 
+    <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
+    <param name="stroke" type="string" gui-hidden="true">LINE_MODE</param>
+    <param name="fill" type="string" gui-hidden="true">none</param>
+
     <script>
-        <command location="inx" interpreter="python">action_make_line.py</command>
+        <command location="inx" interpreter="python">action_change_style.py</command>
     </script>
 </inkscape-extension>
