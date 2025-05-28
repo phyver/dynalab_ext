@@ -67,17 +67,23 @@ class MarkShapes(artefacts.Ext):
                 self.outline_arrow(WARNING, elem, tr, msg=desc + f" => cloned element {elem.get('xlink:href')}")
                 continue
 
+            # we check for path effects (those can be transformed to real
+            # path, so we only give them a WARNING level)
+            extra_feature_level = -1
+            if elem.get("inkscape:path-effect") is not None:
+                desc = "PATH-EFFECT: " + desc
+                extra_feature_level = max(extra_feature_level, WARNING)
+
             # we check if the element is masked, clipped or filtered
-            with_extra_feature = False
             if "mask" in elem.attrib:
                 desc = "MASKED: " + desc
-                with_extra_feature = True
+                extra_feature_level = max(extra_feature_level, ERROR)
             if "clip-path" in elem.attrib:
                 desc = "CLIPPED: " + desc
-                with_extra_feature = True
+                extra_feature_level = max(extra_feature_level, ERROR)
             if "filter" in elem.attrib:
                 desc = "FILTERED: " + desc
-                with_extra_feature = True
+                extra_feature_level = max(extra_feature_level, ERROR)
 
             # we now look if the element contains a gradient in the fill /
             # stroke attribute
@@ -86,19 +92,19 @@ class MarkShapes(artefacts.Ext):
             fill2 = style.get("fill")
             if fill1 and fill1.startswith("url(#") or fill2 and fill2.startswith("url(#"):
                 desc = "GRADIENT FILLED: " + desc
-                with_extra_feature = True
+                extra_feature_level = max(extra_feature_level, ERROR)
             stroke1 = elem.attrib.get("fill")
             stroke2 = style.get("stroke")
             if stroke1 and stroke1.startswith("url(#") or stroke2 and stroke2.startswith("url(#"):
                 desc = "GRADIENT STROKED: " + desc
-                with_extra_feature = True
+                extra_feature_level = max(extra_feature_level, ERROR)
 
             # if the element uses extra problematic features, add a red
             # bounding box
             # at this points, all elements should have well defined bounding
             # box
-            if with_extra_feature:
-                self.outline_bounding_box(ERROR, elem, tr, msg=desc)
+            if extra_feature_level > 0:
+                self.outline_bounding_box(extra_feature_level, elem, tr, msg=desc)
                 continue
 
             # standard shapes that are not path should not cause any problem
