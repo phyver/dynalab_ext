@@ -32,6 +32,14 @@ def _skip_meta(elem):
                  inkex.NamedView, inkex.Script, inkex.Style]))
 
 
+def composed_transform(elem):
+    parent = elem.getparent()
+    inkex.utils.debug(f"  parent => {parent}")
+    if isinstance(parent, inkex.BaseElement):
+        return composed_transform(parent) @ elem.transform
+    return elem.transform
+
+
 def _iter_elements(
     elem,                       # current element
     recurse=True,               # should we recurse inside groups?
@@ -60,6 +68,8 @@ def _iter_elements(
 
     if not isinstance(elem, inkex.Group) or not skip_groups:
         yield elem, _global_transform
+        # yield elem, elem.getparent().composed_transform()
+        # this is functionnaly equivalent, but could be slower if the elements tree is huge
         if limit is not None:
             limit[0] -= 1
 
@@ -73,7 +83,7 @@ def _iter_elements(
                                   skip_groups=skip_groups,
                                   limit=limit,
                                   skip_artefacts=skip_artefacts,
-                                  _global_transform=elem.transform @ _global_transform)
+                                  _global_transform=_global_transform @ elem.transform)
 
 
 def _set_text_style(elem, **kwargs):
