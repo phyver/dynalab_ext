@@ -13,8 +13,7 @@ class LoadConfig(artefacts.Ext):
         pass
 
     def effect(self):
-        self.config = config.DEFAULT_CONFIG.copy()
-        self.save_config(config.DEFAULT_CONFIG_FILE)
+        self.load_config(config.DEFAULT_CONFIG_FILE)
         self.show_config()
 
 

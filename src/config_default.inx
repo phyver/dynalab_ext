@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - reset to default configuration</name>
+    <name>3 - reset to default configuration</name>
 
     <script>
         <command location="inx" interpreter="python">config_default.py</command>

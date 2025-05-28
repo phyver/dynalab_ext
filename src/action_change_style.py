@@ -37,12 +37,12 @@ class ChangeStyle(artefacts.Ext):
         elif self.options.stroke == "LINE_MODE":
             self.options.stroke = self.config.get("laser_mode_line_color", "#000000")
 
-        # TODO should I apply to all elements if the selection is empty?
-        # TODO should I tag text blocks
         self.options.stroke_width = self.mm_to_svg(self.options.stroke_width)
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=True,
                                              limit=None):
+            # TODO, I should only do that on simple path / shapes (ie those
+            # without path-effects, clips and similar
             elem.style["stroke"] = self.options.stroke
             elem.style["stroke-width"] = self.options.stroke_width
             elem.style["fill"] = self.options.fill

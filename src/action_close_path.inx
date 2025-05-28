@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>close open path</name>
+    <name>4 - close open path</name>
 
     <param name="close-distance" type="float" min="0.01" max="100" gui-text="distance under which we close open path (mm):">5</param>
     <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>

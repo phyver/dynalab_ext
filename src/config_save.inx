@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>2 - change (and save) configuration</name>
+    <name>1 - change (and save) configuration</name>
 
     <label>
         To keep a configuration option from the current configuration, leave

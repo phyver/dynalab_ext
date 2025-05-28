@@ -24,7 +24,7 @@ ERROR_COLOR = "#ff0000"     # red
 
 
 # TODO: I should look for a list of valid tags, to check what I am missing!
-# TODO: it might be better to use a white list of tags rather than a black list
+# It might be better to use a white list of tags rather than a black list.
 def _skip_meta(elem):
     """return true if the elem should be skipped as part of metadata"""
     return any((isinstance(elem, cls) for cls in

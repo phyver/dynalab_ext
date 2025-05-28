@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>mark non vectorized shapes</name>
+    <name>1 - mark non vectorized shapes</name>
 
     <param name="color-texts" type="bool" value="false" gui-text="color texts (faster)"/>
     <param name="outline-shapes" type="bool" value="false" gui-text="outline simple non vectorized shapes"/>

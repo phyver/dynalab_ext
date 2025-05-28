@@ -10,10 +10,10 @@
     </effect>
     <name>Diagnostics</name>
 
-    <param name="tiny" type="bool" gui-text="mark tiny elements">true</param>
-    <param name="shapes" type="bool" gui-text="mark non vectorized shapes">true</param>
-    <param name="groups" type="bool" gui-text="mark groups">true</param>
-    <param name="open-paths" type="bool" gui-text="mark open, fill-mode paths">true</param>
+    <param name="shapes" type="bool" gui-text="1 - mark non vectorized shapes">true</param>
+    <param name="groups" type="bool" gui-text="2 - mark groups">true</param>
+    <param name="tiny" type="bool" gui-text="3 - mark tiny elements">true</param>
+    <param name="open-paths" type="bool" gui-text="4 - mark open, fill-mode paths">true</param>
 
     <script>
         <command location="inx" interpreter="python">battery.py</command>

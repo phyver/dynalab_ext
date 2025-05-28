@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>mark paths containing open components</name>
+    <name>4 - mark paths containing open components</name>
 
     <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>
 

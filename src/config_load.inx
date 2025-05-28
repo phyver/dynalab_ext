@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - load configuration</name>
+    <name>2 - load configuration</name>
 
     <param name="config-file" type="path" mode="file" gui-text="Load config file:" />
 

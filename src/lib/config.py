@@ -8,8 +8,8 @@ from gettext import gettext as _
 
 import inkex
 
-# TODO: have a default file used to reset the configuration, and a current file
-DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
+DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "default_config.json"))
+CURRENT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
 DEFAULT_CONFIG = {
     "lock_artefacts": False,
@@ -33,23 +33,17 @@ class Ext():
         super().__init__()
         self.load_config()
 
-    def load_config(self, filename=DEFAULT_CONFIG_FILE):
+    def reset_config(self):
+        self.load_config(DEFAULT_CONFIG_FILE)
+
+    def load_config(self, filename=CURRENT_CONFIG_FILE):
         try:
-            with open(filename, mode="rt") as f:
-                self.config = json.load(f)
-
-                for k, v in DEFAULT_CONFIG.items():
-                    if k not in self.config:
-                        self.config[k] = v
-
-                for k in list(self.config.keys()):
-                    if k not in DEFAULT_CONFIG:
-                        del self.config[k]
-
-            self.save_config(DEFAULT_CONFIG_FILE)
+            f = open(filename, mode="rt")
+            self.config = json.load(f)
+            f.close()
 
         except FileNotFoundError as err:
-            if os.path.realpath(filename) == DEFAULT_CONFIG_FILE:
+            if os.path.realpath(filename) == DEFAULT_CONFIG_FILE or os.path.realpath(filename) == CURRENT_CONFIG_FILE:
                 self.config = DEFAULT_CONFIG.copy()
             else:
                 msg = _("FILE NOT FOUND:")
@@ -61,14 +55,27 @@ class Ext():
             msg = _("INVALID CONFIG FILE:")
             raise inkex.AbortExtension(f"\n\n{msg} {filename}\n{err}\n\n")
 
+        for k, v in DEFAULT_CONFIG.items():
+            if k not in self.config:
+                self.config[k] = v
+
+        for k in list(self.config.keys()):
+            if k not in DEFAULT_CONFIG:
+                del self.config[k]
+
+        # save config so that future run use this new configuration
+        self.save_config(CURRENT_CONFIG_FILE)
+
     def save_config(self, filename, **kwargs):
         filename = os.path.realpath(filename)
+        if filename == DEFAULT_CONFIG_FILE:
+            raise inkex.AbortExtension(f"CANNOT OVERWRITE DEFAULT CONFIG FILE {filename}")
 
         try:
             with open(filename, mode="wt") as f:
                 for k, v in kwargs:
                     self.config[k] = v
-                    # TODO: check keys and values are valid???
+                    # TODO: should I validate that keys and values are valid???
 
                 f.write(json.dumps(self.config, indent=2, sort_keys=True))
         except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as err:

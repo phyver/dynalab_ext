@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - show configuration</name>
+    <name>4 - show configuration</name>
 
     <script>
         <command location="inx" interpreter="python">config_show.py</command>

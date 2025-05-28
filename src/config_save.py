@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import os
 from gettext import gettext as _
 
 import inkex
@@ -44,7 +43,6 @@ class SaveConfig(artefacts.Ext):
 
     def effect(self):
 
-        # TODO check the filepath won't overwrite the default configuration file
         options = vars(self.options)
         for k in config.DEFAULT_CONFIG:
             if options[k] is not None:
@@ -56,7 +54,7 @@ class SaveConfig(artefacts.Ext):
 The following configuration was saved to {self.options.save_file}
                      """)
 
-        self.save_config(config.DEFAULT_CONFIG_FILE)
+        self.save_config(config.CURRENT_CONFIG_FILE)
         self.show_config()
 
 

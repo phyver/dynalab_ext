@@ -26,7 +26,8 @@ class MarkTiny(artefacts.Ext):
                                              skip_groups=True,
                                              limit=None):
             if isinstance(elem, inkex.TextElement):
-                # TODO do something???
+                # TODO should I do something? computing the size requires
+                # calling the slow inkscape_boundingbox method...
                 continue
             bb = elem.bounding_box()
             if self.svg_to_mm(bb.width) < tiny and self.svg_to_mm(bb.height) < tiny:
