@@ -75,13 +75,13 @@ class MarkShapes(artefacts.Ext):
                 extra_feature_level = max(extra_feature_level, WARNING)
 
             # we check if the element is masked, clipped or filtered
-            if "mask" in elem.attrib:
+            if elem.attrib.get("mask", "none") != "none":
                 desc = "MASKED: " + desc
                 extra_feature_level = max(extra_feature_level, ERROR)
-            if "clip-path" in elem.attrib:
+            if elem.attrib.get("clip-path", "none") != "none":
                 desc = "CLIPPED: " + desc
                 extra_feature_level = max(extra_feature_level, ERROR)
-            if "filter" in elem.attrib:
+            if elem.attrib.get("filter", "none") != "none":
                 desc = "FILTERED: " + desc
                 extra_feature_level = max(extra_feature_level, ERROR)
 

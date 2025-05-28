@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   sodipodi:docname="deep-ungroup-complex.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   width="210mm"
+   height="150mm"
+   viewBox="0 0 210 149.99999"
+   version="1.1"
+   id="svg5"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     objecttolerance="10.0"
+     gridtolerance="10.0"
+     guidetolerance="10.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="1.2069844"
+     inkscape:cx="412.18429"
+     inkscape:cy="363.30213"
+     inkscape:window-width="1918"
+     inkscape:window-height="1162"
+     inkscape:window-x="0"
+     inkscape:window-y="37"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
+  <defs
+     id="defs2">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath8449">
+      <g
+         id="g8453"
+         transform="rotate(-44.526943,43.216059,143.3012)"
+         style="stroke-width:0.999999">
+        <rect
+           style="fill:#000000;stroke-width:0.399999;stroke-linecap:round;stroke-linejoin:round"
+           id="rect8451"
+           width="50.87653"
+           height="34.358173"
+           x="25.107897"
+           y="146.35262" />
+      </g>
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-4.6568704,-3.8897055)">
+    <g
+       id="g1935"
+       clip-path="none"
+       transform="translate(1.8556301,13.907866)"
+       style="fill:none;stroke:#ff00ff;stroke-width:1;stroke-dasharray:none">
+      <rect
+         style="fill:none;stroke:#ff00ff;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+         id="rect31"
+         width="38.322578"
+         height="45.260288"
+         x="30.063406"
+         y="13.214683"
+         clip-path="none" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:7.05556px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;fill:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round"
+       x="12.097011"
+       y="15.229334"
+       id="text1236"><tspan
+         sodipodi:role="line"
+         id="tspan1234"
+         style="stroke-width:0.4"
+         x="12.097011"
+         y="15.229334">Path with clip-path:none</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.05556px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;fill:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round"
+       x="112.74986"
+       y="15.52398"
+       id="text1236-9"><tspan
+         sodipodi:role="line"
+         id="tspan1234-2"
+         style="stroke-width:0.4"
+         x="112.74986"
+         y="15.52398">Path with nested transforms</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:7.05556px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;fill:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:round"
+       x="16.335344"
+       y="91.531532"
+       id="text1236-9-4"><tspan
+         sodipodi:role="line"
+         id="tspan1234-2-4"
+         style="stroke-width:0.4"
+         x="16.335344"
+         y="91.531532">Transformed group with</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.4"
+         x="16.335344"
+         y="100.35098"
+         id="tspan7203">transformed clip-path</tspan></text>
+    <g
+       id="g6577"
+       transform="matrix(1,-0.73510565,0,1,-6.4035465,124.82252)"
+       style="fill:none;stroke:#800080">
+      <g
+         id="g6572"
+         transform="translate(23.125695,-5.6162403)"
+         style="fill:none;stroke:#800080">
+        <g
+           id="g6488"
+           transform="rotate(47.618771,138.09343,46.912127)"
+           style="fill:none;stroke:#800080">
+          <rect
+             style="fill:none;stroke:#800080;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+             id="rect6485"
+             width="28.41157"
+             height="33.697441"
+             x="123.88765"
+             y="30.063406" />
+        </g>
+      </g>
+    </g>
+    <g
+       id="g115"
+       transform="matrix(1.2423153,0,0,2.1653288,-5.4140095,-158.65062)"
+       style="fill:none;stroke:#00ffff;stroke-width:0.609708;stroke-dasharray:none">
+      <g
+         id="g8054"
+         transform="rotate(25.31275,72.35325,127.55013)"
+         clip-path="url(#clipPath8449)"
+         style="fill:none;stroke:#00ffff;stroke-width:0.609708;stroke-dasharray:none">
+        <rect
+           style="fill:none;stroke:#00ffff;stroke-width:0.609708;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+           id="rect7951"
+           width="23.125696"
+           height="23.125696"
+           x="10.902113"
+           y="110.67297" />
+        <rect
+           style="fill:none;stroke:#00ffff;stroke-width:0.609708;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+           id="rect7953"
+           width="28.741938"
+           height="25.438265"
+           x="24.777531"
+           y="126.20023" />
+      </g>
+    </g>
+  </g>
+</svg>
