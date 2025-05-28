@@ -7,12 +7,14 @@ from lib import artefacts
 from diagnostic_tiny import MarkTiny
 from diagnostic_shapes import MarkShapes
 from diagnostic_groups import MarkGroups
+from diagnostic_open_paths import MarkOpenPaths
 
 
 EXTENSIONS = {
     "tiny": MarkTiny,
     "shapes": MarkShapes,
     "groups": MarkGroups,
+    "open_paths": MarkOpenPaths,
 }
 
 
@@ -30,6 +32,8 @@ class Battery(artefacts.Ext):
                           default=True, help="mark shapes")
         pars.add_argument("--groups", type=inkex.Boolean,
                           default=True, help="mark groups and layers")
+        pars.add_argument("--open-paths", type=inkex.Boolean,
+                          default=True, help="mark open paths", dest="open_paths")
 
         for ext in EXTENSIONS.values():
             inst = ext(reset_artefacts=False)

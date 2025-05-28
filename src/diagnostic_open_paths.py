@@ -7,11 +7,11 @@ from lib import artefacts
 from lib.artefacts import WARNING
 
 
-class MarkOpen(artefacts.Ext):
+class MarkOpenPaths(artefacts.Ext):
     def add_arguments(self, pars):
-        pars.add_argument("--all-path", type=inkex.Boolean,
-                          default=False, help="don't restrict to path with 'fill mode' color",
-                          dest="all_path")
+        pars.add_argument("--only-fill-mode-paths", type=inkex.Boolean,
+                          default=True, help="restrict to paths with 'fill mode' color",
+                          dest="only_fill_mode_paths")
 
     def effect(self, clean=True):
         self.init_artefact_layer()
@@ -27,8 +27,8 @@ class MarkOpen(artefacts.Ext):
             if not isinstance(elem, inkex.PathElement):
                 continue
 
-            # skip path that don't have the appropriate color (unless option "all_path" was given)
-            if not self.options.all_path and elem.style.get("stroke") != self.config["laser_mode_fill_color"]:
+            # skip path that don't have the appropriate color
+            if self.options.only_fill_mode_paths and elem.style.get("stroke") != self.config["laser_mode_fill_color"]:
                 continue
 
             prev = None
@@ -48,4 +48,4 @@ class MarkOpen(artefacts.Ext):
 
 
 if __name__ == '__main__':
-    MarkOpen().run()
+    MarkOpenPaths().run()

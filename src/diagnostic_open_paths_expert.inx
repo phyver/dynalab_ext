@@ -11,11 +11,11 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>mark path containing open components</name>
+    <name>mark paths containing open components</name>
 
-    <param name="all-path" type="bool" value="false" gui-text="don't restrict to path with 'fill mode' color"/>
+    <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>
 
     <script>
-        <command location="inx" interpreter="python">diagnostic_open_path.py</command>
+        <command location="inx" interpreter="python">diagnostic_open_paths.py</command>
     </script>
 </inkscape-extension>
