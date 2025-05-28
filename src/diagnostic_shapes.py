@@ -88,15 +88,21 @@ class MarkShapes(artefacts.Ext):
             # we now look if the element contains a gradient in the fill /
             # stroke attribute
             style = inkex.Style(elem.attrib.get("style", ''))
-            fill1 = elem.attrib.get("fill")
-            fill2 = style.get("fill")
-            if fill1 and fill1.startswith("url(#") or fill2 and fill2.startswith("url(#"):
+            fill1 = elem.attrib.get("fill", "")
+            fill2 = style.get("fill", "")
+            if fill1.startswith("url(#") or fill2.startswith("url(#"):
                 desc = "GRADIENT or PATTERN FILLED: " + desc
                 extra_feature_level = max(extra_feature_level, ERROR)
-            stroke1 = elem.attrib.get("fill")
-            stroke2 = style.get("stroke")
-            if stroke1 and stroke1.startswith("url(#") or stroke2 and stroke2.startswith("url(#"):
+            stroke1 = elem.attrib.get("fill", "")
+            stroke2 = style.get("stroke", "")
+            if stroke1.startswith("url(#") or stroke2.startswith("url(#"):
                 desc = "GRADIENT STROKED: " + desc
+                extra_feature_level = max(extra_feature_level, ERROR)
+
+            dash1 = elem.attrib.get("stroke-dasharray", "none")
+            dash2 = style.get("stroke-dasharray", "none")
+            if dash1 != "none" or dash2 != "none":
+                desc = "DASHED: " + desc
                 extra_feature_level = max(extra_feature_level, ERROR)
 
             # if the element uses extra problematic features, add a red
