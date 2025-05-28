@@ -36,11 +36,9 @@
         </page>
 
         <page name="save-tab" gui-text="save file">
-            <param name="config-dir" type="path" mode="folder" gui-text="Save values in directory:" />
-            <param name="config-file" type="string" gui-text="Save values to file:" />
+            <param name="save-file" type="path" mode="file_new" gui-text="Save values in file:" />
             <label>
-                If either of these fields is empty, the configuration is
-                changed, but not saved to a file.
+                If empty, the configuration is changed but not saved to a file.
             </label>
         </page>
     </param>

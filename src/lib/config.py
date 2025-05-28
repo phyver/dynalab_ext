@@ -8,6 +8,7 @@ from gettext import gettext as _
 
 import inkex
 
+# TODO: have a default file used to reset the configuration, and a current file
 DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
 DEFAULT_CONFIG = {

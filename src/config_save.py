@@ -40,23 +40,20 @@ class SaveConfig(artefacts.Ext):
         pars.add_argument("--artefacts-stroke-width", type=float, dest="artefacts_stroke_width",
                           help=_("stroke width for artefacts (mm)"))
 
-        pars.add_argument("--config-dir", dest="config_dir",
-                          help=_("Save directory"))
-        pars.add_argument("--config-file", dest="config_file",
-                          help=_("config filename"))
+        pars.add_argument("--save-file", dest="save_file", help=_("Save file"))
 
     def effect(self):
 
+        # TODO check the filepath won't overwrite the default configuration file
         options = vars(self.options)
         for k in config.DEFAULT_CONFIG:
             if options[k] is not None:
                 self.config[k] = options[k]
 
-        if self.options.config_dir and self.options.config_file:
-            filename = os.path.join(self.options.config_dir, self.options.config_file)
-            self.save_config(filename)
+        if self.options.save_file:
+            self.save_config(self.options.save_file)
             self.msg(f"""
-The following configuration was saved to {filename}
+The following configuration was saved to {self.options.save_file}
                      """)
 
         self.save_config(config.DEFAULT_CONFIG_FILE)
