@@ -12,8 +12,8 @@ DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.real
 CURRENT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
 DEFAULT_CONFIG = {
-    "lock_artefacts": False,
-    "group_artefacts": True,
+    "artefacts_locked": False,
+    "artefacts_grouped": True,
     "artefacts_stroke_width": 1,
     #
     "laser_diameter": 0.2,
@@ -83,21 +83,14 @@ class Ext():
 
     def show_config(self):
         self.msg("""
-== laser related configuration
-
   - laser diameter: {laser_diameter:.2f}mm
+  - laser cut mode color: {laser_mode_cut_color:s}
+  - laser fill mode color: {laser_mode_fill_color:s}
+  - laser line mode color: {laser_mode_line_color:s}
 
-  - cut mode color: \t{laser_mode_cut_color:s}
-  - fill mode color: \t{laser_mode_fill_color:s}
-  - line mode color: \t{laser_mode_line_color:s}
+  - size for "tiny" elements: {size_tiny_element}mm
 
-  - size under which an element is tagged "tiny": {size_tiny_element}mm
-
-
-== artefact related configuration
-
-  - artefacts layer is locked (non selectable): {lock_artefacts}
-  - artefacts are put in a single group: {group_artefacts}
+  - artefacts layer is locked (non selectable): {artefacts_locked}
+  - artefacts are put in a single group: {artefacts_grouped}
   - stroke width for artefacts: {artefacts_stroke_width}mm
-
 """.format(**self.config))

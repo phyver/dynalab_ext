@@ -32,9 +32,9 @@ class SaveConfig(artefacts.Ext):
         pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
                           help=_("size for tiny elements (mm)"))
 
-        pars.add_argument("--lock-artefacts", type=inkex.Boolean, dest="lock_artefacts",
+        pars.add_argument("--lock-artefacts", type=inkex.Boolean, dest="artefacts_locked",
                           help=_("lock artefacts layer"))
-        pars.add_argument("--group-artefacts", type=inkex.Boolean, dest="group_artefacts",
+        pars.add_argument("--group-artefacts", type=inkex.Boolean, dest="artefacts_grouped",
                           help=_("group artefacts"))
         pars.add_argument("--artefacts-stroke-width", type=float, dest="artefacts_stroke_width",
                           help=_("stroke width for artefacts (mm)"))
@@ -51,7 +51,7 @@ class SaveConfig(artefacts.Ext):
         if self.options.save_file:
             self.save_config(self.options.save_file)
             self.msg(f"""
-The following configuration was saved to {self.options.save_file}
+### The following configuration was saved to {self.options.save_file}
                      """)
 
         self.save_config(config.CURRENT_CONFIG_FILE)

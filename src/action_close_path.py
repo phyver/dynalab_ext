@@ -16,7 +16,7 @@ class MarkOpen(artefacts.Ext):
                           default=True, help="restrict to paths with 'fill mode' color",
                           dest="only_fill_mode_paths")
 
-    def effect(self):
+    def effect(self, clean=False):
         if not self.svg.selected:
             raise inkex.AbortExtension("\n\n" + _("You must select at least one element.") + "\n\n")
 
@@ -27,6 +27,11 @@ class MarkOpen(artefacts.Ext):
             # skip non-path element
             if not isinstance(elem, inkex.PathElement):
                 continue
+
+            # check path effects
+            if elem.get("inkscape:path-effect") is not None:
+                # FIXME: I should display a warning message
+                continue    # don't try closing them
 
             # skip path that don't have the appropriate color
             if self.options.only_fill_mode_paths and elem.style.get("stroke") != self.config["laser_mode_fill_color"]:
@@ -64,6 +69,9 @@ class MarkOpen(artefacts.Ext):
 
             if modified:
                 elem.path = new_path
+
+        if clean:
+            self.clean(force=False)
 
 
 if __name__ == '__main__':

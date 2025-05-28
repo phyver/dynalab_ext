@@ -18,6 +18,7 @@ class ChangeStyle(artefacts.Ext):
                           help=_("stroke width (mm)"))
         pars.add_argument("--stroke", type=str, default="#000000", help=_("stroke color"))
         pars.add_argument("--fill", type=str, default="none", help=_("fill color"))
+        pars.add_argument("--fill-opacity", type=float, default=100, help=_("opacity (%)"), dest="fill_opacity")
 
     def effect(self):
         if not self.svg.selected:
@@ -46,6 +47,7 @@ class ChangeStyle(artefacts.Ext):
             elem.style["stroke"] = self.options.stroke
             elem.style["stroke-width"] = self.options.stroke_width
             elem.style["fill"] = self.options.fill
+            elem.style["fill-opacity"] = self.options.fill_opacity/100
 
 
 if __name__ == '__main__':

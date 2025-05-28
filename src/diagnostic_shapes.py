@@ -91,7 +91,7 @@ class MarkShapes(artefacts.Ext):
             fill1 = elem.attrib.get("fill")
             fill2 = style.get("fill")
             if fill1 and fill1.startswith("url(#") or fill2 and fill2.startswith("url(#"):
-                desc = "GRADIENT FILLED: " + desc
+                desc = "GRADIENT or PATTERN FILLED: " + desc
                 extra_feature_level = max(extra_feature_level, ERROR)
             stroke1 = elem.attrib.get("fill")
             stroke2 = style.get("stroke")

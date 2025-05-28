@@ -13,9 +13,10 @@
     </effect>
     <name>change style of selection</name>
 
-    <param name="stroke-width" type="float" gui-text="stroke width (mm)"></param>
+    <param name="stroke-width" type="float" min="0" gui-text="stroke width (mm)"></param>
     <param name="stroke" type="string" gui-text="stroke color"></param>
     <param name="fill" type="string" gui-text="fill color"></param>
+    <param name="fill-opacity" type="float" min="0" max="100" gui-text="opacity (%)">100</param>
 
     <script>
         <command location="inx" interpreter="python">action_change_style.py</command>

@@ -104,8 +104,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         super().__init__()
         i18n.Ext.__init__(self)
         config.Ext.__init__(self)
-        self.group_artefacts = self.config["group_artefacts"]
-        self.lock_artefacts = self.config["lock_artefacts"]
+        self.artefacts_grouped = self.config["artefacts_grouped"]
+        self.artefacts_locked = self.config["artefacts_locked"]
         self.reset_artefacts = reset_artefacts
 
     def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
@@ -146,8 +146,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         root = self.document.getroot()
         svg = self.svg
 
-        # make sure the unit is "mm"
-        svg.namedview.set(inkex.addNS('document-units', 'inkscape'), 'mm')
+        # make sure inkscape's unit is "mm"
+        svg.namedview.set('inkscape:document-units', 'mm')
 
         # extract non-artefacts from the artefact layer
         self.extract_non_artefacts()
@@ -169,7 +169,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             artefact_layer = inkex.Layer.new(ARTEFACT_LAYER_ID)
             artefact_layer.set("id", ARTEFACT_LAYER_ID)
             artefact_layer.set("class", ARTEFACT_CLASS)
-            if self.lock_artefacts:
+            if self.artefacts_locked:
                 artefact_layer.set_sensitive(False)
             root.add(artefact_layer)           # insert last, ie at top
             # to insert first, ie on the bottom, use
@@ -177,7 +177,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         # and create Inkscape group inside
         if artefact_group is None:
-            if self.group_artefacts:
+            if self.artefacts_grouped:
                 self.artefact_group = inkex.Group()
                 self.artefact_group.set("id", ARTEFACT_GROUP_ID)
                 self.artefact_group.set("class", ARTEFACT_CLASS)
