@@ -19,6 +19,7 @@ class ChangeStyle(artefacts.Ext):
         pars.add_argument("--stroke", type=str, default="#000000", help=_("stroke color"))
         pars.add_argument("--fill", type=str, default="none", help=_("fill color"))
         pars.add_argument("--fill-opacity", type=float, default=100, help=_("opacity (%)"), dest="fill_opacity")
+        pars.add_argument("--extra-style", type=str, default="", help=_("extra style options"))
         pars.add_argument("--only-paths", type=inkex.Boolean, default=True,
                           help=_("only apply to path like objects"), dest="only_paths")
 
@@ -41,6 +42,20 @@ class ChangeStyle(artefacts.Ext):
             self.options.stroke = self.config.get("laser_mode_line_color", "#000000")
 
         self.options.stroke_width = self.mm_to_svg(self.options.stroke_width)
+
+        extra_style = {}
+        for s in self.options.extra_style.split(";"):
+            s = s.strip()
+            if not s:
+                continue    # ignore empty options
+            try:
+                a, v = s.split(":")
+                extra_style[a] = v
+            except TypeError:
+                raise inkex.AbortExtension("\n\n" +
+                                           _("cannot parse extra style: ") +
+                                           self.options.extra_style + "\n\n")
+
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=True,
                                              limit=None):
@@ -56,6 +71,9 @@ class ChangeStyle(artefacts.Ext):
             elem.style["stroke-width"] = self.options.stroke_width
             elem.style["fill"] = self.options.fill
             elem.style["fill-opacity"] = self.options.fill_opacity/100
+            for a in extra_style:
+                elem.style[a] = extra_style[a]
+
 
 
 if __name__ == '__main__':

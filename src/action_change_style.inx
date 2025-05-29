@@ -17,6 +17,7 @@
     <param name="stroke" type="string" gui-text="stroke color"></param>
     <param name="fill" type="string" gui-text="fill color"></param>
     <param name="fill-opacity" type="float" min="0" max="100" gui-text="opacity (%)">100</param>
+    <param name="extra-style" type="string" gui-text="extra style options"></param>
     <param name="only-paths" type="bool" gui-text="only apply to path and simple shapes">true</param>
 
     <script>
