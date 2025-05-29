@@ -5,14 +5,14 @@ import inkex
 from lib import artefacts
 
 from diagnostic_tiny import MarkTiny
-from diagnostic_shapes import MarkShapes
+from diagnostic_paths import MarkNonPaths
 from diagnostic_groups import MarkGroups
 from diagnostic_open_paths import MarkOpenPaths
 
 
 EXTENSIONS = {
     "tiny": MarkTiny,
-    "shapes": MarkShapes,
+    "non_paths": MarkNonPaths,
     "groups": MarkGroups,
     "open_paths": MarkOpenPaths,
 }
@@ -26,12 +26,12 @@ class Battery(artefacts.Ext):
     """
 
     def add_arguments(self, pars):
-        pars.add_argument("--tiny", type=inkex.Boolean,
-                          default=True, help="detect tiny elements")
-        pars.add_argument("--shapes", type=inkex.Boolean,
-                          default=True, help="mark shapes")
+        pars.add_argument("--non-paths", type=inkex.Boolean,
+                          default=True, help="mark non path objets", dest="non_paths")
         pars.add_argument("--groups", type=inkex.Boolean,
                           default=True, help="mark groups and layers")
+        pars.add_argument("--tiny", type=inkex.Boolean,
+                          default=True, help="detect tiny elements")
         pars.add_argument("--open-paths", type=inkex.Boolean,
                           default=True, help="mark open paths", dest="open_paths")
 

@@ -11,12 +11,12 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - mark non vectorized shapes</name>
+    <name>1 - mark non path objects</name>
 
     <param name="color-texts" type="bool" value="false" gui-text="color texts (faster)"/>
-    <param name="outline-shapes" type="bool" value="false" gui-text="outline simple non vectorized shapes"/>
+    <param name="outline-shapes" type="bool" value="false" gui-text="also outline non path simple shapes (rectangles, circles, etc.)"/>
 
     <script>
-        <command location="inx" interpreter="python">diagnostic_shapes.py</command>
+        <command location="inx" interpreter="python">diagnostic_paths.py</command>
     </script>
 </inkscape-extension>
