@@ -3,7 +3,7 @@
 from gettext import gettext as _
 import inkex
 
-from lib import artefacts
+from lib import artefacts, utils
 
 
 class ChangeStyle(artefacts.Ext):
@@ -19,6 +19,8 @@ class ChangeStyle(artefacts.Ext):
         pars.add_argument("--stroke", type=str, default="#000000", help=_("stroke color"))
         pars.add_argument("--fill", type=str, default="none", help=_("fill color"))
         pars.add_argument("--fill-opacity", type=float, default=100, help=_("opacity (%)"), dest="fill_opacity")
+        pars.add_argument("--only-paths", type=inkex.Boolean, default=True,
+                          help=_("only apply to path like objects"), dest="only_paths")
 
     def effect(self):
         if not self.svg.selected:
@@ -42,8 +44,14 @@ class ChangeStyle(artefacts.Ext):
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=True,
                                              limit=None):
-            # TODO, I should only do that on simple path / shapes (ie those
-            # without path-effects, clips and similar
+            # skip non path elements (except if option only-paths is false)
+            if self.options.only_paths:
+                if not utils.is_path(elem):
+                    continue
+                # we also skip path like objects with effects
+                if utils.effects(elem):
+                    continue
+
             elem.style["stroke"] = self.options.stroke
             elem.style["stroke-width"] = self.options.stroke_width
             elem.style["fill"] = self.options.fill
