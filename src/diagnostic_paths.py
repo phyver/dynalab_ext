@@ -71,7 +71,7 @@ class MarkNonPaths(artefacts.Ext):
             # we add an error and debug message in case I missed something
             if not utils.is_path(elem):
                 self.outline_arrow(ERROR, elem, tr)
-                self.msg("UNKWNOW: " + desc)
+                self.message("UNKWNOW ELEMENT:", desc)
 
             # we now check for extra visible features that probably won't
             # translate automatically to path

@@ -38,6 +38,7 @@ class SaveConfig(artefacts.Ext):
                           help=_("group artefacts"))
         pars.add_argument("--artefacts-stroke-width", type=float, dest="artefacts_stroke_width",
                           help=_("stroke width for artefacts (mm)"))
+        pars.add_argument("--verbosity", type=int, help=_("verbosity"))
 
         pars.add_argument("--save-file", dest="save_file", help=_("Save file"))
 

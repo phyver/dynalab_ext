@@ -108,6 +108,11 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self.artefacts_locked = self.config["artefacts_locked"]
         self.reset_artefacts = reset_artefacts
 
+    def message(self, *args, verbosity=0, end="", sep=" "):
+        if verbosity > self.config.get("verbosity", 1):
+            return
+        self.msg(sep.join(str(a) for a in args) + "\n")
+
     def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
         """iterates over the selected elements (recursively if needs be), or
         all the element if the selection is empty"""
@@ -259,6 +264,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         # convert width
         stroke_width = self.config["artefacts_stroke_width"]
+
         if level == OK:
             stroke = NOTE_COLOR  # green
             stroke_width = stroke_width/2

@@ -28,10 +28,12 @@ class Ungroups(artefacts.Ext):
         groups.reverse()
         for gr, tr in groups:
             if gr.attrib.get("clip-path", "none") != "none":
-                self.msg(f"""WARNING: group {gr.get('id')} contains a clip-path
-which is discarded. If that is a problem, Undo (Ctrl-z) the ungrouping and
-find a way to deal with that. (The "Arrange" => "deep-ungroup" extension might
-be a solution.)""")
+                self.message(f"""
+WARNING: group {gr.get('id')} contains a clip-path. This clip path is
+discarded when ungrouping. If that is a problem, Undo (Ctrl-z) the ungrouping
+and find a way to deal with that. (You can try ungrouping it manually, or try
+using the "Arrange" => "deep-ungroup" extension.)
+                """)
             for elem in gr:
                 gr.remove(elem)
                 elem.transform = tr @ gr.transform @ elem.transform

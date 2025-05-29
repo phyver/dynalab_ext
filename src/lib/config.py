@@ -12,6 +12,7 @@ DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.real
 CURRENT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
 DEFAULT_CONFIG = {
+    "verbosity": 0,
     "artefacts_locked": False,
     "artefacts_grouped": True,
     "artefacts_stroke_width": 1,
@@ -93,4 +94,5 @@ class Ext():
   - artefacts layer is locked (non selectable): {artefacts_locked}
   - artefacts are put in a single group: {artefacts_grouped}
   - stroke width for artefacts: {artefacts_stroke_width}mm
+  - verbosity level: {verbosity}
 """.format(**self.config))
