@@ -3,11 +3,11 @@
 import re
 import inkex
 
-from lib import artefacts
-from lib.artefacts import WARNING
+from lib import dynalab
+from lib.dynalab import WARNING
 
 
-class MarkOpenPaths(artefacts.Ext):
+class MarkOpenPaths(dynalab.Ext):
     def add_arguments(self, pars):
         pars.add_argument("--only-fill-mode-paths", type=inkex.Boolean,
                           default=True, help="restrict to paths with 'fill mode' color",

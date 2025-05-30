@@ -3,11 +3,11 @@
 import re
 import inkex
 
-from lib import artefacts, utils
-from lib.artefacts import OK, WARNING, ERROR
+from lib import dynalab, utils
+from lib.dynalab import OK, WARNING, ERROR
 
 
-class MarkNonPaths(artefacts.Ext):
+class MarkNonPaths(dynalab.Ext):
     """
     mark shapes from the document:
       - path in green

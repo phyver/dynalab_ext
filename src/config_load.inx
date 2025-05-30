@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.load_config</id>
+    <id>dynalab.load_config</id>
 
     <effect needs-live-preview="false">
         <effects-menu>
-            <submenu name="00 Fablab Extension">
-                <submenu name="expert">
-                    <submenu name="configuration"/>
+            <submenu name=" Dynalab">
+                <submenu name="9 - expert">
+                    <submenu name="9 - configuration"/>
                 </submenu>
             </submenu>
         </effects-menu>

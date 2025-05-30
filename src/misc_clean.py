@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from lib import artefacts
+from lib import dynalab
 
 
-class Clean(artefacts.Ext):
+class Clean(dynalab.Ext):
     """
     remove the error layer
     """

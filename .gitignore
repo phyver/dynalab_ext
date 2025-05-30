@@ -1,7 +1,8 @@
 src/TEST*
-i18n/*~
-Makefile
-_attic
+./*.svg
+
 .envrc
-test*.svg
+_attic
+
+i18n/*~
 __pycache__

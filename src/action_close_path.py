@@ -4,10 +4,10 @@ from gettext import gettext as _
 
 import inkex
 
-from lib import artefacts
+from lib import dynalab
 
 
-class MarkOpen(artefacts.Ext):
+class MarkOpen(dynalab.Ext):
     def add_arguments(self, pars):
         pars.add_argument("--close-distance", type=float,
                           default=5, help="distance under which we close open path (mm)",

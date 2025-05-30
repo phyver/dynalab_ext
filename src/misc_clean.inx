@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.clean</id>
+    <id>dynalab.clean</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
-            <submenu name="00 Fablab Extension">
+            <submenu name=" Dynalab">
             </submenu>
         </effects-menu>
     </effect>
-    <name>remove artefacts</name>
+    <name>3 - remove artefacts</name>
 
     <script>
         <command location="inx" interpreter="python">misc_clean.py</command>

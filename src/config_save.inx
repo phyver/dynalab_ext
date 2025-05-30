@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.new_config</id>
+    <id>dynalab.new_config</id>
 
     <effect needs-live-preview="false">
         <effects-menu>
-            <submenu name="00 Fablab Extension">
-                <submenu name="expert">
-                    <submenu name="configuration"/>
+            <submenu name=" Dynalab">
+                <submenu name="9 - expert">
+                    <submenu name="9 - configuration"/>
                 </submenu>
             </submenu>
         </effects-menu>
@@ -14,8 +14,7 @@
     <name>1 - change (and save) configuration</name>
 
     <label>
-        To keep a configuration option from the current configuration, leave
-        the corresponding field empty.
+        Parameters that are unset will keep their current value.
     </label>
 
     <param name="tabs" type="notebook">
@@ -29,9 +28,9 @@
             <param name="size-tiny-element" type="string" gui-text="size of tiny elements (mm):"></param>
         </page>
 
-        <page name="artefact-tab" gui-text="artefacts related options">
-            <param name="lock-artefacts" type="bool" value="false" gui-text="lock layer artefacts"/>
-            <param name="group-artefacts" type="bool" value="true" gui-text="group artefacts"/>
+        <page name="artefact-tab" gui-text="extension related options">
+            <param name="lock-artefacts" type="bool" value="false" gui-text="lock the artefacts' layer"/>
+            <param name="group-artefacts" type="bool" value="true" gui-text="group artefacts for easy removal"/>
             <param name="artefacts-stroke-width" type="string" gui-text="stroke width for artefacts (mm)"/>
             <param name="verbosity" type="int" min="0" max="4" value="1" gui-text="verbosity"/>
         </page>

@@ -4,11 +4,11 @@ from gettext import gettext as _
 
 import inkex
 
-from lib import artefacts
-from lib.artefacts import ERROR
+from lib import dynalab
+from lib.dynalab import ERROR
 
 
-class MarkTiny(artefacts.Ext):
+class MarkTiny(dynalab.Ext):
     """
     tags the "tiny" elements found in the document
     """

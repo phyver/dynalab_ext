@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.make_contour</id>
+    <id>dynalab.make_contour</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
-            <submenu name="00 Fablab Extension">
-                <submenu name="Change selection"/>
+            <submenu name=" Dynalab">
+                <submenu name="2 - Change selection"/>
             </submenu>
         </effects-menu>
     </effect>

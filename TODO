@@ -1,0 +1,42 @@
+GENERAL
+=======
+
+  - use the verbose config option and the self.message method to display user
+    messages
+
+  - artefact should be given an id that only depends on the id of the
+    referenced object, so that we can "merge" artefacts to the same object
+    into a single one.
+
+  - all tagged element should receive a new description ("<desc>") for easy
+    selection in inkscape (Ctrl-f)
+      => it should be removed when cleaning artefacts
+      => ideally, it should keep existing descriptions (prefix those messages
+      with a special prefix???)
+
+  - automatic tests => look at the way official extensions are tested using
+    pytest
+
+
+EXTENSIONS
+==========
+
+easy
+----
+
+  - check stroke colors for allowed modes
+  - export to svg / dxf / pdf (=> dxf should use the existing extension)
+
+not easy
+--------
+
+  - isolated elements
+  - bezier intersection and polygone intersections ???
+
+to discuss
+----------
+
+  - ??? resize to standard size
+  - ??? invisible elements (display:none, stroke:none and fill:none, opacity:0, fill-opacity:0 and stroke-opacity:0, stroke-width:0, ...)
+  - ??? elements outside page
+  - ??? elements with wide stroke (>=1mm?)

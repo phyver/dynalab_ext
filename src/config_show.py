@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from lib import artefacts
+from lib import dynalab
 
 
-class ShowConfig(artefacts.Ext):
+class ShowConfig(dynalab.Ext):
     """
     display the current configuration options
     """

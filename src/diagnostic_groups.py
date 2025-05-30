@@ -2,11 +2,11 @@
 
 import inkex
 
-from lib import artefacts
-from lib.artefacts import WARNING
+from lib import dynalab
+from lib.dynalab import WARNING
 
 
-class MarkGroups(artefacts.Ext):
+class MarkGroups(dynalab.Ext):
     """
     show the bounding boxes of groups and layers found in the document
     """

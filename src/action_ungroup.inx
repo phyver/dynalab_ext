@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.ungroup</id>
+    <id>dynalab.ungroup</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
-            <submenu name="00 Fablab Extension">
-                <submenu name="action">
+            <submenu name=" Dynalab">
+                <submenu name="2 - Change selection">
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>remove groups</name>
+    <name>4 - remove groups</name>
 
     <script>
         <command location="inx" interpreter="python">action_ungroup.py</command>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.close_path</id>
+    <id>dynalab.close_path</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
-            <submenu name="00 Fablab Extension">
-                <submenu name="Change selection"/>
+            <submenu name=" Dynalab">
+                <submenu name="2 - Change selection"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - close open path</name>
+    <name>5 - close open path</name>
 
     <param name="close-distance" type="float" min="0" gui-text="distance under which we close open path (mm):">5</param>
     <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>

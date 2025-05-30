@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>fablabext.change_style_expert</id>
+    <id>dynalab.change_style_expert</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
-            <submenu name="00 Fablab Extension">
-                <submenu name="expert">
-                    <submenu name="actions"/>
+            <submenu name=" Dynalab">
+                <submenu name="9 - expert">
+                    <submenu name="2 - actions"/>
                 </submenu>
             </submenu>
         </effects-menu>

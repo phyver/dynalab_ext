@@ -2,10 +2,10 @@
 
 import inkex
 
-from lib import artefacts
+from lib import dynalab
 
 
-class Ungroups(artefacts.Ext):
+class Ungroups(dynalab.Ext):
     """
     constantly changing dummy extension to test features for upcoming
     extensions

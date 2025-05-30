@@ -40,6 +40,10 @@ def composed_transform(elem):
     return elem.transform
 
 
+# NOTE: the _iter_element method doesn't really need to compute the
+# _global_transform on the fly as it is available with
+# elem.getparent().composed_transform()
+# It is however faster to compute it on the fly, at least theoretically.
 def _iter_elements(
     elem,                       # current element
     recurse=True,               # should we recurse inside groups?

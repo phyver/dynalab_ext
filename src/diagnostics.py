@@ -2,7 +2,7 @@
 
 import inkex
 
-from lib import artefacts
+from lib import dynalab
 
 from diagnostic_tiny import MarkTiny
 from diagnostic_paths import MarkNonPaths
@@ -18,7 +18,7 @@ EXTENSIONS = {
 }
 
 
-class Battery(artefacts.Ext):
+class Battery(dynalab.Ext):
     """
     constantly changing dummy extension to test features for upcoming
     extensions

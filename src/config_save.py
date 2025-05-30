@@ -4,10 +4,10 @@ from gettext import gettext as _
 
 import inkex
 
-from lib import artefacts, config
+from lib import dynalab, config
 
 
-class SaveConfig(artefacts.Ext):
+class SaveConfig(dynalab.Ext):
     """
     save a new configuration file in a user chosen location
     All configuration options that aren"t given are taken from the current

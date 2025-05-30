@@ -3,10 +3,10 @@
 from gettext import gettext as _
 import inkex
 
-from lib import artefacts, utils
+from lib import dynalab, utils
 
 
-class ChangeStyle(artefacts.Ext):
+class ChangeStyle(dynalab.Ext):
     """
     apply some new style (stroke-width, color and fill-color) to the selection
     """
@@ -73,7 +73,6 @@ class ChangeStyle(artefacts.Ext):
             elem.style["fill-opacity"] = self.options.fill_opacity/100
             for a in extra_style:
                 elem.style[a] = extra_style[a]
-
 
 
 if __name__ == '__main__':

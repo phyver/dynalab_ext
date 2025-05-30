@@ -3,10 +3,10 @@
 import os
 from gettext import gettext as _
 
-from lib import artefacts
+from lib import dynalab
 
 
-class LoadConfig(artefacts.Ext):
+class LoadConfig(dynalab.Ext):
     """
     load an existing config file (json) and use it as the new default
     configuration

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from lib import artefacts, config
+from lib import dynalab, config
 
 
-class LoadConfig(artefacts.Ext):
+class LoadConfig(dynalab.Ext):
     """
     load an existing config file (json) and use it as the new default
     configuration
