@@ -25,7 +25,7 @@ class ChangeStyle(dynalab.Ext):
 
     def effect(self):
         if not self.svg.selected:
-            raise inkex.AbortExtension("\n\n" + _("You must select at least one element.") + "\n\n")
+            self.abort(_("You must select at least one element."))
 
         if self.options.stroke_width < 0:
             self.options.stroke_width = self.config.get("laser_diameter", 0.2)
@@ -52,9 +52,10 @@ class ChangeStyle(dynalab.Ext):
                 a, v = s.split(":")
                 extra_style[a] = v
             except TypeError:
-                raise inkex.AbortExtension("\n\n" +
-                                           _("cannot parse extra style: ") +
-                                           self.options.extra_style + "\n\n")
+                raise self.abort(
+                    _("cannot parse extra style: "),
+                    self.options.extra_style,
+                )
 
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=True,

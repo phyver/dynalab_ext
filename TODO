@@ -1,6 +1,9 @@
 GENERAL
 =======
 
+  - use the inkex.command.inkscape directly to get bounding boxes of all text
+    elements
+
   - use the verbose config option and the self.message method to display user
     messages
 
@@ -25,7 +28,6 @@ easy
 ----
 
   - check stroke colors for allowed modes
-  - export to svg / dxf / pdf (=> dxf should use the existing extension)
 
 not easy
 --------

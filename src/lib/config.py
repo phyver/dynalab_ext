@@ -48,13 +48,13 @@ class Ext():
                 self.config = DEFAULT_CONFIG.copy()
             else:
                 msg = _("FILE NOT FOUND:")
-                raise inkex.AbortExtension(f"\n\n{msg} {filename}\n{err}\n\n")
+                raise inkex.AbortExtension(f"\n{msg} {filename}\n{err}")
         except (IOError, OSError) as err:
             msg = _("ERROR READING FILE:")
-            raise inkex.AbortExtension(f"\n\n{msg} {filename}\n{err}\n\n")
+            raise inkex.AbortExtension(f"\n{msg} {filename}\n{err}")
         except json.JSONDecodeError as err:
             msg = _("INVALID CONFIG FILE:")
-            raise inkex.AbortExtension(f"\n\n{msg} {filename}\n{err}\n\n")
+            raise inkex.AbortExtension(f"\n{msg} {filename}\n{err}")
 
         for k, v in DEFAULT_CONFIG.items():
             if k not in self.config:

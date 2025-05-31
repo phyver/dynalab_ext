@@ -18,7 +18,7 @@ class MarkOpen(dynalab.Ext):
 
     def effect(self, clean=False):
         if not self.svg.selected:
-            raise inkex.AbortExtension("\n\n" + _("You must select at least one element.") + "\n\n")
+            self.abort(_("You must select at least one element."))
 
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=False,

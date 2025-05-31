@@ -112,10 +112,19 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self.artefacts_locked = self.config["artefacts_locked"]
         self.reset_artefacts = reset_artefacts
 
-    def message(self, *args, verbosity=0, end="", sep=" "):
+    def message(self, *args, verbosity=0, end="\n", sep=" "):
         if verbosity > self.config.get("verbosity", 1):
             return
-        self.msg(sep.join(str(a) for a in args) + "\n")
+        self.msg(sep.join(str(a) for a in args if a is not None) + end)
+
+    def abort(self, *args, header=None, end="\n", sep=" "):
+        if header is None:
+            header = """
+Error encountered while running extension, aborting.
+
+details:
+"""
+        raise inkex.AbortExtension(header + sep.join(str(a) for a in args if a is not None) + end)
 
     def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
         """iterates over the selected elements (recursively if needs be), or
@@ -260,7 +269,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         external inkscape process!)"""
         if isinstance(elem, inkex.TextElement):
             if not accept_text:
-                raise inkex.AbortExtension("cannot compute text bounding box (function outline_bounding_box)")
+                self.abort("cannot compute text bounding box (function outline_bounding_box)")
             # very slow!!!
             bb = elem.get_inkscape_bbox()   # no need to apply the global transform
         else:
