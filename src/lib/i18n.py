@@ -3,7 +3,7 @@
 import os
 import gettext
 
-GETTEXT_DOMAIN = "fablabext"
+GETTEXT_DOMAIN = "dynalab"
 
 
 class Ext():

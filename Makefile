@@ -11,15 +11,15 @@ install:
 restore_svg:
 	git restore svg_testfiles/*.svg
 
-i18n: i18n/fablabext.pot i18n/fr.po src/locales/fr/LC_MESSAGES/fablabext.mo
+i18n: i18n/dynalab.pot i18n/fr.po src/locales/fr/LC_MESSAGES/dynalab.mo
 
-i18n/fablabext.pot: $(PYTHON_FILES)
-	xgettext -language=Python --from-code=UTF-8 -omit-header --indent --no-wrap --no-location --sort-output --join-existing --output $@ $?
+i18n/dynalab.pot: $(PYTHON_FILES)
+	xgettext -language=Python --from-code=UTF-8 -omit-header --indent --no-wrap --sort-by-file --join-existing --output $@ $?
 
-i18n/fr.po: i18n/fablabext.pot
-	msgmerge --quiet --update --indent --no-wrap --no-location --sort-output $@ $<
+i18n/fr.po: i18n/dynalab.pot
+	msgmerge --quiet --update --indent --no-wrap --sort-by-file $@ $<
 
-src/locales/fr/LC_MESSAGES/fablabext.mo: i18n/fr.po
+src/locales/fr/LC_MESSAGES/dynalab.mo: i18n/fr.po
 	msgfmt $< -o $@
 
 clean:

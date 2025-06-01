@@ -17,6 +17,8 @@ GENERAL
   - automatic tests => look at the way official extensions are tested using
     pytest
 
+  - translate to French
+
   - add an option "make this language the default" in expert -> config
     it should
       - remove menus
@@ -32,6 +34,7 @@ easy
 ----
 
   - check stroke colors for allowed modes
+  - duplicate elements
 
 not easy
 --------

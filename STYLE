@@ -6,8 +6,9 @@ The code (variable names, comments, etc.) must be written in English.
 User messages, etc. should be in English.
 Use gettext to translate them to French or some other language.
 
-I don't know how to localize the inx files! Write them in English during
-developpment and translate them to <EXTENSION>_fr.inx when it works.
+I don't know how to localize the inx files! Write them in English (folder
+menu-en) during developpment and translate them to menu-<LANG>/<EXTENSION>.inx
+when it works.
 
 
 Python
