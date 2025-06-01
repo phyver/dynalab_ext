@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>dynalab.shapes_expert</id>
+    <id>dynalab.tiny_expert</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
@@ -11,12 +11,11 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - mark non path objects</name>
+    <name>3 - mark tiny elements</name>
 
-    <param name="color-texts" type="bool" value="false" gui-text="color texts (faster)"/>
-    <param name="outline-shapes" type="bool" value="false" gui-text="also outline non path simple shapes (rectangles, circles, etc.)"/>
+    <param name="size-tiny-element" type="float" min="0.01" gui-text="size of tiny elements (mm):">0.5</param>
 
     <script>
-        <command location="inx" interpreter="python">diagnostic_paths.py</command>
+        <command location="inx" interpreter="python">../src/diagnostic_tiny.py</command>
     </script>
 </inkscape-extension>

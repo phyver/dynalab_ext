@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>dynalab.export</id>
+    <id>dynalab.TEST</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
@@ -8,15 +8,15 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - export</name>
+    <name> TEST</name>
 
     <param name="dxf" type="bool" gui-text="1 - export to dxf">true</param>
-    <param name="pdf" type="bool" gui-text="2 - export to pdf">false</param>
+    <param name="pdf" type="bool" gui-text="2 - export to pdf">true</param>
 
     <param name="filename" type="string" gui-text="filename (without extension)"/>
     <param name="savedir" type="path" mode="folder" gui-text="save directory"/>
 
     <script>
-        <command location="inx" interpreter="python">export.py</command>
+        <command location="inx" interpreter="python">../src/TEST.py</command>
     </script>
 </inkscape-extension>

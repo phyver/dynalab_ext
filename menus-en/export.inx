@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>dynalab.export</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <effects-menu>
+            <submenu name=" Dynalab">
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>4 - export</name>
+
+    <param name="dxf" type="bool" gui-text="1 - export to dxf">true</param>
+    <param name="pdf" type="bool" gui-text="2 - export to pdf">false</param>
+
+    <param name="filename" type="string" gui-text="filename (without extension)"/>
+    <param name="savedir" type="path" mode="folder" gui-text="save directory"/>
+
+    <script>
+        <command location="inx" interpreter="python">../src/export.py</command>
+    </script>
+</inkscape-extension>

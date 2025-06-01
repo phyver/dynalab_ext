@@ -20,6 +20,13 @@ GENERAL
   - automatic tests => look at the way official extensions are tested using
     pytest
 
+  - add an option "make this language the default" in expert -> config
+    it should
+      - remove menus
+      - copy menus-LANG to menus
+      - rename <name>Dynalab - LANG</name> to <name>Dynalab</name>
+      - remove the "make this language the default" entry
+
 
 EXTENSIONS
 ==========

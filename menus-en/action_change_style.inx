@@ -21,6 +21,6 @@
     <param name="only-paths" type="bool" gui-text="only apply to path and simple shapes">true</param>
 
     <script>
-        <command location="inx" interpreter="python">action_change_style.py</command>
+        <command location="inx" interpreter="python">../src/action_change_style.py</command>
     </script>
 </inkscape-extension>

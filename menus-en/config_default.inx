@@ -14,6 +14,6 @@
     <name>3 - reset to default configuration</name>
 
     <script>
-        <command location="inx" interpreter="python">config_default.py</command>
+        <command location="inx" interpreter="python">../src/config_default.py</command>
     </script>
 </inkscape-extension>

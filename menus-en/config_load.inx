@@ -16,6 +16,6 @@
     <param name="config-file" type="path" mode="file" gui-text="Load config file:" />
 
     <script>
-        <command location="inx" interpreter="python">config_load.py</command>
+        <command location="inx" interpreter="python">../src/config_load.py</command>
     </script>
 </inkscape-extension>

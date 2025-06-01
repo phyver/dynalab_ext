@@ -6,7 +6,7 @@ PYTHON_FILES=$(wildcard src/*.py src/lib/*.py)
 install:
 	@test -d "$(EXTENSION_DIR)" || ( echo "le répertoire $(EXTENSION_DIR) n'existe pas" && false )
 	mkdir -p  "$(DYNALAB_DIR)"
-	cp -r src/*.py src/*.inx src/lib/ src/locales/ "$(DYNALAB_DIR)"
+	cp -r src/ menus-en "$(DYNALAB_DIR)"
 
 restore_svg:
 	git restore svg_testfiles/*.svg
@@ -24,9 +24,6 @@ src/locales/fr/LC_MESSAGES/fablabext.mo: i18n/fr.po
 
 clean:
 	rm -rf __pycache__
-	rm -rf "$(DYNALAB_DIR)"/__pycache__
-	rm -rf "$(DYNALAB_DIR)"/lib
-	rm -rf "$(DYNALAB_DIR)"/locales
-	rm -f  "$(DYNALAB_DIR)"/*
+	rm -rf  "$(DYNALAB_DIR)"/*
 
 .PHONY: clean install restore_test_svg i18n FORCE

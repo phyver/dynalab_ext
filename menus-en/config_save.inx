@@ -44,6 +44,6 @@
     </param>
 
     <script>
-        <command location="inx" interpreter="python">config_save.py</command>
+        <command location="inx" interpreter="python">../src/config_save.py</command>
     </script>
 </inkscape-extension>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>dynalab.make_fill</id>
+    <id>dynalab.make_cut</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
@@ -9,15 +9,14 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - fill engraving mode</name>
+    <name>1 - cut mode</name>
 
     <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
-    <param name="stroke" type="string" gui-hidden="true">FILL_MODE</param>
-    <param name="fill" type="string" gui-hidden="true">#888888</param>
-    <param name="fill-opacity" type="float" min="0" max="100" gui-hidden="true">50</param>
-    <param name="extra-style" type="string" gui-hidden="true">fill-rule:evenodd</param>
+    <param name="stroke" type="string" gui-hidden="true">CUT_MODE</param>
+    <param name="fill" type="string" gui-hidden="true">none</param>
+    <param name="fill-opacity" type="float" min="0" max="100" gui-hidden="true">100</param>
 
     <script>
-        <command location="inx" interpreter="python">action_change_style.py</command>
+        <command location="inx" interpreter="python">../src/action_change_style.py</command>
     </script>
 </inkscape-extension>

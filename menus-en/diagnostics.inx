@@ -16,6 +16,6 @@
     <param name="open-paths" type="bool" gui-text="4 - mark open, fill-mode paths">true</param>
 
     <script>
-        <command location="inx" interpreter="python">diagnostics.py</command>
+        <command location="inx" interpreter="python">../src/diagnostics.py</command>
     </script>
 </inkscape-extension>

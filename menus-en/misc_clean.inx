@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>dynalab.ungroup</id>
+    <id>dynalab.clean</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="2 - Change selection">
-                </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - remove groups</name>
+    <name>3 - remove artefacts</name>
 
     <script>
-        <command location="inx" interpreter="python">action_ungroup.py</command>
+        <command location="inx" interpreter="python">../src/misc_clean.py</command>
     </script>
 </inkscape-extension>
