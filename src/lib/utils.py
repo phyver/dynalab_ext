@@ -47,3 +47,10 @@ def effects(elem):
         E.append("url-stroke")
 
     return E
+
+
+def get_clone_reference_element(elem):
+    if not isinstance(elem, inkex.Use):
+        return elem
+    else:
+        return get_clone_reference_element(elem.href)

@@ -1,8 +1,7 @@
 GENERAL
 =======
 
-  - use the inkex.command.inkscape directly to get bounding boxes of all text
-    elements
+  - check the descriptions added to artefacts to make them uniform
 
   - use the verbose config option and the self.message method to display user
     messages
@@ -11,7 +10,7 @@ GENERAL
     referenced object, so that we can "merge" artefacts to the same object
     into a single one.
 
-  - all tagged element should receive a new description ("<desc>") for easy
+  - all tagged element could receive a new description ("<desc>") for easy
     selection in inkscape (Ctrl-f)
       => it should be removed when cleaning artefacts
       => ideally, it should keep existing descriptions (prefix those messages

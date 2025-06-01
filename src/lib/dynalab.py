@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from tempfile import TemporaryDirectory
 import copy
 
 import inkex
@@ -275,6 +276,9 @@ details:
         else:
             bb = elem.bounding_box(transform=global_transform)
 
+        self.draw_bounding_box(level, bb, msg=msg, margin=margin, **kwargs)
+
+    def draw_bounding_box(self, level, bb, msg=None, margin=1, **kwargs):
         # convert width
         stroke_width = self.config["artefacts_stroke_width"]
 
@@ -360,6 +364,28 @@ details:
             desc.text = msg
             clone.append(desc)
         self.artefact_group.add(clone)
+
+    def get_inkscape_bboxes(self, *elems):
+        """uses the inkscape command to query the actual bounding boxes of the
+        given elements
+        It generalizes the get_inkscape_bbox method of text elements by
+          - querying more than 1 bounding box, which makes is faster on multiple
+            elements
+          - working with clones ('use' elements) as well
+        """
+
+        ids = ",".join([elem.get_id() for elem in elems])
+
+        with TemporaryDirectory(prefix="inkscape-command") as tmpdir:
+            svg_file = inkex.command.write_svg(self.svg.root, tmpdir, "input.svg")
+            out = inkex.command.inkscape(svg_file, "-X", "-Y", "-W", "-H", query_id=ids).splitlines()
+            if len(out) != 4:
+                raise ValueError("Error: Bounding box computation failed")
+            X = list(map(self.svg.root.viewport_to_unit, out[0].split(",")))
+            Y = list(map(self.svg.root.viewport_to_unit, out[1].split(",")))
+            W = list(map(self.svg.root.viewport_to_unit, out[2].split(",")))
+            H = list(map(self.svg.root.viewport_to_unit, out[3].split(",")))
+            return [inkex.transforms.BoundingBox.new_xywh(*dims) for dims in zip(X, Y, W, H)]
 
     def mm_to_svg(self, d):
         return inkex.units.convert_unit(self.svg.viewport_to_unit(d), "", "mm")
