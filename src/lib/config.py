@@ -12,7 +12,7 @@ DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.real
 CURRENT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
 DEFAULT_CONFIG = {
-    "verbosity": 0,
+    "verbosity": 1,
     "artefacts_locked": False,
     "artefacts_grouped": True,
     "artefacts_stroke_width": 1,

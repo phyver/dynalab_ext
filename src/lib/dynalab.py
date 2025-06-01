@@ -2,6 +2,7 @@
 
 from tempfile import TemporaryDirectory
 import copy
+import time
 
 import inkex
 from inkex.paths import Move, Line
@@ -112,8 +113,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self.artefacts_grouped = self.config["artefacts_grouped"]
         self.artefacts_locked = self.config["artefacts_locked"]
         self.reset_artefacts = reset_artefacts
+        self._start_time = time.perf_counter()
 
-    def message(self, *args, verbosity=0, end="\n", sep=" "):
+    def running_time(self):
+        return 1000*(time.perf_counter() - self._start_time)
+
+    def message(self, *args, verbosity=0, end="", sep=" "):
         if verbosity > self.config.get("verbosity", 1):
             return
         self.msg(sep.join(str(a) for a in args if a is not None) + end)
