@@ -22,22 +22,25 @@ class MarkGroups(dynalab.Ext):
     def effect(self, clean=True):
         self.init_artefact_layer()
 
+        # TODO: config option to use get_inkscape_bboxes for bounding boxes?
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=False,
                                              limit=None):
 
             if isinstance(elem, inkex.Layer):
                 if self.show_layers:
+                    desc = f"id={elem.get_id()} => layer"
                     self.outline_bounding_box(WARNING, elem, tr, margin=0,
                                               stroke_width=".7mm",
                                               stroke_dasharray=".7mm, .7mm",
-                                              msg=f"#{elem.get_id()}")
+                                              msg=desc)
 
             elif isinstance(elem, inkex.Group):
                 if self.show_groups:
+                    desc = f"id={elem.get_id()} => group"
                     self.outline_bounding_box(WARNING, elem, tr, margin=0,
                                               stroke_width=".3mm",
-                                              msg=f"#{elem.get_id()}")
+                                              msg=desc)
 
         if clean:
             self.clean(force=False)

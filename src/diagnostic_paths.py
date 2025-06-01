@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import re
 import inkex
 
 from lib import dynalab, utils
@@ -37,8 +36,7 @@ class MarkNonPaths(dynalab.Ext):
                                              skip_groups=False,
                                              limit=None):
 
-            tag = re.sub(r'^\{.*\}', '', elem.tag)
-            desc = f"{elem.get_id()} ({tag})"
+            desc = f"id={elem.get_id()} of type {elem.tag_name}"
 
             if isinstance(elem, inkex.Group):
                 # ignore groups and layers (but recurse into them)
@@ -46,16 +44,13 @@ class MarkNonPaths(dynalab.Ext):
 
             # mark non vectorized texts
             if isinstance(elem, inkex.TextElement):
+                desc += " => not vectorized"
                 if self.options.color_texts:
                     # clone texts to the error layers, in red
-                    self.outline_text(WARNING, elem, tr, msg=desc + " => not vectorized")
-                    # self.outline_arrow(WARNING, elem, tr)
+                    self.outline_text(WARNING, elem, tr, msg=desc)
                 else:
-                    # use the slow (accept_text=True) outline method
-                    missing_bbs.append(elem)
-                    # self.outline_bounding_box(WARNING, elem, tr, msg=desc + " => not vectorized",
-                    #                           accept_text=True)
-
+                    # use inkscape to compute bounding boxes in bulk
+                    missing_bbs.append((elem, desc))
                 continue
 
             # add red bounding box around image
@@ -63,14 +58,16 @@ class MarkNonPaths(dynalab.Ext):
                 self.outline_bounding_box(ERROR, elem, tr, msg=desc)
                 continue
 
-            # add orange arrow pointing to use elements (clones)
-            # because the element could be anything, including a text whose
-            # bounding box is difficult to compute, we just use the arrow
             if isinstance(elem, inkex.Use):
-                # self.outline_arrow(WARNING, elem, tr, msg=desc + f" => # # cloned element {elem.href.get_id()}")
-                # TODO, level depends on the original element => recurse to
-                # find it...
-                missing_bbs.append(elem)
+                desc += f" => cloned version of id={elem.href.get_id()}"
+                # root element, for recursively clone elements
+                ref = utils.get_clone_reference_element(elem)
+                if ref != elem.href:
+                    desc += f" with root element id={ref.get_id()} of type {ref.tag_name}"
+                else:
+                    desc += f" of type {elem.href.tag_name}"
+                # use inkscape to compute bounding boxes in bulk
+                missing_bbs.append((elem, desc))
                 continue
 
             # if we reach this point, the element should be a path / shape
@@ -87,11 +84,11 @@ class MarkNonPaths(dynalab.Ext):
                 # if elem is not a "strict" path but passed the is_path()
                 # function, it must be a shape (rectangle, circle, etc.)
                 if not utils.is_path(elem, strict=True) and self.options.outline_shapes:
-                    self.outline_bounding_box(OK, elem, tr, msg=desc)
+                    self.outline_bounding_box(OK, elem, tr, msg=desc + " => not an actual path")
                 continue
 
             # add list of effects to the description
-            desc = desc + "\nEFFECTS: " + ", ".join(E)
+            desc = desc + " => uses effects: " + ", ".join(E)
 
             if E == ["path-effect"]:
                 # path effects can be transformed to real path, so we only
@@ -101,28 +98,24 @@ class MarkNonPaths(dynalab.Ext):
             self.outline_bounding_box(ERROR, elem, tr, msg=desc)
 
         if missing_bbs:
-            bbs = self.get_inkscape_bboxes(*missing_bbs)
-            for elem, bb in zip(missing_bbs, bbs):
-                tag = re.sub(r'^\{.*\}', '', elem.tag)
-                desc = f"{elem.get_id()} ({tag})"
+            elems, descs = zip(*missing_bbs)
+            bbs = self.get_inkscape_bboxes(*elems)
+            for elem, bb, desc in zip(elems, bbs, descs):
+                elem = utils.get_clone_reference_element(elem)
                 if isinstance(elem, inkex.TextElement):
-                    self.draw_bounding_box(WARNING, bb, msg=desc + " => not vectorized")
-                elif isinstance(elem, inkex.Use):
-                    ref = utils.get_clone_reference_element(elem)
-                    desc += f" => cloned element {elem.href.get_id()},"
-                    desc += f" root element {ref.get_id()} of type {ref.tag_name}"
-
-                    if isinstance(ref, (inkex.TextElement)):
+                    level = WARNING
+                elif isinstance(elem, inkex.Image):
+                    level = ERROR
+                elif not utils.is_path(elem):
+                    level = ERROR
+                    self.message("---UNKWNOW ELEMENT:", desc)
+                else:
+                    E = utils.effects(elem)
+                    if not E or E == ["path-effect"]:
                         level = WARNING
-                    elif utils.is_path(ref):
-                        E = utils.effects(elem)
-                        if not E or E == ["path-effect"]:
-                            level = WARNING
-                        else:
-                            level = ERROR
                     else:
                         level = ERROR
-                    self.draw_bounding_box(level, bb, msg=desc)
+                self.draw_bounding_box(level, bb, msg=desc)
 
         if clean:
             self.clean(force=False)

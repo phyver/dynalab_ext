@@ -1,8 +1,6 @@
 GENERAL
 =======
 
-  - check the descriptions added to artefacts to make them uniform
-
   - use the verbose config option and the self.message method to display user
     messages
 

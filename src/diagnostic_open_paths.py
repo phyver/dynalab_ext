@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import re
 import inkex
 
 from lib import dynalab
@@ -20,8 +19,7 @@ class MarkOpenPaths(dynalab.Ext):
                                              skip_groups=False,
                                              limit=None):
 
-            tag = re.sub(r'^\{.*\}', '', elem.tag)
-            desc = f"#{elem.get_id()} ({tag})"
+            desc = f"id={elem.get_id()} of type {elem.tag_name}"
 
             # skip non-path element
             if not isinstance(elem, inkex.PathElement):
@@ -36,12 +34,15 @@ class MarkOpenPaths(dynalab.Ext):
                 if isinstance(cmd, (inkex.paths.move, inkex.paths.Move)):     # start of new subpath
                     if prev is not None and not isinstance(prev, (inkex.paths.zoneClose, inkex.paths.ZoneClose)):
                         # this subpath is not closed, mark it
+                        desc += " => contains non-closed parts"
                         self.outline_bounding_box(WARNING, elem, tr, msg=desc)
                         break
                 prev = cmd
-            if prev is not None and not isinstance(prev, (inkex.paths.zoneClose, inkex.paths.ZoneClose)):
-                # this subpath is not closed, mark it
-                self.outline_bounding_box(WARNING, elem, tr, msg=desc)
+            else:
+                if prev is not None and not isinstance(prev, (inkex.paths.zoneClose, inkex.paths.ZoneClose)):
+                    # this subpath is not closed, mark it
+                    desc += " => contains non-closed parts"
+                    self.outline_bounding_box(WARNING, elem, tr, msg=desc)
 
         if clean:
             self.clean(force=False)

@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-from gettext import gettext as _
-
 import inkex
 
 from lib import dynalab
@@ -15,7 +13,7 @@ class MarkTiny(dynalab.Ext):
 
     def add_arguments(self, pars):
         pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
-                          help=_("size for tiny elements (mm)"))
+                          help="size for tiny elements (mm)")
 
     def effect(self, clean=True):
         self.init_artefact_layer()
@@ -31,7 +29,7 @@ class MarkTiny(dynalab.Ext):
                 continue
             bb = elem.bounding_box()
             if self.svg_to_mm(bb.width) < tiny and self.svg_to_mm(bb.height) < tiny:
-                desc = f"{_('tiny element')} (id: {elem.get_id()})"
+                desc = f"id={elem.get_id()} of type {elem.tag_name} => 'tiny object'"
                 self.outline_arrow(ERROR, elem, tr, msg=desc)
                 self.outline_bounding_box(ERROR, elem, tr, stroke_width=0.1, msg=desc)
 
