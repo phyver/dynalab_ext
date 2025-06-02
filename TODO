@@ -35,17 +35,17 @@ easy
 
   - check stroke colors for allowed modes
   - duplicate elements
+  - elements out of page
 
 not easy
 --------
 
   - isolated elements
-  - bezier intersection and polygone intersections ???
 
 to discuss
 ----------
 
+  - ??? bezier intersection and polygone intersections ???
   - ??? resize to standard size
   - ??? invisible elements (display:none, stroke:none and fill:none, opacity:0, fill-opacity:0 and stroke-opacity:0, stroke-width:0, ...)
-  - ??? elements outside page
   - ??? elements with wide stroke (>=1mm?)
