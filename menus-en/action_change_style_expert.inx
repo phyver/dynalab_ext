@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>change style of selection</name>
+    <name>1 2 3 - change style of selection</name>
 
     <param name="stroke-width" type="float" min="0" gui-text="stroke width (mm)"></param>
     <param name="stroke" type="string" gui-text="stroke color"></param>

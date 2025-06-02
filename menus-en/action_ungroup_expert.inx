@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>dynalab.ungroup</id>
+    <id>dynalab.ungroup_expert</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="2 - Change selection">
+                <submenu name="9 - expert">
+                    <submenu name="2 - actions"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
     <name>4 - remove groups</name>
 
-    <param name="remove-layers" type="bool" value="true" gui-hidden="true"></param>
-    <param name="remove-groups" type="bool" value="true" gui-hidden="true"></param>
+    <param name="remove-layers" type="bool" value="true" gui-text="remove layers"></param>
+    <param name="remove-groups" type="bool" value="true" gui-text="remove groups"></param>
 
     <script>
         <command location="inx" interpreter="python">../src/action_ungroup.py</command>
