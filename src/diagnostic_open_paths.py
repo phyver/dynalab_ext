@@ -17,8 +17,8 @@ class MarkOpenPaths(dynalab.Ext):
                      verbosity=3)
         self.init_artefact_layer()
 
-        counter_path = 0
-        counter_subpath = 0
+        counter_paths = 0
+        counter_subpaths = 0
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=False,
                                              limit=None):
@@ -29,6 +29,11 @@ class MarkOpenPaths(dynalab.Ext):
             if self.options.only_fill_mode_paths and elem.style.get("stroke") != self.config["laser_mode_fill_color"]:
                 continue
 
+            # skip paths with path effects
+            if elem.get("inkscape:path-effect") is not None:
+                # FIXME: should I display a warning message
+                continue
+
             prev = None
             c = 0       # counter for open subpaths
             for cmd in elem.path:
@@ -36,21 +41,21 @@ class MarkOpenPaths(dynalab.Ext):
                     if prev is not None and not isinstance(prev, (inkex.paths.zoneClose, inkex.paths.ZoneClose)):
                         # this subpath is not closed
                         c += 1
-                        counter_subpath += 1
+                        counter_subpaths += 1
                 prev = cmd
             if prev is not None and not isinstance(prev, (inkex.paths.zoneClose, inkex.paths.ZoneClose)):
                 # the final subpath is not closed
                 c += 1
             if c > 0:
                 desc = f"path with id={elem.get_id()} contains {c} open subpath(s)"
-                counter_path += 1
+                counter_paths += 1
                 self.message("\t-", desc, verbosity=2)
                 self.outline_bounding_box(WARNING, elem, tr, msg=desc)
 
         if clean:
             self.clean(force=False)
 
-        self.message(f"{counter_subpath} open subpath(s) found inside {counter_path} path object(s) found",
+        self.message(f"{counter_subpaths} open subpath(s) found inside {counter_paths} path object(s) found",
                      verbosity=1)
         self.message(f"looking for open paths: running time = {self.running_time():.0f}ms",
                      verbosity=3)

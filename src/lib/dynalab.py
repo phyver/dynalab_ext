@@ -254,6 +254,7 @@ details:
         if artefact_layer is None:
             return
 
+        counter = 0
         for elem, tr in _iter_elements(artefact_layer, recurse=True,
                                        skip_groups=False,
                                        skip_artefacts=False,
@@ -261,10 +262,15 @@ details:
             cl = elem.get("class")
             if cl and ARTEFACT_CLASS in cl:
                 continue
-            self.msg(f"element #{elem.get_id()} moved out of the artefact layer")
+            counter += 1
+            self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artefact layer",
+                         verbosity=2)
             elem.getparent().remove(elem)
             elem.transform = tr
             self.svg.add(elem)
+        if counter > 0:
+            self.message(f"{counter} object(s) were moved out of the artefact layer",
+                         verbosity=1)
 
     def outline_bounding_box(self, level, elem, global_transform, msg=None,
                              margin=1, accept_text=False, **kwargs):

@@ -27,36 +27,53 @@ class ChangeStyle(dynalab.Ext):
         if not self.svg.selected:
             self.abort(_("You must select at least one element."))
 
+        self.message("change style of selected objects:",
+                     verbosity=3)
+
+        style = inkex.Style()
+
         if self.options.stroke_width < 0:
-            self.options.stroke_width = self.config.get("laser_diameter", 0.2)
+            style["stroke-width"] = self.config.get("laser_diameter", 0.2)
+        else:
+            style["stroke-width"] = self.options.stroke_width
+        style["stroke-width"] = self.mm_to_svg(style["stroke-width"])
+
         if not self.options.stroke:
-            self.options.stroke = "none"
+            style["stroke"] = "none"
+        else:
+            if self.options.stroke == "CUT_MODE":
+                style["stroke"] = self.config.get("laser_mode_cut_color", "#ff0000")
+            elif self.options.stroke == "FILL_MODE":
+                style["stroke"] = self.config.get("laser_mode_fill_color", "#0000ff")
+            elif self.options.stroke == "LINE_MODE":
+                style["stroke"] = self.config.get("laser_mode_line_color", "#000000")
+            else:
+                style["stroke"] = self.options.stroke
+
         if not self.options.fill:
-            self.options.fill = "none"
+            style["fill"] = "none"
+        else:
+            style["fill"] = self.options.fill
 
-        if self.options.stroke == "CUT_MODE":
-            self.options.stroke = self.config.get("laser_mode_cut_color", "#ff0000")
-        elif self.options.stroke == "FILL_MODE":
-            self.options.stroke = self.config.get("laser_mode_fill_color", "#0000ff")
-        elif self.options.stroke == "LINE_MODE":
-            self.options.stroke = self.config.get("laser_mode_line_color", "#000000")
+        if not self.options.fill_opacity:
+            style["fill-opacity"] = 1
+        else:
+            style["fill-opacity"] = self.options.fill_opacity/100
 
-        self.options.stroke_width = self.mm_to_svg(self.options.stroke_width)
-
-        extra_style = {}
         for s in self.options.extra_style.split(";"):
             s = s.strip()
             if not s:
                 continue    # ignore empty options
             try:
                 a, v = s.split(":")
-                extra_style[a] = v
+                style[a] = v
             except TypeError:
                 raise self.abort(
                     _("cannot parse extra style: "),
                     self.options.extra_style,
                 )
 
+        counter = 0
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=True,
                                              limit=None):
@@ -68,12 +85,24 @@ class ChangeStyle(dynalab.Ext):
                 if utils.effects(elem):
                     continue
 
-            elem.style["stroke"] = self.options.stroke
-            elem.style["stroke-width"] = self.options.stroke_width
-            elem.style["fill"] = self.options.fill
-            elem.style["fill-opacity"] = self.options.fill_opacity/100
-            for a in extra_style:
-                elem.style[a] = extra_style[a]
+            msg_style = []
+            for a in style:
+                if elem.style.get(a) != style[a]:
+                    msg_style.append(f"{a}:{style[a]}")
+                    elem.style[a] = style[a]
+            if msg_style:
+                counter += 1
+                self.message("\t-", f"object with id={elem.get_id()} modified with style:",
+                             ", ".join(msg_style),
+                             verbosity=2)
+
+        self.message(f"the style of {counter} objects was modified",
+                     verbosity=1)
+        self.message(f"remove groups: running time = {self.running_time():.0f}ms",
+                     verbosity=3)
+        self.message("",
+                     verbosity=1)
+
 
 
 if __name__ == '__main__':

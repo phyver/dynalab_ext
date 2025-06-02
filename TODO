@@ -4,9 +4,6 @@ GENERAL
   - config option to avoid calls to external inkscape command
     (get_inkscape_bboxes)
 
-  - use the verbose config option and the self.message method to display user
-    messages
-
   - artefact should be given an id that only depends on the id of the
     referenced object, so that we can "merge" artefacts to the same object
     into a single one.

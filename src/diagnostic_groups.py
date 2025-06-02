@@ -28,8 +28,8 @@ class MarkGroups(dynalab.Ext):
         self.init_artefact_layer()
 
         # TODO: config option to use get_inkscape_bboxes for bounding boxes?
-        group_counter = 0
-        layer_counter = 0
+        counter_groups = 0
+        counter_layers = 0
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=False,
                                              limit=None):
@@ -37,7 +37,7 @@ class MarkGroups(dynalab.Ext):
             if isinstance(elem, inkex.Layer):
                 if self.options.mark_layers:
                     desc = f"object with id={elem.get_id()} is a layer"
-                    layer_counter += 1
+                    counter_layers += 1
                     self.message("\t-", desc, verbosity=2)
                     w = self.config["artefacts_stroke_width"]
                     w = self.mm_to_svg(w)
@@ -49,7 +49,7 @@ class MarkGroups(dynalab.Ext):
             elif isinstance(elem, inkex.Group):
                 if self.options.mark_groups:
                     desc = f"object witd id={elem.get_id()} is a group"
-                    group_counter += 1
+                    counter_groups += 1
                     self.message("\t-", desc, verbosity=2)
                     w = self.config["artefacts_stroke_width"]
                     w = self.mm_to_svg(w)
@@ -61,10 +61,10 @@ class MarkGroups(dynalab.Ext):
             self.clean(force=False)
 
         if self.options.mark_groups:
-            self.message(f"{group_counter} group(s) found",
+            self.message(f"{counter_groups} group(s) found",
                          verbosity=1)
         if self.options.mark_layers:
-            self.message(f"{layer_counter} layer(s) found",
+            self.message(f"{counter_layers} layer(s) found",
                          verbosity=1)
         self.message(f"looking for groups and layers: running time = {self.running_time():.0f}ms",
                      verbosity=3)

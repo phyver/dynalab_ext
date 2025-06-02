@@ -16,10 +16,18 @@ class MarkOpen(dynalab.Ext):
                           default=True, help="restrict to paths with 'fill mode' color",
                           dest="only_fill_mode_paths")
 
-    def effect(self, clean=False):
+    def effect(self):
         if not self.svg.selected:
             self.abort(_("You must select at least one element."))
 
+        self.message(f"close subpaths in selection, close_distance={self.options.close_distance}mm",
+                     verbosity=3)
+
+        counter_paths = 0
+        counter_subpaths_closed = 0
+        counter_subpaths_not_closed = 0
+        d = self.mm_to_svg(self.options.close_distance)
+        d2 = d*d
         for elem, tr in self.selected_or_all(recurse=True,
                                              skip_groups=False,
                                              limit=None):
@@ -28,33 +36,37 @@ class MarkOpen(dynalab.Ext):
             if not isinstance(elem, inkex.PathElement):
                 continue
 
-            # check path effects
-            if elem.get("inkscape:path-effect") is not None:
-                # FIXME: I should display a warning message
-                continue    # don't try closing them
-
             # skip path that don't have the appropriate color
             if self.options.only_fill_mode_paths and elem.style.get("stroke") != self.config["laser_mode_fill_color"]:
                 continue
 
-            d = self.mm_to_svg(self.options.close_distance)
-            d2 = d*d
+            # skip paths with path effects
+            if elem.get("inkscape:path-effect") is not None:
+                # FIXME: should I display a warning message
+                self.message("\t-", "path with id={elem.get_id()} uses path effects, SKIP",
+                             verbosity=2)
+                continue    # don't try closing them
 
             path = elem.path.to_absolute()
             coord = [p.end_point for p in path.proxy_iterator()]
 
             new_path = []
-            i_start = 0
-            modified = False
+            i_start = -1
+            c = 0   # counter for closed subpath
             for i, cmd in enumerate(path):
+                x1, y1 = coord[i].x, coord[i].y
                 if isinstance(cmd, inkex.paths.Move):     # start of new subpath
-                    if i_start > 0 and not isinstance(new_path[-1], inkex.paths.ZoneClose):
+                    if i_start >= 0 and not isinstance(new_path[-1], inkex.paths.ZoneClose):
                         # this subpath is not closed, close it if distance is small enough
                         x0, y0 = coord[i_start].x, coord[i_start].y
                         x1, y1 = coord[i].x, coord[i].y
                         if (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) <= d2:
+                            counter_subpaths_closed += 1
                             new_path.append(inkex.paths.ZoneClose())
-                            modified = True
+                            c += 1
+                        else:
+                            counter_subpaths_not_closed += 1
+
                     i_start = i         # start of new path
                 new_path.append(cmd)
 
@@ -64,14 +76,26 @@ class MarkOpen(dynalab.Ext):
                 x0, y0 = coord[i_start].x, coord[i_start].y
                 x1, y1 = coord[i].x, coord[i].y
                 if (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1) <= d2:
+                    counter_subpaths_closed += 1
                     new_path.append(inkex.paths.ZoneClose())
-                    modified = True
+                    c += 1
+                else:
+                    counter_subpaths_not_closed += 1
 
-            if modified:
+            if c > 0:
+                self.message("\t-", f"path with id={elem.get_id()}: {c} subpath(s) closed",
+                             verbosity=2)
                 elem.path = new_path
+                counter_paths += 1
 
-        if clean:
-            self.clean(force=False)
+        self.message(f"{counter_subpaths_closed} subpath(s) were closed in {counter_paths} path(s)",
+                     "\n",
+                     f"{counter_subpaths_not_closed} subpath(s) remained open their endpoints were too far away",
+                     verbosity=1)
+        self.message(f"closing subpaths: running time = {self.running_time():.0f}ms",
+                     verbosity=3)
+        self.message("",
+                     verbosity=1)
 
 
 if __name__ == '__main__':

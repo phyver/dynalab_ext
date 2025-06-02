@@ -3,6 +3,7 @@
 import re
 import os
 import sys
+import time
 
 import inkex
 
@@ -24,16 +25,17 @@ class Export(dynalab.Ext):
         pars.add_argument("--savedir", type=str, default="", help="save directory")
 
     def effect(self):
-        self.init_artefact_layer()
+        if not self.options.dxf and not self.options.pdf:
+            self.abort("", "nothing to do: you must select at least one export format")
 
         # TODO: add a default savedir config option
         if not self.options.savedir:
-            self.abort("empty savedir")
+            self.abort("", "empty savedir")
 
         if not os.path.isdir(self.options.savedir):
-            self.abort(f"{self.options.savedir} isn't a directory")
+            self.abort("", f"{self.options.savedir} isn't a directory")
         if not os.access(self.options.savedir, os.R_OK | os.W_OK):
-            self.abort(f"not enough permissions to write to {self.options.savedir}")
+            self.abort("", f"not enough permissions to write to {self.options.savedir}")
 
         if not self.options.filename:
             self.options.filename = self.svg.attrib.get('sodipodi:docname') or ""
@@ -43,29 +45,52 @@ class Export(dynalab.Ext):
 
         # TODO: add a default savefile config option
         if not self.options.filename:
-            self.abort("empty filename")
+            self.abort("", "empty filename")
 
         if not re.match("[-_a-zA-Z0-9]*", self.options.filename):
-            self.abort(
-                "invalid filename, use only ASCII letters and digits (A-Z, a-z, 0-9),",
-                "underscore (_) and minus sign (-)",
-                sep="\n",
-            )
+            self.abort("",
+                       "invalid filename, use only ASCII letters and digits (A-Z, a-z, 0-9),",
+                       "underscore (_) and minus sign (-)",
+                       sep="\n",
+                       )
 
         savefile = os.path.join(self.options.savedir, self.options.filename)
 
+        self.message(f"exporting svg document to {savefile}",
+                     "(with additional extension)",
+                     verbosity=1)
+
+        counter = 0
         if self.options.dxf:
             # NOTE: exporting to dxf defaults to dxf12, so I have to
             # explicitly give the extension id
             # NOTE: by default, exporting to dxf14 uses "unit_from_document"
             # so there shouldn't be any need to specify "units:mm"
             # which is great because I don't know how to do that.
+            counter += 1
+            self.message("\t-", f"exporting to dxf14: {savefile+'.dxf'}",
+                         verbosity=1)
+            start_time = time.perf_counter()
             self.export_with_inkscape(savefile+".dxf", "dxf",
                                       "--export-extension=org.ekips.output.dxf_outlines",
                                       )
+            self.message("\t\t", f"running time {1000*(time.perf_counter()-start_time):.0f}ms",
+                         verbosity=3)
 
         if self.options.pdf:
+            counter += 1
+            self.message("\t-", f"exporting to pdf: {savefile+'.pdf'}",
+                         verbosity=1)
+            start_time = time.perf_counter()
             self.export_with_inkscape(savefile+".pdf", "pdf")
+            self.message("\t\t", f"running time {1000*(time.perf_counter()-start_time):.0f}ms",
+                         verbosity=3)
+
+        self.message(f"{counter} document(s) exported")
+        self.message(f"total running time = {self.running_time():.0f}ms",
+                     verbosity=3)
+        self.message("",
+                     verbosity=1)
 
     def export_with_inkscape(self, savefile, export_format, *args):
         if not self.options.input_file:

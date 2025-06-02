@@ -40,9 +40,9 @@ class Battery(dynalab.Ext):
             inst.add_arguments(pars)
 
     def effect(self):
-        c = 0
         reset_artefacts = True
         inst = None
+        counter = 0
         for name, ext in EXTENSIONS.items():
             if getattr(self.options, name):
                 inst = ext(reset_artefacts=reset_artefacts)
@@ -51,9 +51,16 @@ class Battery(dynalab.Ext):
                 inst.document = self.document
                 inst.svg = self.svg
                 inst.effect(clean=False)
-                c += 1
+                counter += 1
         if inst:
             inst.clean(force=False)
+
+        self.message(f"{counter} diagnostic extension(s) were run",
+                     verbosity=1)
+        self.message(f"total running time = {self.running_time():.0f}ms",
+                     verbosity=3)
+        self.message("",
+                     verbosity=1)
 
 
 if __name__ == '__main__':
