@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>dynalab.about</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <effects-menu>
+            <submenu name=" Dynalab">
+                <submenu name="9 - expert">
+                </submenu>
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>about the Dynalab extensions</name>
+
+    <script>
+        <command location="inx" interpreter="python">../src/about.py</command>
+    </script>
+</inkscape-extension>

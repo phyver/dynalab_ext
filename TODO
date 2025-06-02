@@ -26,6 +26,9 @@ GENERAL
       - rename <name>Dynalab - LANG</name> to <name>Dynalab</name>
       - remove the "make this language the default" entry
 
+  - write documentation in .md files so that we can point to the git repo
+    somewhere
+
 
 EXTENSIONS
 ==========
