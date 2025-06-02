@@ -1,5 +1,10 @@
-src/TEST*
-./*.svg
+Dynalab/src/version.py
+
+Dynalab/*/TEST*
+
+/*.svg
+/*.zip
+current_config.json
 
 .envrc
 _attic
