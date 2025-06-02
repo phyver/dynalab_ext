@@ -1,6 +1,9 @@
 GENERAL
 =======
 
+  - config option to avoid calls to external inkscape command
+    (get_inkscape_bboxes)
+
   - use the verbose config option and the self.message method to display user
     messages
 

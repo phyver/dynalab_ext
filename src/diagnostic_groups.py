@@ -11,16 +11,16 @@ class MarkGroups(dynalab.Ext):
     show the bounding boxes of groups and layers found in the document
     """
 
-    def __init__(self, show_layers=True, show_groups=True, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.show_layers = show_layers
-        self.show_groups = show_groups
-
     def add_arguments(self, pars):
-        pass
+        pars.add_argument("--mark-layers", type=inkex.Boolean,
+                          default=True, help="mark layers",
+                          dest="mark_layers")
+        pars.add_argument("--mark-groups", type=inkex.Boolean,
+                          default=True, help="mark groups",
+                          dest="mark_groups")
 
     def effect(self, clean=True):
-        if not self.show_layers and not self.show_groups:
+        if not self.options.mark_layers and not self.options.mark_groups:
             self.abort("", "nothing to do: you must select to mark layers and/or groups")
 
         self.message("looking for groups and/or layers",
@@ -35,31 +35,35 @@ class MarkGroups(dynalab.Ext):
                                              limit=None):
 
             if isinstance(elem, inkex.Layer):
-                if self.show_layers:
+                if self.options.mark_layers:
                     desc = f"object with id={elem.get_id()} is a layer"
                     layer_counter += 1
                     self.message("\t-", desc, verbosity=2)
+                    w = self.config["artefacts_stroke_width"]
+                    w = self.mm_to_svg(w)
                     self.outline_bounding_box(WARNING, elem, tr, margin=0,
-                                              stroke_width=".7mm",
-                                              stroke_dasharray=".7mm, .7mm",
+                                              stroke_width=w/2,
+                                              stroke_dasharray=f"{w},{w}",
                                               msg=desc)
 
             elif isinstance(elem, inkex.Group):
-                if self.show_groups:
+                if self.options.mark_groups:
                     desc = f"object witd id={elem.get_id()} is a group"
                     group_counter += 1
                     self.message("\t-", desc, verbosity=2)
+                    w = self.config["artefacts_stroke_width"]
+                    w = self.mm_to_svg(w)
                     self.outline_bounding_box(WARNING, elem, tr, margin=0,
-                                              stroke_width=".3mm",
+                                              stroke_width=w/2,
                                               msg=desc)
 
         if clean:
             self.clean(force=False)
 
-        if self.show_groups:
+        if self.options.mark_groups:
             self.message(f"{group_counter} group(s) found",
                          verbosity=1)
-        if self.show_layers:
+        if self.options.mark_layers:
             self.message(f"{layer_counter} layer(s) found",
                          verbosity=1)
         self.message(f"looking for groups and layers: running time = {self.running_time():.0f}ms",
