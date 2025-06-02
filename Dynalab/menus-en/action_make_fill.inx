@@ -5,11 +5,11 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="2 - Change selection"/>
+                <submenu name="2 - Modify selected objects"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - fill engraving mode</name>
+    <name>3 - change to "fill engraving" mode</name>
 
     <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
     <param name="stroke" type="string" gui-hidden="true">FILL_MODE</param>

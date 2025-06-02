@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - remove groups</name>
+    <name>4 - remove groups and/or layers</name>
 
     <param name="remove-layers" type="bool" value="true" gui-text="remove layers"></param>
     <param name="remove-groups" type="bool" value="true" gui-text="remove groups"></param>

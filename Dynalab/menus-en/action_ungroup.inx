@@ -5,12 +5,12 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="2 - Change selection">
+                <submenu name="2 - Modify selected objects">
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - remove groups</name>
+    <name>4 - remove groups and layers</name>
 
     <param name="remove-layers" type="bool" value="true" gui-hidden="true"></param>
     <param name="remove-groups" type="bool" value="true" gui-hidden="true"></param>

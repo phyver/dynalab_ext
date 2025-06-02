@@ -5,11 +5,11 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="2 - Change selection"/>
+                <submenu name="2 - Modify selected objects"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>5 - close open path</name>
+    <name>5 - close open paths</name>
 
     <param name="close-distance" type="float" min="0" max="1000" gui-text="distance under which we close open path (mm):">5</param>
     <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>
