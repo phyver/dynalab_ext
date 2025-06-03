@@ -1,12 +1,29 @@
 GENERAL
 =======
 
-  - config option to avoid calls to external inkscape command
-    (get_inkscape_bboxes)
+  - add svg export option
+  - add "clear artifacts" export option
 
   - artefact should be given an id that only depends on the id of the
     referenced object, so that we can "merge" artefacts to the same object
     into a single one.
+
+  - add extra "artefact_bg" **locked** layer that contains a big red rectangle,
+    or some pattern (intersection of viewport and artefact layer) with 10% (?)
+    opacity This should only be added if there is at least an artefact, and it
+    should be cleared by the clean methode.
+
+  - translate to French
+
+  - write documentation in .md files so that we can point to the git repo
+    somewhere
+
+  - config option to avoid calls to external inkscape command
+    (get_inkscape_bboxes)
+
+  - config options for OK / WARNING / ERROR colors
+
+  - config options for savedir and filename (for exporting)
 
   - all tagged element could receive a new description ("<desc>") for easy
     selection in inkscape (Ctrl-f)
@@ -17,17 +34,12 @@ GENERAL
   - automatic tests => look at the way official extensions are tested using
     pytest
 
-  - translate to French
-
   - add an option "make this language the default" in expert -> config
     it should
       - remove menus
       - copy menus-LANG to menus
       - rename <name>Dynalab - LANG</name> to <name>Dynalab</name>
       - remove the "make this language the default" entry
-
-  - write documentation in .md files so that we can point to the git repo
-    somewhere
 
 
 EXTENSIONS
@@ -37,13 +49,12 @@ easy
 ----
 
   - check stroke colors for allowed modes
-  - duplicate elements
-  - elements out of page
 
 not easy
 --------
 
   - isolated elements
+  - strict duplicate elements (NOTE: the objects could be groups containing many elements)
 
 to discuss
 ----------

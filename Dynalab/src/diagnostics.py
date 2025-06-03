@@ -8,6 +8,7 @@ from diagnostic_tiny import MarkTiny
 from diagnostic_paths import MarkNonPaths
 from diagnostic_groups import MarkGroups
 from diagnostic_open_paths import MarkOpenPaths
+from diagnostic_outside_page import MarkOutside
 
 
 EXTENSIONS = {
@@ -15,6 +16,7 @@ EXTENSIONS = {
     "non_paths": MarkNonPaths,
     "groups": MarkGroups,
     "open_paths": MarkOpenPaths,
+    "outside_objects": MarkOutside,
 }
 
 
@@ -34,6 +36,8 @@ class Battery(dynalab.Ext):
                           default=True, help="detect tiny elements")
         pars.add_argument("--open-paths", type=inkex.Boolean,
                           default=True, help="mark open paths", dest="open_paths")
+        pars.add_argument("--outside-objects", type=inkex.Boolean,
+                          default=True, help="mark objects outside the page", dest="outside_objects")
 
         for ext in EXTENSIONS.values():
             inst = ext(reset_artefacts=False)
