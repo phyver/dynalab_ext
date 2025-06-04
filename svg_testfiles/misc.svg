@@ -529,11 +529,11 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="false"
      inkscape:zoom="1.8541186"
-     inkscape:cx="189.03861"
-     inkscape:cy="189.03861"
+     inkscape:cx="120.81212"
+     inkscape:cy="189.57795"
      inkscape:window-width="1918"
-     inkscape:window-height="1162"
-     inkscape:window-x="0"
+     inkscape:window-height="1042"
+     inkscape:window-x="1024"
      inkscape:window-y="37"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg32"
@@ -934,4 +934,14 @@
      inkscape:transform-center-x="-0.73368227"
      inkscape:transform-center-y="-0.56498731"
      transform="translate(-2443.71, 9.81)" />
+  <text
+     xml:space="preserve"
+     style="font-size:10.6667px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px"
+     x="-93.282944"
+     y="115.95013"
+     id="text332"><tspan
+       sodipodi:role="line"
+       id="tspan330"
+       x="-93.282944"
+       y="115.95013">Inkscape</tspan></text>
 </svg>

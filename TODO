@@ -7,6 +7,8 @@ GENERAL
   - artefact should be given an id that only depends on the id of the
     referenced object, so that we can "merge" artefacts to the same object
     into a single one.
+      => OK for bounding boxes
+      => do the same for arrows / text outlines
 
   - add extra "artefact_bg" **locked** layer that contains a big red rectangle,
     or some pattern (intersection of viewport and artefact layer) with 10% (?)

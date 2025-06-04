@@ -120,23 +120,22 @@ class MarkNonPaths(dynalab.Ext):
             bbs = self.get_inkscape_bboxes(*elems)
             for elem, bb, desc in zip(elems, bbs, descs):
                 ref = utils.get_clone_reference_element(elem)
-                elem = ref
-                if isinstance(elem, inkex.TextElement):
+                if isinstance(ref, inkex.TextElement):
                     level = WARNING
-                elif isinstance(elem, inkex.Image):
+                elif isinstance(ref, inkex.Image):
                     level = ERROR
-                elif not utils.is_path(elem):
+                elif not utils.is_path(ref):
                     # unkwnown element! Should I add this to the description /
                     # message?
                     level = ERROR
                 else:
-                    E = utils.effects(elem)
+                    E = utils.effects(ref)
                     if not E or E == ["path-effect"]:
                         level = WARNING
                     else:
                         level = ERROR
                 counter[level] += 1
-                self.draw_bounding_box(level, bb, msg=desc)
+                self.outline_bounding_box(level, elem, tr=None, bb=bb, msg=desc)
 
         if clean:
             self.clean(force=False)

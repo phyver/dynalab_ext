@@ -39,7 +39,7 @@ class MarkOutside(dynalab.Ext):
                 counter += 1
                 desc += " lies outside the page"
                 self.message("\t-", desc, verbosity=2)
-                self.draw_bounding_box(WARNING, bb, msg=desc)
+                self.outline_bounding_box(WARNING, elem, tr=None, bb=bb, msg=desc)
                 continue
 
         if missing_bbs:
@@ -50,7 +50,7 @@ class MarkOutside(dynalab.Ext):
                     counter += 1
                     desc += " lies outside the page"
                     self.message("\t-", desc, verbosity=2)
-                    self.draw_bounding_box(WARNING, bb, msg=desc)
+                    self.outline_bounding_box(WARNING, elem, tr=None, bb=bb, msg=desc)
 
         if clean:
             self.clean(force=False)

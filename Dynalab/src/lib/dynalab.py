@@ -272,59 +272,73 @@ details:
             self.message(f"{counter} object(s) were moved out of the artefact layer",
                          verbosity=1)
 
-    def outline_bounding_box(self, level, elem, global_transform, msg=None,
+    def outline_bounding_box(self, level, elem, transform=None, bb=None, msg=None,
                              margin=1, accept_text=False, **kwargs):
         """outline the bounding box of elem,global_transform
         Fails on text elements (whose bounding box cannot be computed easily)
         except when parameter accepts_text is true. In this case, the
         "get_inkscape_bb" method is used, but it is very slow. (It calls an
         external inkscape process!)"""
-        if isinstance(elem, inkex.TextElement):
-            if not accept_text:
-                self.abort("cannot compute text bounding box (function outline_bounding_box)")
-            # very slow!!!
-            bb = elem.get_inkscape_bbox()   # no need to apply the global transform
+        if bb is None:
+            if isinstance(elem, inkex.TextElement):
+                if not accept_text:
+                    self.abort("cannot compute text bounding box (function outline_bounding_box)")
+                # very slow!!!
+                bb = elem.get_inkscape_bbox()   # no need to apply the global transform
+            else:
+                bb = elem.bounding_box(transform=transform)
         else:
-            bb = elem.bounding_box(transform=global_transform)
+            # TODO apply transform to given bb?
+            pass
+        id = f"{ARTEFACT_CLASS}_{elem.get_id()}"
+        self._draw_bounding_box(level, bb, id=id, msg=msg, margin=margin, **kwargs)
 
-        self.draw_bounding_box(level, bb, msg=msg, margin=margin, **kwargs)
+    def _draw_bounding_box(self, level, bb, id=id, msg=None, margin=1, **style):
 
-    def draw_bounding_box(self, level, bb, msg=None, margin=1, **kwargs):
-        # convert width
-        stroke_width = self.config["artefacts_stroke_width"]
-
-        if level == OK:
-            stroke = NOTE_COLOR  # green
-            stroke_width = stroke_width/2
-        elif level == NOTE:
-            stroke = NOTE_COLOR
-        elif level == WARNING:
-            stroke = WARNING_COLOR
-        elif level == ERROR:
-            stroke = ERROR_COLOR
-        else:
-            assert False    # FIXME
-
-        x, y = self.svg_to_mm(bb.left), self.svg_to_mm(bb.top)
-        w, h = self.svg_to_mm(bb.width), self.svg_to_mm(bb.height)
-        rect = inkex.Rectangle.new(self.mm_to_svg(x-margin), self.mm_to_svg(y-margin),
-                                   self.mm_to_svg(w+2*margin), self.mm_to_svg(h+2*margin))
-
-        rect.set("class", ARTEFACT_CLASS)
-        rect.style = inkex.Style({
-            "fill": "none",
-            "stroke": stroke,
-            "stroke-width": self.mm_to_svg(stroke_width),
-        })
-        for k in kwargs:
-            rect.style[k.replace("_", "-")] = kwargs[k]
-        self.artefact_group.add(rect)
+        rect = self.svg.getElementById(id)
+        if rect is None:
+            x, y = self.svg_to_mm(bb.left), self.svg_to_mm(bb.top)
+            w, h = self.svg_to_mm(bb.width), self.svg_to_mm(bb.height)
+            rect = inkex.Rectangle.new(self.mm_to_svg(x-margin), self.mm_to_svg(y-margin),
+                                       self.mm_to_svg(w+2*margin), self.mm_to_svg(h+2*margin))
+            rect.set("id", id)
+            rect.set("class", ARTEFACT_CLASS)
+            rect.style = inkex.Style({
+                "error-level": -1,       # custom style attribute
+            })
 
         # add the message in the description
         if msg is not None:
-            desc = inkex.elements.Desc()
-            desc.text = msg
-            rect.append(desc)
+            desc = rect.desc or ""
+            desc += msg + "\n"
+            rect.desc = desc
+
+        if int(rect.style.get("error-level")) > level:
+            # existing bounding box has higher error-level: keep existing style
+            return
+
+        rect.style["error-level"] = level
+        rect.style["fill"] = "none"
+        rect.style["stroke-width"] = self.config["artefacts_stroke_width"]
+
+        if level == OK:
+            rect.style["stroke"] = NOTE_COLOR  # green
+            rect.style["stroke-width"] = rect.style["stroke-width"] / 2
+        elif level == NOTE:
+            rect.style["stroke"] = NOTE_COLOR
+        elif level == WARNING:
+            rect.style["stroke"] = WARNING_COLOR
+        elif level == ERROR:
+            rect.style["stroke"] = ERROR_COLOR
+        else:
+            assert False    # FIXME
+
+        for k in style:
+            rect.style[k.replace("_", "-")] = style[k]
+        self.artefact_group.add(rect)
+
+        # convert stroke-width to actual mm
+        rect.style["stroke-width"] = self.mm_to_svg(rect.style["stroke-width"])
 
     def outline_arrow(self, level, elem, global_transform, msg=None):
         stroke_width = self.config["artefacts_stroke_width"]
