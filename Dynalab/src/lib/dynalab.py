@@ -298,7 +298,7 @@ details:
             rect.style = inkex.Style({
                 "fill": f"url(#{ARTEFACT_BACKGROUND_PATTERN_ID})",
                 # "fill": "red",
-                "opacity": 0.1,
+                "opacity": self.config["artefacts_background_opacity"]/100,
                 "stroke": "none",
                 "stroke-width": "1px",
             })

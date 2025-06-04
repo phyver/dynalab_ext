@@ -36,6 +36,9 @@ class SaveConfig(dynalab.Ext):
                           help=_("lock artefacts layer"))
         pars.add_argument("--group-artefacts", type=inkex.Boolean, dest="artefacts_grouped",
                           help=_("group artefacts"))
+        pars.add_argument("--artefacts-background-opacity", type=int, default=5,
+                          dest="artefacts_background_opacity",
+                          help=_("artefacts background opacity (%)"))
         pars.add_argument("--artefacts-stroke-width", type=float, dest="artefacts_stroke_width",
                           help=_("stroke width for artefacts (mm)"))
         pars.add_argument("--verbosity", type=int, help=_("verbosity"))
