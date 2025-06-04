@@ -18,6 +18,8 @@ class Export(dynalab.Ext):
     """
 
     def add_arguments(self, pars):
+        pars.add_argument("--clean", type=inkex.Boolean, default=True, help="remove artefacts")
+        pars.add_argument("--svg", type=inkex.Boolean, default=False, help="save to svg")
         pars.add_argument("--dxf", type=inkex.Boolean, default=True, help="export to dxf")
         pars.add_argument("--pdf", type=inkex.Boolean, default=True, help="export to pdf")
 
@@ -25,6 +27,9 @@ class Export(dynalab.Ext):
         pars.add_argument("--savedir", type=str, default="", help="save directory")
 
     def effect(self):
+        # TODO: svg save, clean option
+
+
         if not self.options.dxf and not self.options.pdf:
             self.abort("", "nothing to do: you must select at least one export format")
 
@@ -60,7 +65,19 @@ class Export(dynalab.Ext):
                      "(with additional extension)",
                      verbosity=1)
 
+        if self.options.clean:
+            self.clean(force=True)
+
         counter = 0
+        if self.options.pdf:
+            counter += 1
+            self.message("\t-", f"saving to svg: {savefile+'.svg'}",
+                         verbosity=1)
+            start_time = time.perf_counter()
+            self.export_with_inkscape(savefile+".svg", "svg")
+            self.message("\t\t", f"running time {1000*(time.perf_counter()-start_time):.0f}ms",
+                         verbosity=3)
+
         if self.options.dxf:
             # NOTE: exporting to dxf defaults to dxf12, so I have to
             # explicitly give the extension id

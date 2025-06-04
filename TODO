@@ -1,9 +1,6 @@
 GENERAL
 =======
 
-  - add svg export option
-  - add "clear artifacts" export option
-
   - artefact should be given an id that only depends on the id of the
     referenced object, so that we can "merge" artefacts to the same object
     into a single one.

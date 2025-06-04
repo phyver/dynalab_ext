@@ -10,8 +10,11 @@
     </effect>
     <name>4 - export</name>
 
-    <param name="dxf" type="bool" gui-text="1 - export to dxf">true</param>
-    <param name="pdf" type="bool" gui-text="2 - export to pdf">false</param>
+    <param name="clean" type="bool" gui-text="0 - remove artefats">true</param>
+    <spacer/>
+    <param name="svg" type="bool" gui-text="1 - save to svg">true</param>
+    <param name="dxf" type="bool" gui-text="2 - export to dxf">true</param>
+    <param name="pdf" type="bool" gui-text="3 - export to pdf">false</param>
 
     <param name="filename" type="string" gui-text="filename (without extension)"/>
     <param name="savedir" type="path" mode="folder" gui-text="save directory"/>
