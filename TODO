@@ -7,11 +7,6 @@ GENERAL
       => OK for bounding boxes
       => do the same for arrows / text outlines
 
-  - add extra "artefact_bg" **locked** layer that contains a big red rectangle,
-    or some pattern (intersection of viewport and artefact layer) with 10% (?)
-    opacity This should only be added if there is at least an artefact, and it
-    should be cleared by the clean methode.
-
   - translate to French
 
   - write documentation in .md files so that we can point to the git repo

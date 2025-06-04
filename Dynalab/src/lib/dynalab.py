@@ -13,6 +13,9 @@ from lib import i18n, config
 ARTEFACT_CLASS = "artefact"
 ARTEFACT_LAYER_ID = "ArtefactLayer"
 ARTEFACT_GROUP_ID = "ArtefactGroup"
+ARTEFACT_BACKGROUND_LAYER_ID = "ArtefactLayerBackground"
+ARTEFACT_BACKGROUND_ID = "ArtefactBackground"
+ARTEFACT_BACKGROUND_PATTERN_ID = "ArtefactBackgroundPattern"
 
 # error levels
 OK = 0
@@ -171,7 +174,7 @@ details:
         svg = self.svg
 
         # make sure inkscape's unit is "mm"
-        svg.namedview.set('inkscape:document-units', 'mm')
+        svg.namedview.set("inkscape:document-units", "mm")
 
         # extract non-artefacts from the artefact layer
         self.extract_non_artefacts()
@@ -190,8 +193,7 @@ details:
 
         # Create a new layer (this is just a special SVG group)
         if artefact_layer is None:
-            artefact_layer = inkex.Layer.new(ARTEFACT_LAYER_ID)
-            artefact_layer.set("id", ARTEFACT_LAYER_ID)
+            artefact_layer = inkex.Layer.new(ARTEFACT_LAYER_ID, id=ARTEFACT_LAYER_ID)
             artefact_layer.set("class", ARTEFACT_CLASS)
             if self.artefacts_locked:
                 artefact_layer.set_sensitive(False)
@@ -202,8 +204,7 @@ details:
         # and create Inkscape group inside
         if artefact_group is None:
             if self.artefacts_grouped:
-                self.artefact_group = inkex.Group()
-                self.artefact_group.set("id", ARTEFACT_GROUP_ID)
+                self.artefact_group = inkex.Group(id=ARTEFACT_GROUP_ID)
                 self.artefact_group.set("class", ARTEFACT_CLASS)
                 artefact_layer.add(self.artefact_group)
             else:
@@ -221,6 +222,32 @@ details:
         if svg.getElementById("NoteArrowheadMarker") is None:
             self._new_marker("NoteArrowheadMarker", NOTE_COLOR)
 
+        # define the background layer
+        artefact_bg_layer = svg.getElementById(ARTEFACT_BACKGROUND_LAYER_ID)
+        if artefact_bg_layer is not None and self.reset_artefacts:
+            artefact_bg_layer.clear()
+            artefact_bg_layer.getparent().remove(artefact_bg_layer)
+            artefact_bg_layer = None
+        if artefact_bg_layer is None:
+            artefact_bg_layer = inkex.Layer.new(ARTEFACT_BACKGROUND_LAYER_ID, id=ARTEFACT_BACKGROUND_LAYER_ID)
+            artefact_bg_layer.set("class", ARTEFACT_CLASS)
+            artefact_bg_layer.set_sensitive(False)
+            root.insert(0, artefact_bg_layer)           # insert first, ie at bottom
+
+        # define the background pattern
+        artefact_bg_pattern = svg.getElementById(ARTEFACT_BACKGROUND_PATTERN_ID)
+        if artefact_bg_pattern is None:
+            artefact_bg_pattern = inkex.Pattern(id=ARTEFACT_BACKGROUND_PATTERN_ID)
+            artefact_bg_pattern.set("patternUnits", "userSpaceOnUse")
+            artefact_bg_pattern.set("width", 2)
+            artefact_bg_pattern.set("height", 1)
+            artefact_bg_pattern.set("patternTransform", "rotate(30) scale(5)")
+            rect = inkex.Rectangle.new(0, 0, 1, 1)
+            rect.style["fill"] = "red"
+            rect.style["stroke"] = "none"
+            artefact_bg_pattern.add(rect)
+            self.svg.defs.add(artefact_bg_pattern)
+
     def clean(self, force=False):
         """remove the artefact layer / group if it is empty
         If force is true, remove it even if it is not empty"""
@@ -228,6 +255,8 @@ details:
 
         artefact_layer = svg.getElementById(ARTEFACT_LAYER_ID)
         artefact_group = svg.getElementById(ARTEFACT_GROUP_ID)
+        artefact_bg_layer = svg.getElementById(ARTEFACT_BACKGROUND_LAYER_ID)
+        artefact_bg = svg.getElementById(ARTEFACT_BACKGROUND_ID)
 
         if artefact_group is not None and (force or len(artefact_group) == 0):
             artefact_group.clear()
@@ -236,6 +265,13 @@ details:
         if artefact_layer is not None and (force or len(artefact_layer) == 0):
             artefact_layer.clear()
             artefact_layer.getparent().remove(artefact_layer)
+
+        if artefact_bg is not None and force:
+            artefact_bg.getparent().remove(artefact_bg)
+
+        if artefact_bg_layer is not None and (force or len(artefact_bg_layer) == 0):
+            artefact_bg_layer.clear()
+            artefact_bg_layer.getparent().remove(artefact_bg_layer)
 
         if force or len(artefact_layer) == 0:
             marker = svg.getElementById("ErrorArrowheadMarker")
@@ -247,30 +283,59 @@ details:
             marker = svg.getElementById("NoteArrowheadMarker")
             if marker is not None:
                 marker.getparent().remove(marker)
+            bg_pattern = svg.getElementById(ARTEFACT_BACKGROUND_PATTERN_ID)
+            if bg_pattern is not None:
+                bg_pattern.getparent().remove(bg_pattern)
+
+    def update_background(self, bb):
+        rect = self.svg.getElementById(ARTEFACT_BACKGROUND_ID)
+        if rect is None:
+            w = self.svg.unittouu(self.svg.viewport_width)
+            h = self.svg.unittouu(self.svg.viewport_height)
+            rect = inkex.Rectangle.new(0, 0, w, h)
+            rect.set("id", ARTEFACT_BACKGROUND_ID)
+            rect.set("class", ARTEFACT_CLASS)
+            rect.style = inkex.Style({
+                "fill": f"url(#{ARTEFACT_BACKGROUND_PATTERN_ID})",
+                # "fill": "red",
+                "opacity": 0.1,
+                "stroke": "none",
+                "stroke-width": "1px",
+            })
+            bg_layer = self.svg.getElementById(ARTEFACT_BACKGROUND_LAYER_ID)
+            bg_layer.add(rect)
+        if bb is not None:
+            bb = bb + rect.shape_box()
+            rect.set("x", bb.left)
+            rect.set("y", bb.top)
+            rect.set("width", bb.width)
+            rect.set("height", bb.height)
 
     def extract_non_artefacts(self):
         """look through the artefact layer and move all non-artefact outside"""
         artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
-        if artefact_layer is None:
-            return
+        artefact_bg_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
 
         counter = 0
-        for elem, tr in _iter_elements(artefact_layer, recurse=True,
-                                       skip_groups=False,
-                                       skip_artefacts=False,
-                                       ):
-            cl = elem.get("class")
-            if cl and ARTEFACT_CLASS in cl:
+        for layer in [artefact_layer, artefact_bg_layer]:
+            if layer is None:
                 continue
-            counter += 1
-            self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artefact layer",
-                         verbosity=2)
-            elem.getparent().remove(elem)
-            elem.transform = tr
-            self.svg.add(elem)
-        if counter > 0:
-            self.message(f"{counter} object(s) were moved out of the artefact layer",
-                         verbosity=1)
+            for elem, tr in _iter_elements(layer, recurse=True,
+                                           skip_groups=False,
+                                           skip_artefacts=False,
+                                           ):
+                cl = elem.get("class")
+                if cl and ARTEFACT_CLASS in cl:
+                    continue
+                counter += 1
+                self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artefact layer",
+                             verbosity=2)
+                elem.getparent().remove(elem)
+                elem.transform = tr
+                self.svg.add(elem)
+            if counter > 0:
+                self.message(f"{counter} object(s) were moved out of the artefact layer",
+                             verbosity=1)
 
     def outline_bounding_box(self, level, elem, transform=None, bb=None, msg=None,
                              margin=1, accept_text=False, **kwargs):
@@ -292,6 +357,7 @@ details:
             pass
         id = f"{ARTEFACT_CLASS}_{elem.get_id()}"
         self._draw_bounding_box(level, bb, id=id, msg=msg, margin=margin, **kwargs)
+        self.update_background(bb)
 
     def _draw_bounding_box(self, level, bb, id=id, msg=None, margin=1, **style):
 
@@ -421,9 +487,9 @@ details:
     def _new_marker(self, id, color):
         """define an arrowhead marker for the arrow artefacts"""
         marker = inkex.Marker(id=id,
-                              orient='auto',    # orient='auto-start-reverse',
-                              markerWidth='3',
-                              markerHeight='3',
+                              orient="auto",    # orient='auto-start-reverse',
+                              markerWidth="3",
+                              markerHeight="3",
                               )
         marker.set("class", ARTEFACT_CLASS)
 
@@ -450,7 +516,7 @@ details:
             # check if it contains a textpath, and compute the corresponding x,y values
             for e in elem:
                 if isinstance(e, inkex.TextPath):
-                    href = e.get('xlink:href')
+                    href = e.get("xlink:href")
                     path = self.svg.getElementById(href[1:])
                     bb = path.bounding_box(transform=global_transform)
                     x, y = elem.transform.apply_to_point(inkex.Vector2d(bb.left, bb.bottom))
