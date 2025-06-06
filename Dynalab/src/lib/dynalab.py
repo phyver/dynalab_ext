@@ -344,6 +344,9 @@ details:
         except when parameter accepts_text is true. In this case, the
         "get_inkscape_bb" method is used, but it is very slow. (It calls an
         external inkscape process!)"""
+        if elem is None and bb is None:
+            self.abort("ERROR: method `outline_bounding_box` needs either an SVG element or an explicit bounding box")
+
         if bb is None:
             if isinstance(elem, inkex.TextElement):
                 if not accept_text:
@@ -353,15 +356,23 @@ details:
             else:
                 bb = elem.bounding_box(transform=transform)
         else:
-            # TODO apply transform to given bb?
+            # bb is explicitly given, do nothing
+            # TODO: should I apply transform if it is given as well?
             pass
-        id = f"{ARTEFACT_CLASS}_{elem.get_id()}"
+
+        if elem is None:
+            id = self.svg.get_unique_id("artefact_bb")
+        else:
+            id = f"{ARTEFACT_CLASS}_{elem.get_id()}"
+
         self._draw_bounding_box(level, bb, id=id, msg=msg, margin=margin, **kwargs)
-        self.update_background(bb)
+        if level > NOTE:
+            self.update_background(bb)
 
     def _draw_bounding_box(self, level, bb, id=id, msg=None, margin=1, **style):
 
-        rect = self.svg.getElementById(id)
+        # rect = self.svg.getElementById(id)
+        rect = None
         if rect is None:
             x, y = self.svg_to_mm(bb.left), self.svg_to_mm(bb.top)
             w, h = self.svg_to_mm(bb.width), self.svg_to_mm(bb.height)
