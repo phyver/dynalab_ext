@@ -75,7 +75,7 @@ def _iter_elements(
     if _skip_meta(elem):
         return
 
-    if not isinstance(elem, inkex.Group) or not skip_groups:
+    if not isinstance(elem, inkex.Group) or not skip_groups or isinstance(elem, inkex.Layer):
         yield elem, _global_transform
         # yield elem, elem.getparent().composed_transform()
         # this is functionnaly equivalent, but could be slower if the elements tree is huge
