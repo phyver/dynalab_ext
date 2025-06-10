@@ -31,7 +31,8 @@
         <page name="artefact-tab" gui-text="extension related options">
             <param name="lock-artefacts" type="bool" value="false" gui-text="lock the artefacts' layer"/>
             <param name="group-artefacts" type="bool" value="true" gui-text="group artefacts for easy removal"/>
-            <param name="artefacts-background-opacity" type="int" min="0" max="100" value="5" gui-text="artefacts background opacity (%)"/>
+            <param name="artefacts-opacity" type="int" min="0" max="100" value="75" gui-text="artefacts opacity (%)"/>
+            <param name="artefacts-overlay-opacity" type="int" min="0" max="100" value="5" gui-text="artefacts overlay opacity (%)"/>
             <param name="artefacts-stroke-width" type="string" gui-text="stroke width for artefacts (mm)"/>
             <param name="verbosity" type="int" min="0" max="4" value="1" gui-text="verbosity"/>
         </page>

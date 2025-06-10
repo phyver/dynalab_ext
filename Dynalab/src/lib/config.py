@@ -16,7 +16,8 @@ DEFAULT_CONFIG = {
     "artefacts_locked": False,
     "artefacts_grouped": True,
     "artefacts_stroke_width": 1,
-    "artefacts_background_opacity": 5,
+    "artefacts_opacity": 75,
+    "artefacts_overlay_opacity": 5,
     #
     "laser_diameter": 0.2,
     "laser_mode_cut_color": "#ff0000",
@@ -94,7 +95,8 @@ class Ext():
 
   - artefacts layer is locked (non selectable): {artefacts_locked}
   - artefacts are put in a single group: {artefacts_grouped}
-  - artefacts background stripes opacity: {artefacts_background_opacity}%
+  - artefacts opacity: {artefacts_opacity}%
+  - artefacts overlay stripes opacity: {artefacts_overlay_opacity}%
   - stroke width for artefacts: {artefacts_stroke_width}mm
   - verbosity level: {verbosity}
 """.format(**self.config))

@@ -281,7 +281,7 @@ details:
             rect.style = inkex.Style({
                 "fill": f"url(#{ARTEFACT_OVERLAY_PATTERN_ID})",
                 # "fill": "red",
-                "opacity": self.config["artefacts_background_opacity"]/100,
+                "opacity": self.config["artefacts_overlay_opacity"]/100,
                 "stroke": "none",
                 "stroke-width": "1px",
             })
@@ -379,6 +379,7 @@ details:
 
         rect.style["error-level"] = level
         rect.style["fill"] = "none"
+        rect.style["stroke-opacity"] = self.config["artefacts_opacity"]/100
         rect.style["stroke-width"] = self.config["artefacts_stroke_width"]
 
         if level == OK:
@@ -420,6 +421,7 @@ details:
 
         arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
         arrow.style["stroke"] = stroke
+        arrow.style["stroke-opacity"] = self.config["artefacts_opacity"]/100
         arrow.style["marker-end"] = f"url({marker})"
 
     def outline_text(self, level, elem, global_transform, msg=None, **kwargs):
