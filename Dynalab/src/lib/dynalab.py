@@ -13,9 +13,8 @@ from lib import i18n, config
 ARTEFACT_CLASS = "artefact"
 ARTEFACT_LAYER_ID = "ArtefactLayer"
 ARTEFACT_GROUP_ID = "ArtefactGroup"
-ARTEFACT_BACKGROUND_LAYER_ID = "ArtefactLayerBackground"
-ARTEFACT_BACKGROUND_ID = "ArtefactBackground"
-ARTEFACT_BACKGROUND_PATTERN_ID = "ArtefactBackgroundPattern"
+ARTEFACT_OVERLAY_ID = "ArtefactOverlay"
+ARTEFACT_OVERLAY_PATTERN_ID = "ArtefactOverlayPattern"
 
 # error levels
 OK = 0
@@ -222,31 +221,19 @@ details:
         if svg.getElementById("NoteArrowheadMarker") is None:
             self._new_marker("NoteArrowheadMarker", NOTE_COLOR)
 
-        # define the background layer
-        artefact_bg_layer = svg.getElementById(ARTEFACT_BACKGROUND_LAYER_ID)
-        if artefact_bg_layer is not None and self.reset_artefacts:
-            artefact_bg_layer.clear()
-            artefact_bg_layer.getparent().remove(artefact_bg_layer)
-            artefact_bg_layer = None
-        if artefact_bg_layer is None:
-            artefact_bg_layer = inkex.Layer.new(ARTEFACT_BACKGROUND_LAYER_ID, id=ARTEFACT_BACKGROUND_LAYER_ID)
-            artefact_bg_layer.set("class", ARTEFACT_CLASS)
-            artefact_bg_layer.set_sensitive(False)
-            root.insert(0, artefact_bg_layer)           # insert first, ie at bottom
-
         # define the background pattern
-        artefact_bg_pattern = svg.getElementById(ARTEFACT_BACKGROUND_PATTERN_ID)
-        if artefact_bg_pattern is None:
-            artefact_bg_pattern = inkex.Pattern(id=ARTEFACT_BACKGROUND_PATTERN_ID)
-            artefact_bg_pattern.set("patternUnits", "userSpaceOnUse")
-            artefact_bg_pattern.set("width", 2)
-            artefact_bg_pattern.set("height", 1)
-            artefact_bg_pattern.set("patternTransform", "rotate(30) scale(5)")
+        artefact_pattern = svg.getElementById(ARTEFACT_OVERLAY_PATTERN_ID)
+        if artefact_pattern is None:
+            artefact_pattern = inkex.Pattern(id=ARTEFACT_OVERLAY_PATTERN_ID)
+            artefact_pattern.set("patternUnits", "userSpaceOnUse")
+            artefact_pattern.set("width", 2)
+            artefact_pattern.set("height", 1)
+            artefact_pattern.set("patternTransform", "rotate(30) scale(5)")
             rect = inkex.Rectangle.new(0, 0, 1, 1)
             rect.style["fill"] = "red"
             rect.style["stroke"] = "none"
-            artefact_bg_pattern.add(rect)
-            self.svg.defs.add(artefact_bg_pattern)
+            artefact_pattern.add(rect)
+            self.svg.defs.add(artefact_pattern)
 
     def clean(self, force=False):
         """remove the artefact layer / group if it is empty
@@ -255,8 +242,10 @@ details:
 
         artefact_layer = svg.getElementById(ARTEFACT_LAYER_ID)
         artefact_group = svg.getElementById(ARTEFACT_GROUP_ID)
-        artefact_bg_layer = svg.getElementById(ARTEFACT_BACKGROUND_LAYER_ID)
-        artefact_bg = svg.getElementById(ARTEFACT_BACKGROUND_ID)
+        artefact_overlay = svg.getElementById(ARTEFACT_OVERLAY_ID)
+
+        if artefact_overlay is not None and force:
+            artefact_overlay.getparent().remove(artefact_overlay)
 
         if artefact_group is not None and (force or len(artefact_group) == 0):
             artefact_group.clear()
@@ -265,13 +254,6 @@ details:
         if artefact_layer is not None and (force or len(artefact_layer) == 0):
             artefact_layer.clear()
             artefact_layer.getparent().remove(artefact_layer)
-
-        if artefact_bg is not None and force:
-            artefact_bg.getparent().remove(artefact_bg)
-
-        if artefact_bg_layer is not None and (force or len(artefact_bg_layer) == 0):
-            artefact_bg_layer.clear()
-            artefact_bg_layer.getparent().remove(artefact_bg_layer)
 
         if force or len(artefact_layer) == 0:
             marker = svg.getElementById("ErrorArrowheadMarker")
@@ -283,27 +265,28 @@ details:
             marker = svg.getElementById("NoteArrowheadMarker")
             if marker is not None:
                 marker.getparent().remove(marker)
-            bg_pattern = svg.getElementById(ARTEFACT_BACKGROUND_PATTERN_ID)
-            if bg_pattern is not None:
-                bg_pattern.getparent().remove(bg_pattern)
+            pattern = svg.getElementById(ARTEFACT_OVERLAY_PATTERN_ID)
+            if pattern is not None:
+                pattern.getparent().remove(pattern)
 
     def update_background(self, bb):
-        rect = self.svg.getElementById(ARTEFACT_BACKGROUND_ID)
+        rect = self.svg.getElementById(ARTEFACT_OVERLAY_ID)
         if rect is None:
             w = self.svg.unittouu(self.svg.viewport_width)
             h = self.svg.unittouu(self.svg.viewport_height)
             rect = inkex.Rectangle.new(0, 0, w, h)
-            rect.set("id", ARTEFACT_BACKGROUND_ID)
+            rect.set("id", ARTEFACT_OVERLAY_ID)
             rect.set("class", ARTEFACT_CLASS)
+            rect.set_sensitive(False)
             rect.style = inkex.Style({
-                "fill": f"url(#{ARTEFACT_BACKGROUND_PATTERN_ID})",
+                "fill": f"url(#{ARTEFACT_OVERLAY_PATTERN_ID})",
                 # "fill": "red",
                 "opacity": self.config["artefacts_background_opacity"]/100,
                 "stroke": "none",
                 "stroke-width": "1px",
             })
-            bg_layer = self.svg.getElementById(ARTEFACT_BACKGROUND_LAYER_ID)
-            bg_layer.add(rect)
+            artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
+            artefact_layer.add(rect)
         if bb is not None:
             bb = bb + rect.shape_box()
             rect.set("x", bb.left)
