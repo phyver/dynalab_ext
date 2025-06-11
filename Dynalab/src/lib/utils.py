@@ -1,5 +1,24 @@
 import inkex
 
+# Here is a list of relevant inkex classes for SVG elements
+#
+#  - inkex.Group
+#  - inkex.Layer        NOTE: instance of inkex.Group
+#  - inkex.TextElement  NOTE: they can contain an inkex.TextPath referencing a
+#                       path for text along path objects
+#  - inkex.Ellipse
+#  - inkex.Circle
+#  - inkex.Rectangle
+#  - inkex.Line         NOTE: inkscape uses PathElement instead
+#  - inkex.Polyline     NOTE: inkscape uses PathElement instead
+#  - inkex.Polygon      NOTE: inkscape uses PathElement instead
+#  - inkex.PathElement
+#  - inkex.Image
+#  - inkex.Use          NOTE: "clones"
+#  - inkex.Symb         FIXME: I'm not using them anywhere!!!
+#  - inkex.ClipPath     FIXME: I'm not using them anywhere!!!
+#
+
 
 def is_path(elem, strict=False):
     if isinstance(elem, inkex.PathElement):

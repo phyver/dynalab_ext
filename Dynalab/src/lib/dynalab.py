@@ -94,16 +94,16 @@ def _iter_elements(
                                   _global_transform=_global_transform @ elem.transform)
 
 
-def _set_text_style(elem, **kwargs):
+def _set_text_style(elem, **style):
     elem.style = inkex.Style(elem.attrib.get("style", ""))
-    for k in kwargs:
-        elem.style[k.replace("_", "-")] = kwargs[k]
+    for k in style:
+        elem.style[k.replace("_", "-")] = style[k]
         # since values could be inkex objects (like Color), I need to transform the value to a string
-        elem.attrib[k.replace("_", "-")] = str(kwargs[k])
+        elem.attrib[k.replace("_", "-")] = str(style[k])
 
     # Recurse into child nodes (tspan, textPath, etc.)
     for e in elem:
-        _set_text_style(e, **kwargs)
+        _set_text_style(e, **style)
 
 
 class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
@@ -112,8 +112,6 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         super().__init__()
         i18n.Ext.__init__(self)
         config.Ext.__init__(self)
-        self.artefacts_grouped = self.config["artefacts_grouped"]
-        self.artefacts_locked = self.config["artefacts_locked"]
         self.reset_artefacts = reset_artefacts
         self._start_time = time.perf_counter()
 
@@ -124,15 +122,6 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         if verbosity > self.config.get("verbosity", 1):
             return
         self.msg(sep.join(str(a) for a in args if a is not None) + end)
-
-    def abort(self, *args, header=None, end="\n", sep=" "):
-        if header is None:
-            header = """
-Error encountered while running extension, aborting.
-
-details:
-"""
-        raise inkex.AbortExtension(header + sep.join(str(a) for a in args if a is not None) + end)
 
     def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
         """iterates over the selected elements (recursively if needs be), or
@@ -194,7 +183,7 @@ details:
         if artefact_layer is None:
             artefact_layer = inkex.Layer.new(ARTEFACT_LAYER_ID, id=ARTEFACT_LAYER_ID)
             artefact_layer.set("class", ARTEFACT_CLASS)
-            if self.artefacts_locked:
+            if self.config["artefacts_locked"]:
                 artefact_layer.set_sensitive(False)
             root.add(artefact_layer)           # insert last, ie at top
             # to insert first, ie on the bottom, use
@@ -202,7 +191,7 @@ details:
 
         # and create Inkscape group inside
         if artefact_group is None:
-            if self.artefacts_grouped:
+            if self.config["artefacts_grouped"]:
                 self.artefact_group = inkex.Group(id=ARTEFACT_GROUP_ID)
                 self.artefact_group.set("class", ARTEFACT_CLASS)
                 artefact_layer.add(self.artefact_group)
@@ -221,7 +210,7 @@ details:
         if svg.getElementById("NoteArrowheadMarker") is None:
             self._new_marker("NoteArrowheadMarker", NOTE_COLOR)
 
-        # define the background pattern
+        # define the overlay pattern
         artefact_pattern = svg.getElementById(ARTEFACT_OVERLAY_PATTERN_ID)
         if artefact_pattern is None:
             artefact_pattern = inkex.Pattern(id=ARTEFACT_OVERLAY_PATTERN_ID)
@@ -269,7 +258,7 @@ details:
             if pattern is not None:
                 pattern.getparent().remove(pattern)
 
-    def update_background(self, bb):
+    def update_overlay(self, bb):
         rect = self.svg.getElementById(ARTEFACT_OVERLAY_ID)
         if rect is None:
             w = self.svg.unittouu(self.svg.viewport_width)
@@ -280,7 +269,6 @@ details:
             rect.set_sensitive(False)
             rect.style = inkex.Style({
                 "fill": f"url(#{ARTEFACT_OVERLAY_PATTERN_ID})",
-                # "fill": "red",
                 "opacity": self.config["artefacts_overlay_opacity"]/100,
                 "stroke": "none",
                 "stroke-width": "1px",
@@ -320,138 +308,6 @@ details:
                 self.message(f"{counter} object(s) were moved out of the artefact layer",
                              verbosity=1)
 
-    def outline_bounding_box(self, level, elem, transform=None, bb=None, msg=None,
-                             margin=1, accept_text=False, **kwargs):
-        """outline the bounding box of elem,global_transform
-        Fails on text elements (whose bounding box cannot be computed easily)
-        except when parameter accepts_text is true. In this case, the
-        "get_inkscape_bb" method is used, but it is very slow. (It calls an
-        external inkscape process!)"""
-        if elem is None and bb is None:
-            self.abort("ERROR: method `outline_bounding_box` needs either an SVG element or an explicit bounding box")
-
-        if bb is None:
-            if isinstance(elem, inkex.TextElement):
-                if not accept_text:
-                    self.abort("cannot compute text bounding box (function outline_bounding_box)")
-                # very slow!!!
-                bb = elem.get_inkscape_bbox()   # no need to apply the global transform
-            else:
-                bb = elem.bounding_box(transform=transform)
-        else:
-            # bb is explicitly given, do nothing
-            # TODO: should I apply transform if it is given as well?
-            pass
-
-        if elem is None:
-            id = self.svg.get_unique_id("artefact_bb")
-        else:
-            id = f"{ARTEFACT_CLASS}_{elem.get_id()}"
-
-        self._draw_bounding_box(level, bb, id=id, msg=msg, margin=margin, **kwargs)
-        if level > NOTE:
-            self.update_background(bb)
-
-    def _draw_bounding_box(self, level, bb, id=id, msg=None, margin=1, **style):
-
-        # rect = self.svg.getElementById(id)
-        rect = None
-        if rect is None:
-            x, y = self.svg_to_mm(bb.left), self.svg_to_mm(bb.top)
-            w, h = self.svg_to_mm(bb.width), self.svg_to_mm(bb.height)
-            rect = inkex.Rectangle.new(self.mm_to_svg(x-margin), self.mm_to_svg(y-margin),
-                                       self.mm_to_svg(w+2*margin), self.mm_to_svg(h+2*margin))
-            rect.set("id", id)
-            rect.set("class", ARTEFACT_CLASS)
-            rect.style = inkex.Style({
-                "error-level": -1,       # custom style attribute
-            })
-
-        # add the message in the description
-        if msg is not None:
-            desc = rect.desc or ""
-            desc += msg + "\n"
-            rect.desc = desc
-
-        if int(rect.style.get("error-level")) > level:
-            # existing bounding box has higher error-level: keep existing style
-            return
-
-        rect.style["error-level"] = level
-        rect.style["fill"] = "none"
-        rect.style["stroke-opacity"] = self.config["artefacts_opacity"]/100
-        rect.style["stroke-width"] = self.config["artefacts_stroke_width"]
-
-        if level == OK:
-            rect.style["stroke"] = NOTE_COLOR  # green
-            rect.style["stroke-width"] = rect.style["stroke-width"] / 2
-        elif level == NOTE:
-            rect.style["stroke"] = NOTE_COLOR
-        elif level == WARNING:
-            rect.style["stroke"] = WARNING_COLOR
-        elif level == ERROR:
-            rect.style["stroke"] = ERROR_COLOR
-        else:
-            assert False    # FIXME
-
-        for k in style:
-            rect.style[k.replace("_", "-")] = style[k]
-        self.artefact_group.add(rect)
-
-        # convert stroke-width to actual mm
-        rect.style["stroke-width"] = self.mm_to_svg(rect.style["stroke-width"])
-
-    def outline_arrow(self, level, elem, global_transform, msg=None):
-        stroke_width = self.config["artefacts_stroke_width"]
-        if level == OK:
-            stroke = NOTE_COLOR
-            stroke_width = stroke_width/2
-            marker = "#NoteArrowheadMarker"
-        elif level == NOTE:
-            stroke = NOTE_COLOR
-            marker = "#NoteArrowheadMarker"
-        elif level == WARNING:
-            stroke = WARNING_COLOR
-            marker = "#WarningArrowheadMarker"
-        elif level == ERROR:
-            stroke = ERROR_COLOR  # red
-            marker = "#ErrorArrowheadMarker"
-        else:
-            assert False    # FIXME
-
-        arrow = self._new_artefact_arrow(elem, global_transform, stroke_width=stroke_width, msg=msg)
-        arrow.style["stroke"] = stroke
-        arrow.style["stroke-opacity"] = self.config["artefacts_opacity"]/100
-        arrow.style["marker-end"] = f"url({marker})"
-
-    def outline_text(self, level, elem, global_transform, msg=None, **kwargs):
-        stroke_width = self.config["artefacts_stroke_width"]/3
-        if level == OK:
-            stroke = NOTE_COLOR  # green
-            stroke_width = stroke_width/2
-        elif level == NOTE:
-            stroke = NOTE_COLOR
-        elif level == WARNING:
-            stroke = WARNING_COLOR
-        elif level == ERROR:
-            stroke = ERROR_COLOR
-        else:
-            assert False    # FIXME
-        if "stroke" not in kwargs:
-            kwargs["stroke"] = stroke
-
-        clone = copy.deepcopy(elem)
-        clone.set("class", ARTEFACT_CLASS)
-        clone.transform = clone.transform @ global_transform
-        kwargs["stroke-width"] = self.mm_to_svg(stroke_width)
-        _set_text_style(clone, **kwargs)
-        # add the message in the description
-        if msg is not None:
-            desc = inkex.elements.Desc()
-            desc.text = msg
-            clone.append(desc)
-        self.artefact_group.add(clone)
-
     def get_inkscape_bboxes(self, *elems):
         """uses the inkscape command to query the actual bounding boxes of the
         given elements
@@ -480,6 +336,113 @@ details:
     def svg_to_mm(self, d):
         return self.svg.unit_to_viewport(inkex.units.convert_unit(d, "mm"))
 
+    def outline_bounding_box(self, level, elem, transform=None, bb=None, msg=None, margin=1, accept_text=False,
+                             **style):
+        """outline the bounding box of elem,global_transform
+        Fails on text elements (whose bounding box cannot be computed easily)
+        except when parameter accepts_text is true. In this case, the
+        "get_inkscape_bb" method is used, but it is very slow. (It calls an
+        external inkscape process!)"""
+        if elem is None and bb is None:
+            self.abort("ERROR: method `outline_bounding_box` needs either an SVG element or an explicit bounding box")
+
+        if bb is None:
+            if isinstance(elem, inkex.TextElement):
+                # TODO: other objects could have difficult to compute bounding boxes, like clones of texts, or groups
+                # countaining texts, etc.
+                if not accept_text:
+                    self.abort("cannot compute text bounding box (function outline_bounding_box)")
+                # very slow!!!
+                bb = elem.get_inkscape_bbox()   # no need to apply the global transform
+            else:
+                bb = elem.bounding_box(transform=transform)
+        else:
+            # bb is explicitly given, do nothing
+            # TODO: should I apply transform if it is given as well?
+            pass
+
+        if elem is None:
+            id = self.svg.get_unique_id("artefact_bb")
+        else:
+            id = f"{ARTEFACT_CLASS}_boundingbox_{elem.get_id()}"
+
+        self.__new_artefact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
+        if level > NOTE:
+            self.update_overlay(bb)
+
+    def outline_arrow(self, level, elem, transform=None, p=None, msg=None, margin=1,
+                      **style):
+        if elem is None and p is None:
+            self.abort("ERROR: method `outline_arrow` needs either an SVG element or an explicit point")
+
+        if p is None:
+            # FIXME: clean this code!
+            if isinstance(elem, inkex.TextElement):
+                # check if it contains a textpath, and compute the corresponding x,y values
+                for e in elem:
+                    if isinstance(e, inkex.TextPath):
+                        href = e.get("xlink:href")
+                        path = self.svg.getElementById(href[1:])
+                        bb = path.bounding_box(transform=transform)
+                        p = elem.transform.apply_to_point(inkex.Vector2d(bb.left, bb.bottom))
+                        break
+                else:
+                    # otherwise, just use the text's x,y values
+                    if transform is not None:
+                        p = transform.apply_to_point(inkex.Vector2d(elem.x, elem.y))
+                    else:
+                        p = (elem.x, elem.y)
+            else:
+                # for other elements, use the bottom left corner of the bounding box
+                bb = elem.bounding_box(transform=transform)
+                p = (bb.left, bb.bottom)
+        else:
+            # p is explicitly given, do nothing
+            # TODO: should I apply transform if it is given as well?
+            pass
+
+        x, y = p
+
+        if elem is None:
+            id = self.svg.get_unique_id("artefact_arrow")
+        else:
+            id = f"{ARTEFACT_CLASS}_arrow_{elem.get_id()}"
+
+        self._new_artefact_arrow(level, x, y, id, length=10, msg=msg, margin=margin, **style)
+
+        if level > NOTE:
+            self.update_overlay(inkex.BoundingBox())
+
+    def outline_text(self, level, elem, global_transform, msg=None, **style):
+        # FIXME: clean
+        stroke_width = self.config["artefacts_stroke_width"]/3
+
+        if level == OK:
+            stroke = NOTE_COLOR
+            stroke_width = stroke_width/2
+        elif level == NOTE:
+            stroke = NOTE_COLOR
+        elif level == WARNING:
+            stroke = WARNING_COLOR
+        elif level == ERROR:
+            stroke = ERROR_COLOR
+        else:
+            assert False    # FIXME
+        if "stroke" not in style:
+            style["stroke"] = stroke
+
+        clone = copy.deepcopy(elem)
+        clone.set("class", ARTEFACT_CLASS)
+        clone.transform = clone.transform @ global_transform
+        style["stroke-width"] = self.mm_to_svg(stroke_width)
+        _set_text_style(clone, **style)
+        # add the message in the description
+        if msg is not None:
+            desc = inkex.elements.Desc()
+            desc.text = msg
+            clone.append(desc)
+        self.artefact_group.add(clone)
+
     def _new_marker(self, id, color):
         """define an arrowhead marker for the arrow artefacts"""
         marker = inkex.Marker(id=id,
@@ -496,58 +459,124 @@ details:
             "stroke": color,
             "stroke-width": 1,
             "fill": "none",
+            # "stroke-opacity": self.config["artefacts_opacity"]/100,
         })
         marker.append(arrow)
         self.svg.defs.append(marker)
 
-    def _new_artefact_arrow(self, elem, global_transform, stroke_width=None, length=None, msg=None):
-        """add an artefact arrow in the error layer
-           elem, global_transform is the element the arrow should be pointing to
-        """
-        if stroke_width is None:
-            stroke_width = self.config["artefacts_stroke_width"]
-        if length is None:
-            length = 15*stroke_width
-        if isinstance(elem, inkex.TextElement):
-            # check if it contains a textpath, and compute the corresponding x,y values
-            for e in elem:
-                if isinstance(e, inkex.TextPath):
-                    href = e.get("xlink:href")
-                    path = self.svg.getElementById(href[1:])
-                    bb = path.bounding_box(transform=global_transform)
-                    x, y = elem.transform.apply_to_point(inkex.Vector2d(bb.left, bb.bottom))
-                    break
-            else:
-                # otherwise, just use the text's x,y values
-                x, y = global_transform.apply_to_point(inkex.Vector2d(elem.x, elem.y))
-        else:
-            # for other elements, use the bottom left corner of the bounding box
-            bb = elem.bounding_box(transform=global_transform)
-            x, y = bb.left, bb.bottom
-
-        x, y = self.svg_to_mm(x), self.svg_to_mm(y)
-
-        # convert distances to mm
-        side = length / 2**.5
-        arrow = inkex.PathElement()
-        arrow.set("class", ARTEFACT_CLASS)
-        arrow.path = [Move(self.mm_to_svg(x-side), self.mm_to_svg(y+side)),
-                      Line(self.mm_to_svg(x-stroke_width/2), self.mm_to_svg(y+stroke_width/2))]
-        arrow.style = inkex.Style({
-            "stroke-width": self.mm_to_svg(stroke_width),
-            "fill": "none",
-        })
+    def __new_artefact_bb(self, level, bb, id, msg=None, margin=1, **style):
+        rect = self.svg.getElementById(id)
+        if rect is None:
+            margin = self.mm_to_svg(margin)
+            x, y = bb.left, bb.top
+            w, h = bb.width, bb.height
+            rect = inkex.Rectangle.new(x-margin, y-margin, w+2*margin, h+2*margin)
+            rect.set("id", id)
+            rect.set("class", ARTEFACT_CLASS)
+            rect.style = inkex.Style({
+                "error-level": -1,       # custom style attribute
+            })
 
         # add the message in the description
         if msg is not None:
-            desc = inkex.elements.Desc()
-            desc.text = msg
-            arrow.append(desc)
+            desc = rect.desc or ""
+            desc += msg + "\n"
+            rect.desc = desc
+
+        if int(rect.style.get("error-level")) > level:
+            # existing bounding box has higher error-level: keep existing style
+            return
+
+        rect.style["error-level"] = level
+        rect.style["fill"] = "none"
+        rect.style["stroke-opacity"] = self.config["artefacts_opacity"]/100
+        rect.style["stroke-width"] = self.config["artefacts_stroke_width"]
+
+        if level == OK:
+            rect.style["stroke"] = NOTE_COLOR
+            rect.style["stroke-width"] = float(rect.style["stroke-width"]) / 2
+        elif level == NOTE:
+            rect.style["stroke"] = NOTE_COLOR
+        elif level == WARNING:
+            rect.style["stroke"] = WARNING_COLOR
+        elif level == ERROR:
+            rect.style["stroke"] = ERROR_COLOR
+        else:
+            assert False    # FIXME
+
+        for k in style:
+            rect.style[k.replace("_", "-")] = style[k]
+        self.artefact_group.add(rect)
+
+        # convert stroke-width to actual mm
+        rect.style["stroke-width"] = self.mm_to_svg(rect.style["stroke-width"])
+
+    def _new_artefact_arrow(self, level, x, y, id, msg=None, length=10, margin=1, **style):
+        """add an artefact arrow in the error layer
+           elem, global_transform is the element the arrow should be pointing to
+        """
+        arrow = self.svg.getElementById(id)
+        if arrow is None:
+            side = self.mm_to_svg(length)
+            margin = self.mm_to_svg(margin)
+            arrow = inkex.PathElement()
+            arrow.set("id", id)
+            arrow.set("class", ARTEFACT_CLASS)
+            arrow.path = [Move(x-side, y+side),
+                          Line(x-margin, y+margin)]
+            arrow.style = inkex.Style({
+                "error-level": -1,       # custom style attribute
+            })
+
+        # add the message in the description
+        if msg is not None:
+            desc = arrow.desc or ""
+            desc += msg + "\n"
+            arrow.desc = desc
+
+        if int(arrow.style.get("error-level")) > level:
+            # existing  arrow has higher error-level: keep existing style
+            return
+
+        arrow.style["error-level"] = level
+        arrow.style["fill"] = "none"
+        arrow.style["opacity"] = self.config["artefacts_opacity"]/100
+        arrow.style["stroke-width"] = self.config["artefacts_stroke_width"]
+
+        if level == OK:
+            arrow.style["stroke"] = NOTE_COLOR
+            arrow.style["stroke-width"] = float(arrow.style["stroke-width"]) / 2
+            arrow.style["marker-end"] = "url(#NoteArrowheadMarker)"
+        elif level == NOTE:
+            arrow.style["stroke"] = NOTE_COLOR
+            arrow.style["marker-end"] = "url(#NoteArrowheadMarker)"
+        elif level == WARNING:
+            arrow.style["stroke"] = WARNING_COLOR
+            arrow.style["marker-end"] = "url(#WarningArrowheadMarker)"
+        elif level == ERROR:
+            arrow.style["stroke"] = ERROR_COLOR
+            arrow.style["marker-end"] = "url(#ErrorArrowheadMarker)"
+        else:
+            assert False    # FIXME
+
+        for k in style:
+            arrow.style[k.replace("_", "-")] = style[k]
+        self.artefact_group.add(arrow)
 
         # Add the artefact to the error group (inside the error layer)
         self.artefact_group.add(arrow)
 
-        return arrow
+        # convert stroke-width to actual mm
+        arrow.style["stroke-width"] = self.mm_to_svg(arrow.style["stroke-width"])
+
+    def abort(self, *args, header=None, end="\n", sep=" "):
+        if header is None:
+            header = """
+Error encountered while running extension, aborting.
+
+details:
+"""
+        raise inkex.AbortExtension(header + sep.join(str(a) for a in args if a is not None) + end)
 
 
 # vim: textwidth=120 foldmethod=indent foldlevel=0

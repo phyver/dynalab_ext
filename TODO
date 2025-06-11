@@ -1,6 +1,13 @@
 GENERAL
 =======
 
+  - clean up outline_bb, outline_arrow and outline_text methods
+
+  - abort extensions if they take too long???
+
+  - make all diagnostic (except path) only apply to paths?
+    with extra argument --only-paths=false available in expert mode?
+
   - artefact should be given an id that only depends on the id of the
     referenced object, so that we can "merge" artefacts to the same object
     into a single one.
@@ -47,7 +54,7 @@ easy
 not easy
 --------
 
-  - isolated elements
+  - isolated elements ???
   - strict duplicate elements (NOTE: the objects could be groups containing many elements)
 
 to discuss
