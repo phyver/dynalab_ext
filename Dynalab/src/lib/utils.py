@@ -3,7 +3,13 @@ import inkex
 # Here is a list of relevant inkex classes for SVG elements
 #
 #  - inkex.Group
-#  - inkex.Layer        NOTE: instance of inkex.Group
+#  -    -> inkex.Layer          NOTE: instance of inkex.Group
+#  -    -> inkex.ClipPath       FIXME: I'm not using them anywhere!!!
+#                               NOTE: should only appear in <defs>
+#  -    -> inkex.Symbol         FIXME: I'm not using them anywhere!!!
+#                               NOTE: should only appear in <defs>
+#  - inkex.Use          NOTE: inkscape's "clones"
+#  - inkex.Image
 #  - inkex.TextElement  NOTE: they can contain an inkex.TextPath referencing a
 #                       path for text along path objects
 #  - inkex.Ellipse
@@ -13,10 +19,6 @@ import inkex
 #  - inkex.Polyline     NOTE: inkscape uses PathElement instead
 #  - inkex.Polygon      NOTE: inkscape uses PathElement instead
 #  - inkex.PathElement
-#  - inkex.Image
-#  - inkex.Use          NOTE: "clones"
-#  - inkex.Symb         FIXME: I'm not using them anywhere!!!
-#  - inkex.ClipPath     FIXME: I'm not using them anywhere!!!
 #
 
 
@@ -29,6 +31,20 @@ def is_path(elem, strict=False):
         return True
 
     return False
+
+
+def bounding_box(elem, transform):
+    if is_path(elem) or isinstance(elem, inkex.Image):
+        return elem.bounding_box(transform=transform)
+
+    if isinstance(elem, inkex.TextElement):
+        return None
+
+    if isinstance(elem, inkex.Use):
+        return bounding_box(elem.href, transform@elem.transform)
+
+    # if isinstance(elem, inkex.Group):   # also works for layers
+    #     ???
 
 
 def effects(elem):

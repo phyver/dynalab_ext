@@ -7,7 +7,7 @@ import time
 import inkex
 from inkex.paths import Move, Line
 
-from lib import i18n, config
+from lib import i18n, config, utils
 
 
 ARTEFACT_CLASS = "artefact"
@@ -114,6 +114,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         config.Ext.__init__(self)
         self.reset_artefacts = reset_artefacts
         self._start_time = time.perf_counter()
+        self.missing_bb = []
 
     def running_time(self):
         return 1000*(time.perf_counter() - self._start_time)
@@ -336,8 +337,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
     def svg_to_mm(self, d):
         return self.svg.unit_to_viewport(inkex.units.convert_unit(d, "mm"))
 
-    def outline_bounding_box(self, level, elem, transform=None, bb=None, msg=None, margin=1, accept_text=False,
-                             **style):
+    def outline_bounding_box(self, level, elem, transform=None, bb=None, msg=None, margin=1, **style):
         """outline the bounding box of elem,global_transform
         Fails on text elements (whose bounding box cannot be computed easily)
         except when parameter accepts_text is true. In this case, the
@@ -346,29 +346,29 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         if elem is None and bb is None:
             self.abort("ERROR: method `outline_bounding_box` needs either an SVG element or an explicit bounding box")
 
-        if bb is None:
-            if isinstance(elem, inkex.TextElement):
-                # TODO: other objects could have difficult to compute bounding boxes, like clones of texts, or groups
-                # countaining texts, etc.
-                if not accept_text:
-                    self.abort("cannot compute text bounding box (function outline_bounding_box)")
-                # very slow!!!
-                bb = elem.get_inkscape_bbox()   # no need to apply the global transform
-            else:
-                bb = elem.bounding_box(transform=transform)
-        else:
-            # bb is explicitly given, do nothing
-            # TODO: should I apply transform if it is given as well?
-            pass
-
         if elem is None:
             id = self.svg.get_unique_id("artefact_bb")
         else:
             id = f"{ARTEFACT_CLASS}_boundingbox_{elem.get_id()}"
 
+        if bb is None:
+            bb = utils.bounding_box(elem, transform)
+        if bb is None:
+            self.missing_bb.append((level, elem, id, msg, margin, style))
+            return
+
         self.__new_artefact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
         if level > NOTE:
             self.update_overlay(bb)
+
+    def outline_missing_bounding_boxes(self):
+        elems = [elem for (_, elem, _, _, _, _) in self.missing_bb]
+        bbs = self.get_inkscape_bboxes(*elems)
+        for bb, (level, _, id, msg, margin, style) in zip(bbs, self.missing_bb):
+            self.__new_artefact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
+            if level > NOTE:
+                self.update_overlay(bb)
+        self.missing_bb = []
 
     def outline_arrow(self, level, elem, transform=None, p=None, msg=None, margin=1,
                       **style):
