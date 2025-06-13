@@ -274,8 +274,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 "stroke": "none",
                 "stroke-width": "1px",
             })
-            artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
-            artefact_layer.add(rect)
+            if self.config["artefacts_grouped"]:
+                artefact_group = self.svg.getElementById(ARTEFACT_GROUP_ID)
+                artefact_group.add(rect)
+            else:
+                artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
+                artefact_layer.add(rect)
         if bb is not None:
             bb = bb + rect.shape_box()
             rect.set("x", bb.left)
