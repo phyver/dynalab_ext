@@ -32,73 +32,66 @@ class MarkNonPaths(dynalab.Ext):
                      verbosity=3)
         self.init_artefact_layer()
 
-        missing_bbs = []
-
         counter = [0, 0, 0, 0]
         for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=False,
+                                             skip_groups=True,
                                              limit=None):
 
             desc = f"object with id={elem.get_id()} of type {elem.tag_name}"
 
-            if isinstance(elem, inkex.Group):
-                # ignore groups and layers (but recurse into them)
-                continue
+            level = -1
 
-            # mark non vectorized texts
-            if isinstance(elem, inkex.TextElement):
-                desc += " is not vectorized"
-                self.message("\t-", desc, verbosity=2)
-                if self.options.color_texts:
-                    # clone texts to the error layers, in red
-                    self.outline_text(WARNING, elem, tr, msg=desc)
-                else:
-                    # use inkscape to compute bounding boxes in bulk
-                    missing_bbs.append((elem, desc))
-                continue
-
-            # add red bounding box around image
-            if isinstance(elem, inkex.Image):
-                counter[ERROR] += 1
-                desc += " is possibly a non vectorized image"
-                self.message("\t-", desc, verbosity=2)
-                self.outline_bounding_box(ERROR, elem, tr, msg=desc)
-                continue
-
+            # root element, for recursively clone elements
+            elem_ref = utils.get_clone_reference_element(elem)
             if isinstance(elem, inkex.Use):
-                # root element, for recursively clone elements
-                ref = utils.get_clone_reference_element(elem)
-                if ref == elem.href:
+                if elem_ref == elem.href:
                     desc += f" is a cloned version of id={elem.href.get_id()}, of type {elem.href.tag_name}"
                 else:
                     desc += f" is a cloned version of id={elem.href.get_id()}, "
-                    desc += f" with root element id={ref.get_id()} of type {ref.tag_name}"
+                    desc += f" with root element id={elem_ref.get_id()} of type {elem_ref.tag_name}"
+                level = WARNING
+            else:
+                assert elem_ref == elem
+
+            # warning for non vectorized texts
+            if isinstance(elem_ref, inkex.TextElement):
+                level = max(level, WARNING)
+                desc += " is not vectorized"
                 self.message("\t-", desc, verbosity=2)
-                # use inkscape to compute bounding boxes in bulk
-                missing_bbs.append((elem, desc))
+                self.outline_bounding_box(level, elem, tr, msg=desc)
+                continue
+
+            # error around image
+            if isinstance(elem_ref, inkex.Image):
+                level = max(level, ERROR)
+                desc += " is a non vectorized image"
+                self.message("\t-", desc, verbosity=2)
+                self.outline_bounding_box(level, elem, tr, msg=desc)
                 continue
 
             # if we reach this point, the element should be a path / shape
             # we add an error and debug message in case I missed something
-            if not utils.is_path(elem):
+            if not utils.is_path(elem_ref):
+                level = max(level, ERROR)
                 desc += " is an unknown element! (Report this as a bug)"
                 counter[ERROR] += 1
                 self.message("\t-", desc, verbosity=2)
-                self.outline_arrow(ERROR, elem, tr)
+                self.outline_arrow(level, elem, tr)
                 self.message("UNKWNOW ELEMENT:", desc)
 
             # we now check for extra visible features that probably won't
             # translate automatically to path
-            E = utils.effects(elem)
+            E = utils.effects(elem_ref)
 
             if not E:
                 # if elem is not a "strict" path but passed the is_path()
                 # function, it must be a shape (rectangle, circle, etc.)
-                if not utils.is_path(elem, strict=True) and self.options.outline_shapes:
-                    desc += " is a simple SVG shape, you can probably leave it"
-                    counter[OK] += 1
+                if not utils.is_path(elem_ref, strict=True) and self.options.outline_shapes:
+                    desc += " is a simple SVG shape"
+                    level = max(level, OK)
+                    counter[level] += 1
                     self.message("\t-", desc, verbosity=2)
-                    self.outline_bounding_box(OK, elem, tr, msg=desc)
+                    self.outline_bounding_box(level, elem, tr, msg=desc)
                 continue
 
             # add list of effects to the description
@@ -108,34 +101,16 @@ class MarkNonPaths(dynalab.Ext):
             if E == ["path-effect"]:
                 # path effects can be transformed to real path, so we only
                 # give them a WARNING level)
-                counter[WARNING] += 1
-                self.outline_bounding_box(WARNING, elem, tr, msg=desc)
+                level = max(level, WARNING)
+                counter[level] += 1
+                self.outline_bounding_box(level, elem, tr, msg=desc)
                 continue
 
-            counter[ERROR] += 1
-            self.outline_bounding_box(ERROR, elem, tr, msg=desc)
+            level = max(level, ERROR)
+            counter[level] += 1
+            self.outline_bounding_box(level, elem, tr, msg=desc)
 
-        if missing_bbs:
-            elems, descs = zip(*missing_bbs)
-            bbs = self.get_inkscape_bboxes(*elems)
-            for elem, bb, desc in zip(elems, bbs, descs):
-                ref = utils.get_clone_reference_element(elem)
-                if isinstance(ref, inkex.TextElement):
-                    level = WARNING
-                elif isinstance(ref, inkex.Image):
-                    level = ERROR
-                elif not utils.is_path(ref):
-                    # unkwnown element! Should I add this to the description /
-                    # message?
-                    level = ERROR
-                else:
-                    E = utils.effects(ref)
-                    if not E or E == ["path-effect"]:
-                        level = WARNING
-                    else:
-                        level = ERROR
-                counter[level] += 1
-                self.outline_bounding_box(level, elem, tr=None, bb=bb, msg=desc)
+        self.outline_missing_bounding_boxes()
 
         if clean:
             self.clean(force=False)
