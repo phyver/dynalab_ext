@@ -40,9 +40,7 @@ class MarkBlobs(dynalab.Ext):
         self.init_artefact_layer()
 
         BB = []
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=True,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=True):
             if not utils.is_path(elem) or utils.effects(elem):
                 # ignore everything but simple paths
                 # TODO: should I change that?

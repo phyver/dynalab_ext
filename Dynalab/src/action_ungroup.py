@@ -31,9 +31,7 @@ class Ungroups(dynalab.Ext):
         groups = []
         counter_groups = 0
         counter_layers = 0
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=False,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=False):
 
             if isinstance(elem, inkex.Layer):
                 if self.options.remove_layers:

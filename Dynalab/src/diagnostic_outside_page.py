@@ -24,9 +24,7 @@ class MarkOutside(dynalab.Ext):
         missing_bbs = []
 
         counter = 0
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=True,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=True):
 
             desc = f"object with id={elem.get_id()} of type {elem.tag_name}"
 

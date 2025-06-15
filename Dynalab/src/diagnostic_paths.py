@@ -21,7 +21,7 @@ class MarkNonPaths(dynalab.Ext):
 
     def add_arguments(self, pars):
         pars.add_argument("--outline-shapes", type=inkex.Boolean,
-                          default=False, help="outline simple shapes (rect, circles, etc.) that are not path",
+                          default=True, help="outline simple shapes (rect, circles, etc.) that are not path",
                           dest="outline_shapes")
         pars.add_argument("--color-texts", type=inkex.Boolean,
                           default=False, help="use color to highlight text elements",
@@ -33,9 +33,7 @@ class MarkNonPaths(dynalab.Ext):
         self.init_artefact_layer()
 
         counter = [0, 0, 0, 0]
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=True,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=True):
 
             desc = f"object with id={elem.get_id()} of type {elem.tag_name}"
 

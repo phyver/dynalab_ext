@@ -5,7 +5,7 @@ MENU_FILES=$(wildcard Dynalab/menus-*/*.inx)
 
 install: version
 	@test -d "$(EXTENSION_DIR)" || ( echo "le répertoire $(EXTENSION_DIR) n'existe pas" && false )
-	cp -r Dynalab "$(EXTENSION_DIR)"
+	cp -ur Dynalab "$(EXTENSION_DIR)"
 
 version: FORCE
 	printf 'tag = "%s"\n' "$$(git describe --always --dirty)" > Dynalab/src/version.py

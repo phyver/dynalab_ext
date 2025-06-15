@@ -36,21 +36,18 @@ def _skip_meta(elem):
                  inkex.NamedView, inkex.Script, inkex.Style]))
 
 
-def composed_transform(elem):
-    parent = elem.getparent()
-    inkex.utils.debug(f"  parent => {parent}")
-    if isinstance(parent, inkex.BaseElement):
-        return composed_transform(parent) @ elem.transform
-    return elem.transform
-
-
 # NOTE: the _iter_element method doesn't really need to compute the
 # _global_transform on the fly as it is available with
 # elem.getparent().composed_transform()
 # It is however faster to compute it on the fly, at least theoretically.
+# TODO: add arguments
+#  - skip_use / recurse_use
+#  - skip_symbol / recurse_symbol is not necessary because Symbol inherits from Group
+#  - ?? skip_locked
+#  - ??? what to do with clippath
 def _iter_elements(
     elem,                       # current element
-    recurse=True,               # should we recurse inside groups?
+    recurse_groups=True,        # should we recurse inside groups?
     skip_groups=False,          # should we return group elements?
     skip_artefacts=True,        # should we skip artefacts?
     limit=None,                 # current limit for total number of returned elements
@@ -81,13 +78,13 @@ def _iter_elements(
         if limit is not None:
             limit[0] -= 1
 
-    # don't recurse in non-groups, or if recurse is False
-    if not isinstance(elem, inkex.Group) or not recurse:
+    # don't recurse in non-groups, or if recurse_groups is False
+    if not isinstance(elem, inkex.Group) or not recurse_groups:
         return
 
     for e in elem:
         yield from _iter_elements(e,
-                                  recurse=recurse,
+                                  recurse_groups=recurse_groups,
                                   skip_groups=skip_groups,
                                   limit=limit,
                                   skip_artefacts=skip_artefacts,
@@ -124,7 +121,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             return
         self.msg(sep.join(str(a) for a in args if a is not None) + end)
 
-    def selected_or_all(self, recurse=False, skip_groups=False, limit=None):
+    def selected_or_all(self, recurse_groups=True, skip_groups=False, limit=None):
         """iterates over the selected elements (recursively if needs be), or
         all the element if the selection is empty"""
         if limit is not None:
@@ -132,9 +129,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         if not self.svg.selected:
             for elem in self.svg:
                 yield from _iter_elements(elem,
-                                          recurse=recurse,
+                                          recurse_groups=recurse_groups,
                                           skip_groups=skip_groups,
-                                          skip_artefacts=True,
                                           limit=limit)
         else:
             for elem in self.svg.selected:
@@ -144,13 +140,9 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                     # error layer, which is removed before running a new
                     # extension
                     continue
-                if not isinstance(elem, inkex.Group):
-                    tr = parent.composed_transform()
-                else:
-                    tr = elem.composed_transform()
-                yield from _iter_elements(elem, recurse=recurse,
+                tr = parent.composed_transform()
+                yield from _iter_elements(elem, recurse_groups=recurse_groups,
                                           skip_groups=skip_groups,
-                                          skip_artefacts=True,
                                           limit=limit,
                                           _global_transform=tr)
 
@@ -296,7 +288,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         for layer in [artefact_layer, artefact_bg_layer]:
             if layer is None:
                 continue
-            for elem, tr in _iter_elements(layer, recurse=True,
+            for elem, tr in _iter_elements(layer,
                                            skip_groups=False,
                                            skip_artefacts=False,
                                            ):
@@ -347,6 +339,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         except when parameter accepts_text is true. In this case, the
         "get_inkscape_bb" method is used, but it is very slow. (It calls an
         external inkscape process!)"""
+
         if elem is None and bb is None:
             self.abort("ERROR: method `outline_bounding_box` needs either an SVG element or an explicit bounding box")
 

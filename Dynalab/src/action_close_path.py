@@ -28,9 +28,7 @@ class MarkOpen(dynalab.Ext):
         counter_subpaths_not_closed = 0
         d = self.mm_to_svg(self.options.close_distance)
         d2 = d*d
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=False,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=False):
 
             # skip non-path element
             if not isinstance(elem, inkex.PathElement):

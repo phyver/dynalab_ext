@@ -23,9 +23,7 @@ class MarkTiny(dynalab.Ext):
 
         # mark the selected elements
         counter = 0
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=True,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=True):
             if isinstance(elem, inkex.TextElement):
                 # TODO should I do something? computing the size requires
                 # calling the slow inkscape_boundingbox method...

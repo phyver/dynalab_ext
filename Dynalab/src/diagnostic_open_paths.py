@@ -19,9 +19,7 @@ class MarkOpenPaths(dynalab.Ext):
 
         counter_paths = 0
         counter_subpaths = 0
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=False,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=False):
             # skip non-path element
             if not isinstance(elem, inkex.PathElement):
                 continue

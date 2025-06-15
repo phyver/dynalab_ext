@@ -1,6 +1,20 @@
 GENERAL
 =======
 
+  - refactor diagnostics
+      - mark non vectorized visual elements
+      - mark tiny visual elements
+      - mark visual elements outside page
+      - mark open subpaths
+      - mark groups, layers and symbols
+      - mark elements with effects
+
+  - using external inkscape command to get bounding boxes of nested groups
+    only returns the outermost one!
+    => use --query-all when initializing a dynalab extension?
+
+  - deal with symbols
+
   - clean up outline_bb, outline_arrow and outline_text methods
 
   - abort extensions if they take too long???
@@ -49,6 +63,7 @@ EXTENSIONS
 easy
 ----
 
+  - display palette of colors as small squares just outside the page
   - check stroke colors for allowed modes
 
 not easy

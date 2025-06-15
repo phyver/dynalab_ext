@@ -74,9 +74,7 @@ class ChangeStyle(dynalab.Ext):
                 )
 
         counter = 0
-        for elem, tr in self.selected_or_all(recurse=True,
-                                             skip_groups=True,
-                                             limit=None):
+        for elem, tr in self.selected_or_all(skip_groups=True):
             # skip non path elements (except if option only-paths is false)
             if self.options.only_paths:
                 if not utils.is_path(elem):
