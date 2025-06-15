@@ -71,7 +71,7 @@ def _iter_elements(
     if _skip_meta(elem):
         return
 
-    if not isinstance(elem, inkex.Group) or not skip_groups or isinstance(elem, inkex.Layer):
+    if not isinstance(elem, inkex.Group) or not skip_groups:
         yield elem, _global_transform
         # yield elem, elem.getparent().composed_transform()
         # this is functionnaly equivalent, but could be slower if the elements tree is huge
@@ -111,7 +111,33 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         config.Ext.__init__(self)
         self.reset_artefacts = reset_artefacts
         self._start_time = time.perf_counter()
-        self.missing_bb = []
+        self.BB = {}
+
+    def get_all_bounding_boxes(self):
+        with TemporaryDirectory(prefix="inkscape-command") as tmpdir:
+            svg_file = inkex.command.write_svg(self.svg.root, tmpdir, "input.svg")
+            out = inkex.command.inkscape(svg_file, "--query-all").splitlines()
+            for line in out:
+                id, x, y, w, h = line.split(",")
+                x = self.svg.viewport_to_unit(x)
+                y = self.svg.viewport_to_unit(y)
+                w = self.svg.viewport_to_unit(w)
+                h = self.svg.viewport_to_unit(h)
+                self.BB[id] = inkex.BoundingBox.new_xywh(x, y, w, h)
+
+    def bounding_box(self, elem):
+        k = elem.get_id()
+        if self.BB:
+            bb = self.BB.get(k, inkex.BoundingBox())
+            return bb
+
+        bb = utils.bounding_box(elem, elem.getparent().composed_transform())
+        if bb is not None:
+            return bb
+        else:
+            self.get_all_bounding_boxes()
+            bb = self.BB.get(k, inkex.BoundingBox())
+            return bb
 
     def running_time(self):
         return 1000*(time.perf_counter() - self._start_time)
@@ -305,28 +331,6 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 self.message(f"{counter} object(s) were moved out of the artefact layer",
                              verbosity=1)
 
-    def get_inkscape_bboxes(self, *elems):
-        """uses the inkscape command to query the actual bounding boxes of the
-        given elements
-        It generalizes the get_inkscape_bbox method of text elements by
-          - querying more than 1 bounding box, which makes is faster on multiple
-            elements
-          - working with clones ('use' elements) as well
-        """
-
-        ids = ",".join([elem.get_id() for elem in elems])
-
-        with TemporaryDirectory(prefix="inkscape-command") as tmpdir:
-            svg_file = inkex.command.write_svg(self.svg.root, tmpdir, "input.svg")
-            out = inkex.command.inkscape(svg_file, "-X", "-Y", "-W", "-H", query_id=ids).splitlines()
-            if len(out) != 4:
-                raise ValueError("Error: Bounding box computation failed")
-            X = list(map(self.svg.root.viewport_to_unit, out[0].split(",")))
-            Y = list(map(self.svg.root.viewport_to_unit, out[1].split(",")))
-            W = list(map(self.svg.root.viewport_to_unit, out[2].split(",")))
-            H = list(map(self.svg.root.viewport_to_unit, out[3].split(",")))
-            return [inkex.transforms.BoundingBox.new_xywh(*dims) for dims in zip(X, Y, W, H)]
-
     def mm_to_svg(self, d):
         return inkex.units.convert_unit(self.svg.viewport_to_unit(d), "", "mm")
 
@@ -349,23 +353,11 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             id = f"{ARTEFACT_CLASS}_boundingbox_{elem.get_id()}"
 
         if bb is None:
-            bb = utils.bounding_box(elem, transform)
-        if bb is None:
-            self.missing_bb.append((level, elem, id, msg, margin, style))
-            return
+            bb = self.bounding_box(elem)
 
         self.__new_artefact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
         if level > NOTE:
             self.update_overlay(bb)
-
-    def outline_missing_bounding_boxes(self):
-        elems = [elem for (_, elem, _, _, _, _) in self.missing_bb]
-        bbs = self.get_inkscape_bboxes(*elems)
-        for bb, (level, _, id, msg, margin, style) in zip(bbs, self.missing_bb):
-            self.__new_artefact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
-            if level > NOTE:
-                self.update_overlay(bb)
-        self.missing_bb = []
 
     def outline_arrow(self, level, elem, transform=None, p=None, msg=None, margin=1,
                       **style):
@@ -380,7 +372,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                     if isinstance(e, inkex.TextPath):
                         href = e.get("xlink:href")
                         path = self.svg.getElementById(href[1:])
-                        bb = path.bounding_box(transform=transform)
+                        bb = self.bounding_box(path)
                         p = elem.transform.apply_to_point(inkex.Vector2d(bb.left, bb.bottom))
                         break
                 else:
@@ -391,7 +383,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                         p = (elem.x, elem.y)
             else:
                 # for other elements, use the bottom left corner of the bounding box
-                bb = elem.bounding_box(transform=transform)
+                bb = self.bounding_box(elem)
                 p = (bb.left, bb.bottom)
         else:
             # p is explicitly given, do nothing
@@ -410,35 +402,57 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         if level > NOTE:
             self.update_overlay(inkex.BoundingBox())
 
-    def outline_text(self, level, elem, global_transform, msg=None, **style):
-        # FIXME: clean
-        stroke_width = self.config["artefacts_stroke_width"]/3
+    def outline_element(self, level, elem, transform=None, msg=None, **style):
+        if elem is None:
+            self.abort("ERROR: method `outline_element` needs an SVG element")
+        id = f"{ARTEFACT_CLASS}_element_{elem.get_id()}"
+        clone = self.svg.getElementById(id)
+        if clone is None:
+            clone = copy.deepcopy(elem)
+            clone.set("id", id)
+            clone.set("class", ARTEFACT_CLASS)
+            clone.transform = transform @ elem.transform
+            clone.style = inkex.Style({
+                "error-level": -1,       # custom style attribute
+            })
+            # _set_text_style(clone, **style)
 
-        if level == OK:
-            stroke = NOTE_COLOR
-            stroke_width = stroke_width/2
-        elif level == NOTE:
-            stroke = NOTE_COLOR
-        elif level == WARNING:
-            stroke = WARNING_COLOR
-        elif level == ERROR:
-            stroke = ERROR_COLOR
-        else:
-            assert False    # FIXME
-        if "stroke" not in style:
-            style["stroke"] = stroke
-
-        clone = copy.deepcopy(elem)
-        clone.set("class", ARTEFACT_CLASS)
-        clone.transform = clone.transform @ global_transform
-        style["stroke-width"] = self.mm_to_svg(stroke_width)
-        _set_text_style(clone, **style)
         # add the message in the description
         if msg is not None:
-            desc = inkex.elements.Desc()
-            desc.text = msg
-            clone.append(desc)
+            desc = clone.desc or ""
+            desc += msg + "\n"
+            clone.desc = desc
+
+        if int(clone.style.get("error-level")) > level:
+            # existing clone has higher error-level: keep existing style
+            return
+
+        clone.style["error-level"] = level
+        clone.style["fill"] = "none"
+        clone.style["opacity"] = self.config["artefacts_opacity"]/100
+        clone.style["stroke-width"] = self.config["artefacts_stroke_width"]
+
+        if level == OK:
+            clone.style["stroke"] = NOTE_COLOR
+            clone.style["stroke-width"] = float(clone.style["stroke-width"]) / 2
+        elif level == NOTE:
+            clone.style["stroke"] = NOTE_COLOR
+        elif level == WARNING:
+            clone.style["stroke"] = WARNING_COLOR
+        elif level == ERROR:
+            clone.style["stroke"] = ERROR_COLOR
+        else:
+            assert False    # FIXME
+
+        for k in style:
+            clone.style[k.replace("_", "-")] = style[k]
         self.artefact_group.add(clone)
+
+        # Add the artefact to the error group (inside the error layer)
+        self.artefact_group.add(clone)
+
+        # convert stroke-width to actual mm
+        clone.style["stroke-width"] = self.mm_to_svg(clone.style["stroke-width"])
 
     def _new_marker(self, id, color):
         """define an arrowhead marker for the arrow artefacts"""
@@ -532,7 +546,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             arrow.desc = desc
 
         if int(arrow.style.get("error-level")) > level:
-            # existing  arrow has higher error-level: keep existing style
+            # existing arrow has higher error-level: keep existing style
             return
 
         arrow.style["error-level"] = level

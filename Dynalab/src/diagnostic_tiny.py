@@ -29,7 +29,7 @@ class MarkTiny(dynalab.Ext):
                 # calling the slow inkscape_boundingbox method...
                 # what about clones?
                 continue
-            bb = elem.bounding_box()
+            bb = self.bounding_box(elem)
             if self.svg_to_mm(bb.width) < tiny and self.svg_to_mm(bb.height) < tiny:
                 desc = f"object with id={elem.get_id()} of type {elem.tag_name} is 'tiny'"
                 counter += 1

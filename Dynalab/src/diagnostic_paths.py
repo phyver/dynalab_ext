@@ -75,7 +75,7 @@ class MarkNonPaths(dynalab.Ext):
                 counter[ERROR] += 1
                 self.message("\t-", desc, verbosity=2)
                 self.outline_arrow(level, elem, tr)
-                self.message("UNKWNOW ELEMENT:", desc)
+                self.message("UNKNOWN ELEMENT:", desc)
 
             # we now check for extra visible features that probably won't
             # translate automatically to path
@@ -107,8 +107,6 @@ class MarkNonPaths(dynalab.Ext):
             level = max(level, ERROR)
             counter[level] += 1
             self.outline_bounding_box(level, elem, tr, msg=desc)
-
-        self.outline_missing_bounding_boxes()
 
         if clean:
             self.clean(force=False)

@@ -9,10 +9,6 @@ GENERAL
       - mark groups, layers and symbols
       - mark elements with effects
 
-  - using external inkscape command to get bounding boxes of nested groups
-    only returns the outermost one!
-    => use --query-all when initializing a dynalab extension?
-
   - deal with symbols
 
   - clean up outline_bb, outline_arrow and outline_text methods

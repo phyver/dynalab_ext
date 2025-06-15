@@ -47,6 +47,7 @@ class Battery(dynalab.Ext):
         reset_artefacts = True
         inst = None
         counter = 0
+        bbs = {}
         for name, ext in EXTENSIONS.items():
             if getattr(self.options, name):
                 inst = ext(reset_artefacts=reset_artefacts)
@@ -54,7 +55,9 @@ class Battery(dynalab.Ext):
                 inst.options = self.options
                 inst.document = self.document
                 inst.svg = self.svg
+                inst.bb = bbs
                 inst.effect(clean=False)
+                bbs = inst.bb
                 counter += 1
         if inst:
             inst.clean(force=False)

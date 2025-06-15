@@ -21,34 +21,18 @@ class MarkOutside(dynalab.Ext):
 
         viewbox = inkex.BoundingBox((0, w), (0, h))
 
-        missing_bbs = []
-
         counter = 0
         for elem, tr in self.selected_or_all(skip_groups=True):
 
             desc = f"object with id={elem.get_id()} of type {elem.tag_name}"
 
-            if isinstance(elem, (inkex.TextElement, inkex.Use)):
-                missing_bbs.append((elem, desc))
-                continue
-
-            bb = elem.bounding_box(transform=tr)
+            bb = self.bounding_box(elem)
             if not (bb & viewbox):
                 counter += 1
                 desc += " lies outside the page"
                 self.message("\t-", desc, verbosity=2)
                 self.outline_bounding_box(WARNING, elem, tr=None, bb=bb, msg=desc)
                 continue
-
-        if missing_bbs:
-            elems, descs = zip(*missing_bbs)
-            bbs = self.get_inkscape_bboxes(*elems)
-            for elem, bb, desc in zip(elems, bbs, descs):
-                if not (bb & viewbox):
-                    counter += 1
-                    desc += " lies outside the page"
-                    self.message("\t-", desc, verbosity=2)
-                    self.outline_bounding_box(WARNING, elem, tr=None, bb=bb, msg=desc)
 
         if clean:
             self.clean(force=False)

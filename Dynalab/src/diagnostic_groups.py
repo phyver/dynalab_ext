@@ -53,8 +53,6 @@ class MarkGroups(dynalab.Ext):
                                               stroke_width=w/2,
                                               msg=desc)
 
-        self.outline_missing_bounding_boxes()
-
         if clean:
             self.clean(force=False)
 

@@ -44,8 +44,8 @@ def bounding_box(elem, transform):
         return bounding_box(elem.href, transform@elem.transform)
 
     if isinstance(elem, inkex.Group):   # also works for layers
-        return elem.bounding_box(transform=transform)
-        # return None
+        # return elem.bounding_box(transform=transform)
+        return None
 
 
 def effects(elem):
