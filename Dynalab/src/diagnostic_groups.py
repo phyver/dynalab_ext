@@ -27,10 +27,9 @@ class MarkGroups(dynalab.Ext):
                      verbosity=3)
         self.init_artifact_layer()
 
-        # TODO: config option to use get_inkscape_bboxes for bounding boxes?
         counter_groups = 0
         counter_layers = 0
-        for elem, tr in self.selected_or_all(skip_groups=False):
+        for elem in self.selected_or_all(skip_groups=False):
 
             if isinstance(elem, inkex.Layer):
                 if self.options.mark_layers:
@@ -38,7 +37,7 @@ class MarkGroups(dynalab.Ext):
                     counter_layers += 1
                     self.message("\t-", desc, verbosity=2)
                     w = self.config["artifacts_stroke_width"]
-                    self.outline_bounding_box(WARNING, elem, tr,
+                    self.outline_bounding_box(WARNING, elem,
                                               stroke_width=w/2,
                                               stroke_dasharray=f"{w},{w}",
                                               msg=desc)
@@ -49,12 +48,12 @@ class MarkGroups(dynalab.Ext):
                     counter_groups += 1
                     self.message("\t-", desc, verbosity=2)
                     w = self.config["artifacts_stroke_width"]
-                    self.outline_bounding_box(WARNING, elem, tr,
+                    self.outline_bounding_box(WARNING, elem,
                                               stroke_width=w/2,
                                               msg=desc)
 
         if clean:
-            self.clean(force=False)
+            self.clean_artifacts(force=False)
 
         if self.options.mark_groups:
             self.message(f"{counter_groups} group(s) found",

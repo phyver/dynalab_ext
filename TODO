@@ -1,36 +1,14 @@
 GENERAL
 =======
 
-  - refactor diagnostics
-      - mark non vectorized visual elements
-      - mark tiny visual elements
-      - mark visual elements outside page
-      - mark open subpaths
-      - mark groups, layers and symbols
-      - mark elements with effects
-
-  - deal with symbols
-
-  - clean up outline_bb, outline_arrow and outline_text methods
+  - move the artefact background to the bottom
 
   - abort extensions if they take too long???
-
-  - make all diagnostic (except path) only apply to paths?
-    with extra argument --only-paths=false available in expert mode?
-
-  - artefact should be given an id that only depends on the id of the
-    referenced object, so that we can "merge" artefacts to the same object
-    into a single one.
-      => OK for bounding boxes
-      => do the same for arrows / text outlines
 
   - translate to French
 
   - write documentation in .md files so that we can point to the git repo
     somewhere
-
-  - config option to avoid calls to external inkscape command
-    (get_inkscape_bboxes)
 
   - config options for OK / WARNING / ERROR colors
 

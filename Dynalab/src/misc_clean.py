@@ -13,7 +13,7 @@ class Clean(dynalab.Ext):
 
     def effect(self):
         self.extract_non_artifacts()
-        self.clean(force=True)
+        self.clean_artifacts(force=True)
 
 
 if __name__ == '__main__':

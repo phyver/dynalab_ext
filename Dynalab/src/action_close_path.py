@@ -28,7 +28,7 @@ class MarkOpen(dynalab.Ext):
         counter_subpaths_not_closed = 0
         d = self.mm_to_svg(self.options.close_distance)
         d2 = d*d
-        for elem, tr in self.selected_or_all(skip_groups=False):
+        for elem in self.selected_or_all(skip_groups=False):
 
             # skip non-path element
             if not isinstance(elem, inkex.PathElement):
@@ -40,9 +40,8 @@ class MarkOpen(dynalab.Ext):
 
             # skip paths with path effects
             if elem.get("inkscape:path-effect") is not None:
-                # FIXME: should I display a warning message
                 self.message("\t-", "path with id={elem.get_id()} uses path effects, SKIP",
-                             verbosity=2)
+                             verbosity=1)
                 continue    # don't try closing them
 
             path = elem.path.to_absolute()

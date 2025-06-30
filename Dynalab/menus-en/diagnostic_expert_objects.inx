@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>dynalab.objects_expert</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <effects-menu>
+            <submenu name=" Dynalab">
+                <submenu name="9 - expert">
+                    <submenu name="1 - diagnostics"/>
+                </submenu>
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>1 - mark non path objects</name>
+
+    <param name="text" type="bool" gui-text="a - mark text objects">true</param>
+    <param name="images" type="bool" gui-text="b - mark images">true</param>
+    <param name="shapes" type="bool" gui-text="c - mark non-path shapes">true</param>
+    <param name="effects" type="bool" gui-text="d - mark objects with effects">true</param>
+    <param name="clones" type="bool" gui-text="e - mark clones">true</param>
+
+    <script>
+        <command location="inx" interpreter="python">../src/diagnostics_objects.py</command>
+    </script>
+</inkscape-extension>

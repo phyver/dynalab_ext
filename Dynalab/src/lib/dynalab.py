@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from tempfile import TemporaryDirectory
-import copy
 import time
 
 import inkex
@@ -27,7 +26,6 @@ WARNING_COLOR = "#ffa500"   # orange
 ERROR_COLOR = "#ff0000"     # red
 
 
-# TODO: I should look for a list of valid tags, to check what I am missing!
 # It might be better to use a white list of tags rather than a black list.
 def _skip_meta(elem):
     """return true if the elem should be skipped as part of metadata"""
@@ -36,33 +34,12 @@ def _skip_meta(elem):
                  inkex.NamedView, inkex.Script, inkex.Style]))
 
 
-# NOTE: the _iter_element method doesn't really need to compute the
-# _global_transform on the fly as it is available with
-# elem.getparent().composed_transform()
-# It is however faster to compute it on the fly, at least theoretically.
-# TODO: add arguments
-#  - skip_use / recurse_use
-#  - skip_symbol / recurse_symbol is not necessary because Symbol inherits from Group
-#  - ?? skip_locked
-#  - ??? what to do with clippath
 def _iter_elements(
     elem,                       # current element
-    recurse_groups=True,        # should we recurse inside groups?
-    skip_groups=False,          # should we return group elements?
+    skip_groups=False,          # should we return group elements
     skip_artifacts=True,        # should we skip artifacts?
-    limit=None,                 # current limit for total number of returned elements
-                                # if None, there is no limit; otherwise, limit should be a list with a single element
-                                # that decreases each time we "yield" an element
-    _global_transform=None,     # current transformation wrt root, accumulate transformation while going inside groups
 ):
-    """recursively iterates over elements
-    returns pairs consisting of an element together with its global
-    transformation from the root of the document
-    """
-    _global_transform = _global_transform or inkex.transforms.Transform()
-    if limit is not None and limit[0] <= 0:
-        return
-
+    """recursively iterates over elements"""
     # skip artifacts
     if skip_artifacts and elem.get("class") == ARTIFACT_CLASS:
         return
@@ -71,36 +48,17 @@ def _iter_elements(
     if _skip_meta(elem):
         return
 
+    # return visual elements (those that are not a group)
+    # or the group itself if "skip_group" is false
     if not isinstance(elem, inkex.Group) or not skip_groups:
-        yield elem, _global_transform
-        # yield elem, elem.getparent().composed_transform()
-        # this is functionnaly equivalent, but could be slower if the elements tree is huge
-        if limit is not None:
-            limit[0] -= 1
+        yield elem
 
-    # don't recurse in non-groups, or if recurse_groups is False
-    if not isinstance(elem, inkex.Group) or not recurse_groups:
-        return
-
-    for e in elem:
-        yield from _iter_elements(e,
-                                  recurse_groups=recurse_groups,
-                                  skip_groups=skip_groups,
-                                  limit=limit,
-                                  skip_artifacts=skip_artifacts,
-                                  _global_transform=_global_transform @ elem.transform)
-
-
-def _set_text_style(elem, **style):
-    elem.style = inkex.Style(elem.attrib.get("style", ""))
-    for k in style:
-        elem.style[k.replace("_", "-")] = style[k]
-        # since values could be inkex objects (like Color), I need to transform the value to a string
-        elem.attrib[k.replace("_", "-")] = str(style[k])
-
-    # Recurse into child nodes (tspan, textPath, etc.)
-    for e in elem:
-        _set_text_style(e, **style)
+    if isinstance(elem, inkex.Group):
+        # recurse into groups
+        for e in elem:
+            yield from _iter_elements(e,
+                                      skip_groups=skip_groups,
+                                      skip_artifacts=skip_artifacts)
 
 
 class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
@@ -113,7 +71,61 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self._start_time = time.perf_counter()
         self.BB = {}
 
-    def get_all_bounding_boxes(self):
+    ################
+    # misc methods #
+    def mm_to_svg(self, d):
+        """convert a distance in real-life mm to SVG document units"""
+        return inkex.units.convert_unit(self.svg.viewport_to_unit(d), "", "mm")
+
+    def svg_to_mm(self, d):
+        """convert a distance in SVG document units to real-life mm"""
+        return self.svg.unit_to_viewport(inkex.units.convert_unit(d, "mm"))
+
+    def message(self, *args, verbosity=0, end="", sep=" "):
+        """display an inkscape message during extension run
+        The message will only be displayed if the current verbosity
+        setting is greater or equal to `verbosity`."""
+        if verbosity > self.config.get("verbosity", 1):
+            return
+        self.msg(sep.join(str(a) for a in args if a is not None) + end)
+
+    def abort(self, *args, header=None, end="\n", sep=" "):
+        """abort the extension by raising the appropriate exception"""
+        if header is None:
+            header = "Error encountered while running extension, aborting.\n\ndetails:\n"
+        raise inkex.AbortExtension(header + sep.join(str(a) for a in args if a is not None) + end)
+
+    def running_time(self):
+        """return the running time (in milliseconds) of the extension since its initialisation"""
+        return 1000*(time.perf_counter() - self._start_time)
+
+    def selected_or_all(self, skip_groups=False):
+        """iterates over the selected elements (recursively if needs be), or
+        all the element if the selection is empty"""
+        if not self.svg.selected:
+            for elem in self.svg:
+                yield from _iter_elements(elem,
+                                          skip_groups=skip_groups)
+        else:
+            for elem in self.svg.selected:
+                parent = elem.getparent()
+                if parent is None:
+                    # this can happen if the user selected an object in the
+                    # error layer, which is removed before running a new
+                    # extension
+                    continue
+                yield from _iter_elements(elem, skip_groups=skip_groups)
+
+    ############################
+    # computing bounding boxes #
+    def get_all_inkscape_bboxes(self):
+        """computes a dictionary indexed by ids containing all bounding boxes
+        It is similar to inkex' get_inkscape_bbox method for text elements but
+        uses the "--query-all" flag to get all bounding boxes with a single
+        inkscape invocation. We thus don't have to call the external inkscape
+        more than once.
+        """
+        BB = {}
         with TemporaryDirectory(prefix="inkscape-command") as tmpdir:
             svg_file = inkex.command.write_svg(self.svg.root, tmpdir, "input.svg")
             out = inkex.command.inkscape(svg_file, "--query-all").splitlines()
@@ -123,55 +135,45 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 y = self.svg.viewport_to_unit(y)
                 w = self.svg.viewport_to_unit(w)
                 h = self.svg.viewport_to_unit(h)
-                self.BB[id] = inkex.BoundingBox.new_xywh(x, y, w, h)
+                BB[id] = inkex.BoundingBox.new_xywh(x, y, w, h)
+        return BB
 
     def bounding_box(self, elem):
+        """get the bounding box of an SVG object
+        If the bounding box is not easy to compute (typically, for a text element),
+        the get_all_inkscape_bboxes is used to ask the external inkscape command for
+        all bounding boxes. They are then kept in a dictionnary so that later calls
+        to the method are faster.
+        """
+
+        # bounding boxes are kept in self.BB, indexed by the element's id
+        # check
         k = elem.get_id()
         if self.BB:
             bb = self.BB.get(k, inkex.BoundingBox())
-            return bb
+            if bb is not None:
+                return bb
+            else:
+                self.abort(f"ERROR: cannot retrieve the bounding box for element with id '{k}'")
 
+        # if self.BB isn't defined, try computing the bounding box normally
         bb = utils.bounding_box(elem, elem.getparent().composed_transform())
         if bb is not None:
             return bb
         else:
-            self.get_all_bounding_boxes()
+            # we only call get_all_inkscape_bboxes when this computation failed
+            start = time.perf_counter()
+            self.message(">>> calling external inkscape command to retrieve bounding boxes",
+                         verbosity=4)
+            self.BB = self.get_all_inkscape_bboxes()
+            t = 1000*(time.perf_counter() - start)
+            self.message(f">>> running time for external inkscape command: {t:.0f}ms",
+                         verbosity=4)
             bb = self.BB.get(k, inkex.BoundingBox())
             return bb
 
-    def running_time(self):
-        return 1000*(time.perf_counter() - self._start_time)
-
-    def message(self, *args, verbosity=0, end="", sep=" "):
-        if verbosity > self.config.get("verbosity", 1):
-            return
-        self.msg(sep.join(str(a) for a in args if a is not None) + end)
-
-    def selected_or_all(self, recurse_groups=True, skip_groups=False, limit=None):
-        """iterates over the selected elements (recursively if needs be), or
-        all the element if the selection is empty"""
-        if limit is not None:
-            limit = [limit]
-        if not self.svg.selected:
-            for elem in self.svg:
-                yield from _iter_elements(elem,
-                                          recurse_groups=recurse_groups,
-                                          skip_groups=skip_groups,
-                                          limit=limit)
-        else:
-            for elem in self.svg.selected:
-                parent = elem.getparent()
-                if parent is None:
-                    # this can happen if the user selected an object in the
-                    # error layer, which is removed before running a new
-                    # extension
-                    continue
-                tr = parent.composed_transform()
-                yield from _iter_elements(elem, recurse_groups=recurse_groups,
-                                          skip_groups=skip_groups,
-                                          limit=limit,
-                                          _global_transform=tr)
-
+    #############################
+    # dealing with artifacts... #
     def init_artifact_layer(self):
         """create a special layer to put all errors / warning artifacts
         Artifacts are put inside a group in this layer for easy removal.
@@ -243,7 +245,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             artifact_pattern.add(rect)
             self.svg.defs.add(artifact_pattern)
 
-    def clean(self, force=False):
+    def clean_artifacts(self, force=False):
         """remove the artifact layer / group if it is empty
         If force is true, remove it even if it is not empty"""
         svg = self.svg
@@ -277,6 +279,33 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             if pattern is not None:
                 pattern.getparent().remove(pattern)
 
+    def extract_non_artifacts(self):
+        """look through the artifact layer and move all non-artifact outside"""
+        artifact_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
+        artifact_bg_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
+
+        counter = 0
+        for layer in [artifact_layer, artifact_bg_layer]:
+            if layer is None:
+                continue
+            for elem in _iter_elements(layer,
+                                       skip_groups=False,
+                                       skip_artifacts=False,
+                                       ):
+                cl = elem.get("class")
+                if cl and ARTIFACT_CLASS in cl:
+                    continue
+                counter += 1
+                self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artifact layer",
+                             verbosity=2)
+                tr = elem.getparent().composed_transform()
+                elem.getparent().remove(elem)
+                elem.transform = tr @ elem.transform
+                self.svg.add(elem)
+            if counter > 0:
+                self.message(f"{counter} object(s) were moved out of the artifact layer",
+                             verbosity=1)
+
     def update_overlay(self, bb):
         rect = self.svg.getElementById(ARTIFACT_OVERLAY_ID)
         if rect is None:
@@ -305,40 +334,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             rect.set("width", bb.width)
             rect.set("height", bb.height)
 
-    def extract_non_artifacts(self):
-        """look through the artifact layer and move all non-artifact outside"""
-        artifact_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
-        artifact_bg_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
-
-        counter = 0
-        for layer in [artifact_layer, artifact_bg_layer]:
-            if layer is None:
-                continue
-            for elem, tr in _iter_elements(layer,
-                                           skip_groups=False,
-                                           skip_artifacts=False,
-                                           ):
-                cl = elem.get("class")
-                if cl and ARTIFACT_CLASS in cl:
-                    continue
-                counter += 1
-                self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artifact layer",
-                             verbosity=2)
-                elem.getparent().remove(elem)
-                elem.transform = tr
-                self.svg.add(elem)
-            if counter > 0:
-                self.message(f"{counter} object(s) were moved out of the artifact layer",
-                             verbosity=1)
-
-    def mm_to_svg(self, d):
-        return inkex.units.convert_unit(self.svg.viewport_to_unit(d), "", "mm")
-
-    def svg_to_mm(self, d):
-        return self.svg.unit_to_viewport(inkex.units.convert_unit(d, "mm"))
-
-    def outline_bounding_box(self, level, elem, transform=None, bb=None, msg=None, margin=1, **style):
-        """outline the bounding box of elem,global_transform
+    def outline_bounding_box(self, level, elem, bb=None, msg=None, margin=1, **style):
+        """outline the bounding box of elem
         Fails on text elements (whose bounding box cannot be computed easily)
         except when parameter accepts_text is true. In this case, the
         "get_inkscape_bb" method is used, but it is very slow. (It calls an
@@ -358,122 +355,6 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self.__new_artifact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
         if level > NOTE:
             self.update_overlay(bb)
-
-    def outline_arrow(self, level, elem, transform=None, p=None, msg=None, margin=1,
-                      **style):
-        if elem is None and p is None:
-            self.abort("ERROR: method `outline_arrow` needs either an SVG element or an explicit point")
-
-        if p is None:
-            # FIXME: clean this code!
-            if isinstance(elem, inkex.TextElement):
-                # check if it contains a textpath, and compute the corresponding x,y values
-                for e in elem:
-                    if isinstance(e, inkex.TextPath):
-                        href = e.get("xlink:href")
-                        path = self.svg.getElementById(href[1:])
-                        bb = self.bounding_box(path)
-                        p = elem.transform.apply_to_point(inkex.Vector2d(bb.left, bb.bottom))
-                        break
-                else:
-                    # otherwise, just use the text's x,y values
-                    if transform is not None:
-                        p = transform.apply_to_point(inkex.Vector2d(elem.x, elem.y))
-                    else:
-                        p = (elem.x, elem.y)
-            else:
-                # for other elements, use the bottom left corner of the bounding box
-                bb = self.bounding_box(elem)
-                p = (bb.left, bb.bottom)
-        else:
-            # p is explicitly given, do nothing
-            # TODO: should I apply transform if it is given as well?
-            pass
-
-        x, y = p
-
-        if elem is None:
-            id = self.svg.get_unique_id("artifact_arrow")
-        else:
-            id = f"{ARTIFACT_CLASS}_arrow_{elem.get_id()}"
-
-        self._new_artifact_arrow(level, x, y, id, length=10, msg=msg, margin=margin, **style)
-
-        if level > NOTE:
-            self.update_overlay(inkex.BoundingBox())
-
-    def outline_element(self, level, elem, transform=None, msg=None, **style):
-        if elem is None:
-            self.abort("ERROR: method `outline_element` needs an SVG element")
-        id = f"{ARTIFACT_CLASS}_element_{elem.get_id()}"
-        clone = self.svg.getElementById(id)
-        if clone is None:
-            clone = copy.deepcopy(elem)
-            clone.set("id", id)
-            clone.set("class", ARTIFACT_CLASS)
-            clone.transform = transform @ elem.transform
-            clone.style = inkex.Style({
-                "error-level": -1,       # custom style attribute
-            })
-            # _set_text_style(clone, **style)
-
-        # add the message in the description
-        if msg is not None:
-            desc = clone.desc or ""
-            desc += msg + "\n"
-            clone.desc = desc
-
-        if int(clone.style.get("error-level")) > level:
-            # existing clone has higher error-level: keep existing style
-            return
-
-        clone.style["error-level"] = level
-        clone.style["fill"] = "none"
-        clone.style["opacity"] = self.config["artifacts_opacity"]/100
-        clone.style["stroke-width"] = self.config["artifacts_stroke_width"]
-
-        if level == OK:
-            clone.style["stroke"] = NOTE_COLOR
-            clone.style["stroke-width"] = float(clone.style["stroke-width"]) / 2
-        elif level == NOTE:
-            clone.style["stroke"] = NOTE_COLOR
-        elif level == WARNING:
-            clone.style["stroke"] = WARNING_COLOR
-        elif level == ERROR:
-            clone.style["stroke"] = ERROR_COLOR
-        else:
-            assert False    # FIXME
-
-        for k in style:
-            clone.style[k.replace("_", "-")] = style[k]
-        self.artifact_group.add(clone)
-
-        # Add the artifact to the error group (inside the error layer)
-        self.artifact_group.add(clone)
-
-        # convert stroke-width to actual mm
-        clone.style["stroke-width"] = self.mm_to_svg(clone.style["stroke-width"])
-
-    def _new_marker(self, id, color):
-        """define an arrowhead marker for the arrow artifacts"""
-        marker = inkex.Marker(id=id,
-                              orient="auto",    # orient='auto-start-reverse',
-                              markerWidth="3",
-                              markerHeight="3",
-                              )
-        marker.set("class", ARTIFACT_CLASS)
-
-        arrow = inkex.PathElement()
-        arrow.set("class", ARTIFACT_CLASS)
-        arrow.path = [Move(-3, 3), Line(0, 0), Line(-3, -3)]
-        arrow.style = inkex.Style({
-            "stroke": color,
-            "stroke-width": 1,
-            "fill": "none",
-            # "stroke-opacity": self.config["artifacts_opacity"]/100,
-        })
-        marker.append(arrow)
-        self.svg.defs.append(marker)
 
     def __new_artifact_bb(self, level, bb, id, msg=None, margin=1, **style):
         rect = self.svg.getElementById(id)
@@ -513,7 +394,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         elif level == ERROR:
             rect.style["stroke"] = ERROR_COLOR
         else:
-            assert False    # FIXME
+            assert False
 
         for k in style:
             rect.style[k.replace("_", "-")] = style[k]
@@ -522,9 +403,30 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         # convert stroke-width to actual mm
         rect.style["stroke-width"] = self.mm_to_svg(rect.style["stroke-width"])
 
-    def _new_artifact_arrow(self, level, x, y, id, msg=None, length=10, margin=1, **style):
+    def outline_arrow(self, level, elem, p=None, msg=None, margin=1,
+                      **style):
+        if elem is None and p is None:
+            self.abort("ERROR: method `outline_arrow` needs either an SVG element or an explicit point")
+
+        if p is None:
+            bb = self.bounding_box(elem)
+            p = (bb.left, bb.bottom)
+
+        x, y = p
+
+        if elem is None:
+            id = self.svg.get_unique_id("artifact_arrow")
+        else:
+            id = f"{ARTIFACT_CLASS}_arrow_{elem.get_id()}"
+
+        self.__new_artifact_arrow(level, x, y, id, length=10, msg=msg, margin=margin, **style)
+
+        if level > NOTE:
+            self.update_overlay(inkex.BoundingBox())
+
+    def __new_artifact_arrow(self, level, x, y, id, msg=None, length=10, margin=1, **style):
         """add an artifact arrow in the error layer
-           elem, global_transform is the element the arrow should be pointing to
+           elem is the element the arrow should be pointing to
         """
         arrow = self.svg.getElementById(id)
         if arrow is None:
@@ -568,7 +470,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             arrow.style["stroke"] = ERROR_COLOR
             arrow.style["marker-end"] = "url(#ErrorArrowheadMarker)"
         else:
-            assert False    # FIXME
+            assert False
 
         for k in style:
             arrow.style[k.replace("_", "-")] = style[k]
@@ -580,14 +482,27 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         # convert stroke-width to actual mm
         arrow.style["stroke-width"] = self.mm_to_svg(arrow.style["stroke-width"])
 
-    def abort(self, *args, header=None, end="\n", sep=" "):
-        if header is None:
-            header = """
-Error encountered while running extension, aborting.
+    ###############################
+    # misc initialisation methods #
+    def _new_marker(self, id, color):
+        """define an arrowhead marker for the arrow artifacts"""
+        marker = inkex.Marker(id=id,
+                              orient="auto",    # orient='auto-start-reverse',
+                              markerWidth="3",
+                              markerHeight="3",
+                              )
+        marker.set("class", ARTIFACT_CLASS)
 
-details:
-"""
-        raise inkex.AbortExtension(header + sep.join(str(a) for a in args if a is not None) + end)
-
+        arrow = inkex.PathElement()
+        arrow.set("class", ARTIFACT_CLASS)
+        arrow.path = [Move(-3, 3), Line(0, 0), Line(-3, -3)]
+        arrow.style = inkex.Style({
+            "stroke": color,
+            "stroke-width": 1,
+            "fill": "none",
+            # "stroke-opacity": self.config["artifacts_opacity"]/100,
+        })
+        marker.append(arrow)
+        self.svg.defs.append(marker)
 
 # vim: textwidth=120 foldmethod=indent foldlevel=0

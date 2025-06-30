@@ -27,13 +27,10 @@ class Export(dynalab.Ext):
         pars.add_argument("--savedir", type=str, default="", help="save directory")
 
     def effect(self):
-        # TODO: svg save, clean option
 
-
-        if not self.options.dxf and not self.options.pdf:
+        if not any([self.options.dxf, self.options.pdf, self.options.svg]):
             self.abort("", "nothing to do: you must select at least one export format")
 
-        # TODO: add a default savedir config option
         if not self.options.savedir:
             self.abort("", "empty savedir")
 
@@ -48,7 +45,6 @@ class Export(dynalab.Ext):
         # remove extension
         self.options.filename = re.sub(r"\.*?$", "", self.options.filename)
 
-        # TODO: add a default savefile config option
         if not self.options.filename:
             self.abort("", "empty filename")
 
@@ -66,7 +62,7 @@ class Export(dynalab.Ext):
                      verbosity=1)
 
         if self.options.clean:
-            self.clean(force=True)
+            self.clean_artifacts(force=True)
 
         counter = 0
         if self.options.pdf:

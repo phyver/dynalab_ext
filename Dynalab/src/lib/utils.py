@@ -4,10 +4,8 @@ import inkex
 #
 #  - inkex.Group
 #  -    -> inkex.Layer          NOTE: instance of inkex.Group
-#  -    -> inkex.ClipPath       FIXME: I'm not using them anywhere!!!
-#                               NOTE: should only appear in <defs>
-#  -    -> inkex.Symbol         FIXME: I'm not using them anywhere!!!
-#                               NOTE: should only appear in <defs>
+#  -    -> inkex.ClipPath       NOTE: should only appear in <defs>
+#  -    -> inkex.Symbol         NOTE: should only appear in <defs>
 #  - inkex.Use          NOTE: inkscape's "clones"
 #  - inkex.Image
 #  - inkex.TextElement  NOTE: they can contain an inkex.TextPath referencing a

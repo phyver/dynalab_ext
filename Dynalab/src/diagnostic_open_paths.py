@@ -19,7 +19,7 @@ class MarkOpenPaths(dynalab.Ext):
 
         counter_paths = 0
         counter_subpaths = 0
-        for elem, tr in self.selected_or_all(skip_groups=False):
+        for elem in self.selected_or_all(skip_groups=False):
             # skip non-path element
             if not isinstance(elem, inkex.PathElement):
                 continue
@@ -29,7 +29,8 @@ class MarkOpenPaths(dynalab.Ext):
 
             # skip paths with path effects
             if elem.get("inkscape:path-effect") is not None:
-                # FIXME: should I display a warning message
+                self.message("\t-", "path with id={elem.get_id()} uses path effects, SKIP",
+                             verbosity=1)
                 continue
 
             prev = None
@@ -48,12 +49,12 @@ class MarkOpenPaths(dynalab.Ext):
                 desc = f"path with id={elem.get_id()} contains {c} open subpath(s)"
                 counter_paths += 1
                 self.message("\t-", desc, verbosity=2)
-                self.outline_bounding_box(WARNING, elem, tr, msg=desc)
+                self.outline_bounding_box(WARNING, elem, msg=desc)
 
         if clean:
-            self.clean(force=False)
+            self.clean_artifacts(force=False)
 
-        self.message(f"{counter_subpaths} open subpath(s) found inside {counter_paths} path object(s) found",
+        self.message(f"{counter_subpaths} open subpath(s) found inside {counter_paths} path object(s)",
                      verbosity=1)
         self.message(f"looking for open paths: running time = {self.running_time():.0f}ms",
                      verbosity=3)

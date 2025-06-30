@@ -40,12 +40,9 @@ class MarkBlobs(dynalab.Ext):
         self.init_artifact_layer()
 
         BB = []
-        for elem, tr in self.selected_or_all(skip_groups=True):
-            if not utils.is_path(elem) or utils.effects(elem):
-                # ignore everything but simple paths
-                # TODO: should I change that?
-                continue
-            BB.append((elem.get_id(), elem.bounding_box(transform=tr)))
+        for elem in self.selected_or_all(skip_groups=True):
+            BB.append((elem.get_id(),
+                       self.bounding_box(elem)))
 
         # add padding around bbs
         padding = self.mm_to_svg(self.options.padding)
@@ -62,10 +59,10 @@ class MarkBlobs(dynalab.Ext):
                 desc = "the following objects form an isolated blob: "
                 desc += ", ".join(ids)
                 self.outline_bounding_box(NOTE, None, bb=bbb, margin=0,
-                                          stroke_width=0.5, msg=desc)
+                                          msg=desc)
 
         if clean:
-            self.clean(force=False)
+            self.clean_artifacts(force=False)
 
         self.message(f"{len(BBB)} bounding boxes blob(s) found",
                      verbosity=1)

@@ -12,7 +12,6 @@ class ChangeStyle(dynalab.Ext):
     """
 
     def add_arguments(self, pars):
-        # TODO: add opacity argument
         pars.add_argument("--stroke-width", type=float,
                           default=-1, dest="stroke_width",
                           help=_("stroke width (mm)"))
@@ -74,13 +73,10 @@ class ChangeStyle(dynalab.Ext):
                 )
 
         counter = 0
-        for elem, tr in self.selected_or_all(skip_groups=True):
+        for elem in self.selected_or_all(skip_groups=True):
             # skip non path elements (except if option only-paths is false)
             if self.options.only_paths:
                 if not utils.is_path(elem):
-                    continue
-                # we also skip path like objects with effects
-                if utils.effects(elem):
                     continue
 
             msg_style = []
@@ -100,7 +96,6 @@ class ChangeStyle(dynalab.Ext):
                      verbosity=3)
         self.message("",
                      verbosity=1)
-
 
 
 if __name__ == '__main__':

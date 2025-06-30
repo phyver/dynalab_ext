@@ -31,18 +31,18 @@ class Ungroups(dynalab.Ext):
         groups = []
         counter_groups = 0
         counter_layers = 0
-        for elem, tr in self.selected_or_all(skip_groups=False):
+        for elem in self.selected_or_all(skip_groups=False):
 
             if isinstance(elem, inkex.Layer):
                 if self.options.remove_layers:
-                    groups.append((elem, tr))
+                    groups.append(elem)
             elif isinstance(elem, inkex.Group):
                 if self.options.remove_groups:
-                    groups.append((elem, tr))
+                    groups.append(elem)
 
         # reverse the order, so that deeper groups are removed first
         groups.reverse()
-        for gr, tr in groups:
+        for gr in groups:
             if gr.attrib.get("clip-path", "none") != "none":
                 self.message(f"""
 WARNING: group {gr.get('id')} contains a clip-path. This clip path is
@@ -61,7 +61,7 @@ using the "Arrange" => "deep-ungroup" extension.)
 
             for elem in gr:
                 gr.remove(elem)
-                elem.transform = tr @ gr.transform @ elem.transform
+                elem.transform = gr.getparent().composed_transform() @ gr.transform @ elem.transform
                 self.svg.add(elem)
             gr.getparent().remove(gr)
 
