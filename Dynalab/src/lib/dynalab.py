@@ -12,7 +12,9 @@ from lib import i18n, config, utils
 ARTIFACT_CLASS = "artifact"
 ARTIFACT_LAYER_ID = "ArtifactLayer"
 ARTIFACT_GROUP_ID = "ArtifactGroup"
+ARTIFACT_OVERLAY_GROUP_ID = "ArtifactOverlayGroup"
 ARTIFACT_OVERLAY_ID = "ArtifactOverlay"
+ARTIFACT_OVERLAY_BORDER_ID = "ArtifactOverlayBorder"
 ARTIFACT_OVERLAY_PATTERN_ID = "ArtifactOverlayPattern"
 
 # error levels
@@ -252,7 +254,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         artifact_layer = svg.getElementById(ARTIFACT_LAYER_ID)
         artifact_group = svg.getElementById(ARTIFACT_GROUP_ID)
-        artifact_overlay = svg.getElementById(ARTIFACT_OVERLAY_ID)
+        artifact_overlay = svg.getElementById(ARTIFACT_OVERLAY_GROUP_ID)
 
         if artifact_overlay is not None and force:
             artifact_overlay.getparent().remove(artifact_overlay)
@@ -321,18 +323,40 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 "stroke": "none",
                 "stroke-width": "1px",
             })
-            if self.config["artifacts_grouped"]:
-                artifact_group = self.svg.getElementById(ARTIFACT_GROUP_ID)
-                artifact_group.add(rect)
-            else:
-                artifact_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
-                artifact_layer.add(rect)
+
+            g = inkex.Group(id=ARTIFACT_OVERLAY_GROUP_ID)
+            g.set("class", ARTIFACT_CLASS)
+
+            self.svg.root.insert(0, g)
+            g.add(rect)
+
+            # add a border for easy selection of overlay
+            m = self.mm_to_svg(10)
+            border = inkex.Rectangle.new(-m/2, -m/2, w+m, h+m)
+            border.set("id", ARTIFACT_OVERLAY_BORDER_ID)
+            border.set("class", ARTIFACT_CLASS)
+            border.style = inkex.Style({
+                "fill": "none",
+                "stroke": f"url(#{ARTIFACT_OVERLAY_PATTERN_ID})",
+                "stroke-width": m,
+            })
+            g.add(border)
+
+        border = self.svg.getElementById(ARTIFACT_OVERLAY_BORDER_ID)
+
         if bb is not None:
             bb = bb + rect.shape_box()
             rect.set("x", bb.left)
             rect.set("y", bb.top)
             rect.set("width", bb.width)
             rect.set("height", bb.height)
+
+            assert border is not None
+            m = self.mm_to_svg(10)
+            border.set("x", bb.left-m/2)
+            border.set("y", bb.top-m/2)
+            border.set("width", bb.width+m)
+            border.set("height", bb.height+m)
 
     def outline_bounding_box(self, level, elem, bb=None, msg=None, margin=1, **style):
         """outline the bounding box of elem
