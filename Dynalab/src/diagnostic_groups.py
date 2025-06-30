@@ -25,7 +25,7 @@ class MarkGroups(dynalab.Ext):
 
         self.message("looking for groups and/or layers",
                      verbosity=3)
-        self.init_artefact_layer()
+        self.init_artifact_layer()
 
         # TODO: config option to use get_inkscape_bboxes for bounding boxes?
         counter_groups = 0
@@ -37,7 +37,7 @@ class MarkGroups(dynalab.Ext):
                     desc = f"object with id={elem.get_id()} is a layer"
                     counter_layers += 1
                     self.message("\t-", desc, verbosity=2)
-                    w = self.config["artefacts_stroke_width"]
+                    w = self.config["artifacts_stroke_width"]
                     self.outline_bounding_box(WARNING, elem, tr,
                                               stroke_width=w/2,
                                               stroke_dasharray=f"{w},{w}",
@@ -48,7 +48,7 @@ class MarkGroups(dynalab.Ext):
                     desc = f"object witd id={elem.get_id()} is a group"
                     counter_groups += 1
                     self.message("\t-", desc, verbosity=2)
-                    w = self.config["artefacts_stroke_width"]
+                    w = self.config["artifacts_stroke_width"]
                     self.outline_bounding_box(WARNING, elem, tr,
                                               stroke_width=w/2,
                                               msg=desc)

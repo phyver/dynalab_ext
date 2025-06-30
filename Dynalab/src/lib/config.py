@@ -13,11 +13,11 @@ CURRENT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.real
 
 DEFAULT_CONFIG = {
     "verbosity": 1,
-    "artefacts_locked": False,
-    "artefacts_grouped": True,
-    "artefacts_stroke_width": 1,
-    "artefacts_opacity": 75,
-    "artefacts_overlay_opacity": 5,
+    "artifacts_locked": False,
+    "artifacts_grouped": True,
+    "artifacts_stroke_width": 1,
+    "artifacts_opacity": 75,
+    "artifacts_overlay_opacity": 5,
     #
     "laser_diameter": 0.2,
     "laser_mode_cut_color": "#ff0000",
@@ -93,10 +93,10 @@ class Ext():
 
   - size for "tiny" elements: {size_tiny_element}mm
 
-  - artefacts layer is locked (non selectable): {artefacts_locked}
-  - artefacts are put in a single group: {artefacts_grouped}
-  - artefacts opacity: {artefacts_opacity}%
-  - artefacts overlay stripes opacity: {artefacts_overlay_opacity}%
-  - stroke width for artefacts: {artefacts_stroke_width}mm
+  - artifacts layer is locked (non selectable): {artifacts_locked}
+  - artifacts are put in a single group: {artifacts_grouped}
+  - artifacts opacity: {artifacts_opacity}%
+  - artifacts overlay stripes opacity: {artifacts_overlay_opacity}%
+  - stroke width for artifacts: {artifacts_stroke_width}mm
   - verbosity level: {verbosity}
 """.format(**self.config))

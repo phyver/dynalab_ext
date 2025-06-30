@@ -18,7 +18,7 @@ class Export(dynalab.Ext):
     """
 
     def add_arguments(self, pars):
-        pars.add_argument("--clean", type=inkex.Boolean, default=True, help="remove artefacts")
+        pars.add_argument("--clean", type=inkex.Boolean, default=True, help="remove artifacts")
         pars.add_argument("--svg", type=inkex.Boolean, default=False, help="save to svg")
         pars.add_argument("--dxf", type=inkex.Boolean, default=True, help="export to dxf")
         pars.add_argument("--pdf", type=inkex.Boolean, default=True, help="export to pdf")

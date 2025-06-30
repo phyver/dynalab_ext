@@ -15,7 +15,7 @@ class MarkOpenPaths(dynalab.Ext):
     def effect(self, clean=True):
         self.message("looking for open paths",
                      verbosity=3)
-        self.init_artefact_layer()
+        self.init_artifact_layer()
 
         counter_paths = 0
         counter_subpaths = 0

@@ -32,18 +32,18 @@ class SaveConfig(dynalab.Ext):
         pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
                           help=_("size for tiny elements (mm)"))
 
-        pars.add_argument("--lock-artefacts", type=inkex.Boolean, dest="artefacts_locked",
-                          help=_("lock artefacts layer"))
-        pars.add_argument("--group-artefacts", type=inkex.Boolean, dest="artefacts_grouped",
-                          help=_("group artefacts"))
-        pars.add_argument("--artefacts-opacity", type=int, default=75,
-                          dest="artefacts_opacity",
-                          help=_("artefacts opacity (%)"))
-        pars.add_argument("--artefacts-overlay-opacity", type=int, default=5,
-                          dest="artefacts_overlay_opacity",
-                          help=_("artefacts overlay opacity (%)"))
-        pars.add_argument("--artefacts-stroke-width", type=float, dest="artefacts_stroke_width",
-                          help=_("stroke width for artefacts (mm)"))
+        pars.add_argument("--lock-artifacts", type=inkex.Boolean, dest="artifacts_locked",
+                          help=_("lock artifacts layer"))
+        pars.add_argument("--group-artifacts", type=inkex.Boolean, dest="artifacts_grouped",
+                          help=_("group artifacts"))
+        pars.add_argument("--artifacts-opacity", type=int, default=75,
+                          dest="artifacts_opacity",
+                          help=_("artifacts opacity (%)"))
+        pars.add_argument("--artifacts-overlay-opacity", type=int, default=5,
+                          dest="artifacts_overlay_opacity",
+                          help=_("artifacts overlay opacity (%)"))
+        pars.add_argument("--artifacts-stroke-width", type=float, dest="artifacts_stroke_width",
+                          help=_("stroke width for artifacts (mm)"))
         pars.add_argument("--verbosity", type=int, help=_("verbosity"))
 
         pars.add_argument("--save-file", dest="save_file", help=_("Save file"))

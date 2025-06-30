@@ -18,7 +18,7 @@ class MarkTiny(dynalab.Ext):
     def effect(self, clean=True):
         self.message("looking for tiny objects",
                      verbosity=3)
-        self.init_artefact_layer()
+        self.init_artifact_layer()
         tiny = self.options.size_tiny_element or self.config["size_tiny_element"]
 
         # mark the selected elements

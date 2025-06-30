@@ -14,7 +14,7 @@ class MarkOutside(dynalab.Ext):
     def effect(self, clean=True):
         self.message("looking for objects lying outside the SVG page",
                      verbosity=3)
-        self.init_artefact_layer()
+        self.init_artifact_layer()
 
         w = self.svg.unittouu(self.svg.viewport_width)
         h = self.svg.unittouu(self.svg.viewport_height)

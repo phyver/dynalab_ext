@@ -10,11 +10,11 @@ from inkex.paths import Move, Line
 from lib import i18n, config, utils
 
 
-ARTEFACT_CLASS = "artefact"
-ARTEFACT_LAYER_ID = "ArtefactLayer"
-ARTEFACT_GROUP_ID = "ArtefactGroup"
-ARTEFACT_OVERLAY_ID = "ArtefactOverlay"
-ARTEFACT_OVERLAY_PATTERN_ID = "ArtefactOverlayPattern"
+ARTIFACT_CLASS = "artifact"
+ARTIFACT_LAYER_ID = "ArtifactLayer"
+ARTIFACT_GROUP_ID = "ArtifactGroup"
+ARTIFACT_OVERLAY_ID = "ArtifactOverlay"
+ARTIFACT_OVERLAY_PATTERN_ID = "ArtifactOverlayPattern"
 
 # error levels
 OK = 0
@@ -49,7 +49,7 @@ def _iter_elements(
     elem,                       # current element
     recurse_groups=True,        # should we recurse inside groups?
     skip_groups=False,          # should we return group elements?
-    skip_artefacts=True,        # should we skip artefacts?
+    skip_artifacts=True,        # should we skip artifacts?
     limit=None,                 # current limit for total number of returned elements
                                 # if None, there is no limit; otherwise, limit should be a list with a single element
                                 # that decreases each time we "yield" an element
@@ -63,8 +63,8 @@ def _iter_elements(
     if limit is not None and limit[0] <= 0:
         return
 
-    # skip artefacts
-    if skip_artefacts and elem.get("class") == ARTEFACT_CLASS:
+    # skip artifacts
+    if skip_artifacts and elem.get("class") == ARTIFACT_CLASS:
         return
 
     # skip non SVG elements
@@ -87,7 +87,7 @@ def _iter_elements(
                                   recurse_groups=recurse_groups,
                                   skip_groups=skip_groups,
                                   limit=limit,
-                                  skip_artefacts=skip_artefacts,
+                                  skip_artifacts=skip_artifacts,
                                   _global_transform=_global_transform @ elem.transform)
 
 
@@ -105,11 +105,11 @@ def _set_text_style(elem, **style):
 
 class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
-    def __init__(self, reset_artefacts=True):
+    def __init__(self, reset_artifacts=True):
         super().__init__()
         i18n.Ext.__init__(self)
         config.Ext.__init__(self)
-        self.reset_artefacts = reset_artefacts
+        self.reset_artifacts = reset_artifacts
         self._start_time = time.perf_counter()
         self.BB = {}
 
@@ -172,9 +172,9 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                                           limit=limit,
                                           _global_transform=tr)
 
-    def init_artefact_layer(self):
-        """create a special layer to put all errors / warning artefacts
-        Artefacts are put inside a group in this layer for easy removal.
+    def init_artifact_layer(self):
+        """create a special layer to put all errors / warning artifacts
+        Artifacts are put inside a group in this layer for easy removal.
         If either the group or the layer already exists, it is cleared first.
         """
         root = self.document.getroot()
@@ -183,43 +183,43 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         # make sure inkscape's unit is "mm"
         svg.namedview.set("inkscape:document-units", "mm")
 
-        # extract non-artefacts from the artefact layer
-        self.extract_non_artefacts()
+        # extract non-artifacts from the artifact layer
+        self.extract_non_artifacts()
 
-        # re-initialise existing artefact layer / group
-        artefact_layer = svg.getElementById(ARTEFACT_LAYER_ID)
-        artefact_group = svg.getElementById(ARTEFACT_GROUP_ID)
-        if artefact_group is not None and self.reset_artefacts:
-            artefact_group.clear()
-            artefact_group.getparent().remove(artefact_group)
-            artefact_group = None
-        if artefact_layer is not None and self.reset_artefacts:
-            artefact_layer.clear()
-            artefact_layer.getparent().remove(artefact_layer)
-            artefact_layer = None
+        # re-initialise existing artifact layer / group
+        artifact_layer = svg.getElementById(ARTIFACT_LAYER_ID)
+        artifact_group = svg.getElementById(ARTIFACT_GROUP_ID)
+        if artifact_group is not None and self.reset_artifacts:
+            artifact_group.clear()
+            artifact_group.getparent().remove(artifact_group)
+            artifact_group = None
+        if artifact_layer is not None and self.reset_artifacts:
+            artifact_layer.clear()
+            artifact_layer.getparent().remove(artifact_layer)
+            artifact_layer = None
 
         # Create a new layer (this is just a special SVG group)
-        if artefact_layer is None:
-            artefact_layer = inkex.Layer.new(ARTEFACT_LAYER_ID, id=ARTEFACT_LAYER_ID)
-            artefact_layer.set("class", ARTEFACT_CLASS)
-            if self.config["artefacts_locked"]:
-                artefact_layer.set_sensitive(False)
-            root.add(artefact_layer)           # insert last, ie at top
+        if artifact_layer is None:
+            artifact_layer = inkex.Layer.new(ARTIFACT_LAYER_ID, id=ARTIFACT_LAYER_ID)
+            artifact_layer.set("class", ARTIFACT_CLASS)
+            if self.config["artifacts_locked"]:
+                artifact_layer.set_sensitive(False)
+            root.add(artifact_layer)           # insert last, ie at top
             # to insert first, ie on the bottom, use
-            # root.insert(0, artefact_layer)
+            # root.insert(0, artifact_layer)
 
         # and create Inkscape group inside
-        if artefact_group is None:
-            if self.config["artefacts_grouped"]:
-                self.artefact_group = inkex.Group(id=ARTEFACT_GROUP_ID)
-                self.artefact_group.set("class", ARTEFACT_CLASS)
-                artefact_layer.add(self.artefact_group)
+        if artifact_group is None:
+            if self.config["artifacts_grouped"]:
+                self.artifact_group = inkex.Group(id=ARTIFACT_GROUP_ID)
+                self.artifact_group.set("class", ARTIFACT_CLASS)
+                artifact_layer.add(self.artifact_group)
             else:
-                self.artefact_group = artefact_layer
+                self.artifact_group = artifact_layer
         else:
-            self.artefact_group = artefact_group
+            self.artifact_group = artifact_group
 
-        assert self.artefact_group is not None
+        assert self.artifact_group is not None
 
         # define the arrow markers
         if svg.getElementById("ErrorArrowheadMarker") is None:
@@ -230,40 +230,40 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             self._new_marker("NoteArrowheadMarker", NOTE_COLOR)
 
         # define the overlay pattern
-        artefact_pattern = svg.getElementById(ARTEFACT_OVERLAY_PATTERN_ID)
-        if artefact_pattern is None:
-            artefact_pattern = inkex.Pattern(id=ARTEFACT_OVERLAY_PATTERN_ID)
-            artefact_pattern.set("patternUnits", "userSpaceOnUse")
-            artefact_pattern.set("width", 2)
-            artefact_pattern.set("height", 1)
-            artefact_pattern.set("patternTransform", "rotate(30) scale(5)")
+        artifact_pattern = svg.getElementById(ARTIFACT_OVERLAY_PATTERN_ID)
+        if artifact_pattern is None:
+            artifact_pattern = inkex.Pattern(id=ARTIFACT_OVERLAY_PATTERN_ID)
+            artifact_pattern.set("patternUnits", "userSpaceOnUse")
+            artifact_pattern.set("width", 2)
+            artifact_pattern.set("height", 1)
+            artifact_pattern.set("patternTransform", "rotate(30) scale(5)")
             rect = inkex.Rectangle.new(0, 0, 1, 1)
             rect.style["fill"] = "red"
             rect.style["stroke"] = "none"
-            artefact_pattern.add(rect)
-            self.svg.defs.add(artefact_pattern)
+            artifact_pattern.add(rect)
+            self.svg.defs.add(artifact_pattern)
 
     def clean(self, force=False):
-        """remove the artefact layer / group if it is empty
+        """remove the artifact layer / group if it is empty
         If force is true, remove it even if it is not empty"""
         svg = self.svg
 
-        artefact_layer = svg.getElementById(ARTEFACT_LAYER_ID)
-        artefact_group = svg.getElementById(ARTEFACT_GROUP_ID)
-        artefact_overlay = svg.getElementById(ARTEFACT_OVERLAY_ID)
+        artifact_layer = svg.getElementById(ARTIFACT_LAYER_ID)
+        artifact_group = svg.getElementById(ARTIFACT_GROUP_ID)
+        artifact_overlay = svg.getElementById(ARTIFACT_OVERLAY_ID)
 
-        if artefact_overlay is not None and force:
-            artefact_overlay.getparent().remove(artefact_overlay)
+        if artifact_overlay is not None and force:
+            artifact_overlay.getparent().remove(artifact_overlay)
 
-        if artefact_group is not None and (force or len(artefact_group) == 0):
-            artefact_group.clear()
-            artefact_group.getparent().remove(artefact_group)
+        if artifact_group is not None and (force or len(artifact_group) == 0):
+            artifact_group.clear()
+            artifact_group.getparent().remove(artifact_group)
 
-        if artefact_layer is not None and (force or len(artefact_layer) == 0):
-            artefact_layer.clear()
-            artefact_layer.getparent().remove(artefact_layer)
+        if artifact_layer is not None and (force or len(artifact_layer) == 0):
+            artifact_layer.clear()
+            artifact_layer.getparent().remove(artifact_layer)
 
-        if force or len(artefact_layer) == 0:
+        if force or len(artifact_layer) == 0:
             marker = svg.getElementById("ErrorArrowheadMarker")
             if marker is not None:
                 marker.getparent().remove(marker)
@@ -273,31 +273,31 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             marker = svg.getElementById("NoteArrowheadMarker")
             if marker is not None:
                 marker.getparent().remove(marker)
-            pattern = svg.getElementById(ARTEFACT_OVERLAY_PATTERN_ID)
+            pattern = svg.getElementById(ARTIFACT_OVERLAY_PATTERN_ID)
             if pattern is not None:
                 pattern.getparent().remove(pattern)
 
     def update_overlay(self, bb):
-        rect = self.svg.getElementById(ARTEFACT_OVERLAY_ID)
+        rect = self.svg.getElementById(ARTIFACT_OVERLAY_ID)
         if rect is None:
             w = self.svg.unittouu(self.svg.viewport_width)
             h = self.svg.unittouu(self.svg.viewport_height)
             rect = inkex.Rectangle.new(0, 0, w, h)
-            rect.set("id", ARTEFACT_OVERLAY_ID)
-            rect.set("class", ARTEFACT_CLASS)
+            rect.set("id", ARTIFACT_OVERLAY_ID)
+            rect.set("class", ARTIFACT_CLASS)
             rect.set_sensitive(False)
             rect.style = inkex.Style({
-                "fill": f"url(#{ARTEFACT_OVERLAY_PATTERN_ID})",
-                "opacity": self.config["artefacts_overlay_opacity"]/100,
+                "fill": f"url(#{ARTIFACT_OVERLAY_PATTERN_ID})",
+                "opacity": self.config["artifacts_overlay_opacity"]/100,
                 "stroke": "none",
                 "stroke-width": "1px",
             })
-            if self.config["artefacts_grouped"]:
-                artefact_group = self.svg.getElementById(ARTEFACT_GROUP_ID)
-                artefact_group.add(rect)
+            if self.config["artifacts_grouped"]:
+                artifact_group = self.svg.getElementById(ARTIFACT_GROUP_ID)
+                artifact_group.add(rect)
             else:
-                artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
-                artefact_layer.add(rect)
+                artifact_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
+                artifact_layer.add(rect)
         if bb is not None:
             bb = bb + rect.shape_box()
             rect.set("x", bb.left)
@@ -305,30 +305,30 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             rect.set("width", bb.width)
             rect.set("height", bb.height)
 
-    def extract_non_artefacts(self):
-        """look through the artefact layer and move all non-artefact outside"""
-        artefact_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
-        artefact_bg_layer = self.svg.getElementById(ARTEFACT_LAYER_ID)
+    def extract_non_artifacts(self):
+        """look through the artifact layer and move all non-artifact outside"""
+        artifact_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
+        artifact_bg_layer = self.svg.getElementById(ARTIFACT_LAYER_ID)
 
         counter = 0
-        for layer in [artefact_layer, artefact_bg_layer]:
+        for layer in [artifact_layer, artifact_bg_layer]:
             if layer is None:
                 continue
             for elem, tr in _iter_elements(layer,
                                            skip_groups=False,
-                                           skip_artefacts=False,
+                                           skip_artifacts=False,
                                            ):
                 cl = elem.get("class")
-                if cl and ARTEFACT_CLASS in cl:
+                if cl and ARTIFACT_CLASS in cl:
                     continue
                 counter += 1
-                self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artefact layer",
+                self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artifact layer",
                              verbosity=2)
                 elem.getparent().remove(elem)
                 elem.transform = tr
                 self.svg.add(elem)
             if counter > 0:
-                self.message(f"{counter} object(s) were moved out of the artefact layer",
+                self.message(f"{counter} object(s) were moved out of the artifact layer",
                              verbosity=1)
 
     def mm_to_svg(self, d):
@@ -348,14 +348,14 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             self.abort("ERROR: method `outline_bounding_box` needs either an SVG element or an explicit bounding box")
 
         if elem is None:
-            id = self.svg.get_unique_id("artefact_bb")
+            id = self.svg.get_unique_id("artifact_bb")
         else:
-            id = f"{ARTEFACT_CLASS}_boundingbox_{elem.get_id()}"
+            id = f"{ARTIFACT_CLASS}_boundingbox_{elem.get_id()}"
 
         if bb is None:
             bb = self.bounding_box(elem)
 
-        self.__new_artefact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
+        self.__new_artifact_bb(level, bb, id=id, msg=msg, margin=margin, **style)
         if level > NOTE:
             self.update_overlay(bb)
 
@@ -393,11 +393,11 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         x, y = p
 
         if elem is None:
-            id = self.svg.get_unique_id("artefact_arrow")
+            id = self.svg.get_unique_id("artifact_arrow")
         else:
-            id = f"{ARTEFACT_CLASS}_arrow_{elem.get_id()}"
+            id = f"{ARTIFACT_CLASS}_arrow_{elem.get_id()}"
 
-        self._new_artefact_arrow(level, x, y, id, length=10, msg=msg, margin=margin, **style)
+        self._new_artifact_arrow(level, x, y, id, length=10, msg=msg, margin=margin, **style)
 
         if level > NOTE:
             self.update_overlay(inkex.BoundingBox())
@@ -405,12 +405,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
     def outline_element(self, level, elem, transform=None, msg=None, **style):
         if elem is None:
             self.abort("ERROR: method `outline_element` needs an SVG element")
-        id = f"{ARTEFACT_CLASS}_element_{elem.get_id()}"
+        id = f"{ARTIFACT_CLASS}_element_{elem.get_id()}"
         clone = self.svg.getElementById(id)
         if clone is None:
             clone = copy.deepcopy(elem)
             clone.set("id", id)
-            clone.set("class", ARTEFACT_CLASS)
+            clone.set("class", ARTIFACT_CLASS)
             clone.transform = transform @ elem.transform
             clone.style = inkex.Style({
                 "error-level": -1,       # custom style attribute
@@ -429,8 +429,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         clone.style["error-level"] = level
         clone.style["fill"] = "none"
-        clone.style["opacity"] = self.config["artefacts_opacity"]/100
-        clone.style["stroke-width"] = self.config["artefacts_stroke_width"]
+        clone.style["opacity"] = self.config["artifacts_opacity"]/100
+        clone.style["stroke-width"] = self.config["artifacts_stroke_width"]
 
         if level == OK:
             clone.style["stroke"] = NOTE_COLOR
@@ -446,36 +446,36 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         for k in style:
             clone.style[k.replace("_", "-")] = style[k]
-        self.artefact_group.add(clone)
+        self.artifact_group.add(clone)
 
-        # Add the artefact to the error group (inside the error layer)
-        self.artefact_group.add(clone)
+        # Add the artifact to the error group (inside the error layer)
+        self.artifact_group.add(clone)
 
         # convert stroke-width to actual mm
         clone.style["stroke-width"] = self.mm_to_svg(clone.style["stroke-width"])
 
     def _new_marker(self, id, color):
-        """define an arrowhead marker for the arrow artefacts"""
+        """define an arrowhead marker for the arrow artifacts"""
         marker = inkex.Marker(id=id,
                               orient="auto",    # orient='auto-start-reverse',
                               markerWidth="3",
                               markerHeight="3",
                               )
-        marker.set("class", ARTEFACT_CLASS)
+        marker.set("class", ARTIFACT_CLASS)
 
         arrow = inkex.PathElement()
-        arrow.set("class", ARTEFACT_CLASS)
+        arrow.set("class", ARTIFACT_CLASS)
         arrow.path = [Move(-3, 3), Line(0, 0), Line(-3, -3)]
         arrow.style = inkex.Style({
             "stroke": color,
             "stroke-width": 1,
             "fill": "none",
-            # "stroke-opacity": self.config["artefacts_opacity"]/100,
+            # "stroke-opacity": self.config["artifacts_opacity"]/100,
         })
         marker.append(arrow)
         self.svg.defs.append(marker)
 
-    def __new_artefact_bb(self, level, bb, id, msg=None, margin=1, **style):
+    def __new_artifact_bb(self, level, bb, id, msg=None, margin=1, **style):
         rect = self.svg.getElementById(id)
         if rect is None:
             margin = self.mm_to_svg(margin)
@@ -483,7 +483,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             w, h = bb.width, bb.height
             rect = inkex.Rectangle.new(x-margin, y-margin, w+2*margin, h+2*margin)
             rect.set("id", id)
-            rect.set("class", ARTEFACT_CLASS)
+            rect.set("class", ARTIFACT_CLASS)
             rect.style = inkex.Style({
                 "error-level": -1,       # custom style attribute
             })
@@ -500,8 +500,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         rect.style["error-level"] = level
         rect.style["fill"] = "none"
-        rect.style["stroke-opacity"] = self.config["artefacts_opacity"]/100
-        rect.style["stroke-width"] = self.config["artefacts_stroke_width"]
+        rect.style["stroke-opacity"] = self.config["artifacts_opacity"]/100
+        rect.style["stroke-width"] = self.config["artifacts_stroke_width"]
 
         if level == OK:
             rect.style["stroke"] = NOTE_COLOR
@@ -517,13 +517,13 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         for k in style:
             rect.style[k.replace("_", "-")] = style[k]
-        self.artefact_group.add(rect)
+        self.artifact_group.add(rect)
 
         # convert stroke-width to actual mm
         rect.style["stroke-width"] = self.mm_to_svg(rect.style["stroke-width"])
 
-    def _new_artefact_arrow(self, level, x, y, id, msg=None, length=10, margin=1, **style):
-        """add an artefact arrow in the error layer
+    def _new_artifact_arrow(self, level, x, y, id, msg=None, length=10, margin=1, **style):
+        """add an artifact arrow in the error layer
            elem, global_transform is the element the arrow should be pointing to
         """
         arrow = self.svg.getElementById(id)
@@ -532,7 +532,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             margin = self.mm_to_svg(margin)
             arrow = inkex.PathElement()
             arrow.set("id", id)
-            arrow.set("class", ARTEFACT_CLASS)
+            arrow.set("class", ARTIFACT_CLASS)
             arrow.path = [Move(x-side, y+side),
                           Line(x-margin, y+margin)]
             arrow.style = inkex.Style({
@@ -551,8 +551,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         arrow.style["error-level"] = level
         arrow.style["fill"] = "none"
-        arrow.style["opacity"] = self.config["artefacts_opacity"]/100
-        arrow.style["stroke-width"] = self.config["artefacts_stroke_width"]
+        arrow.style["opacity"] = self.config["artifacts_opacity"]/100
+        arrow.style["stroke-width"] = self.config["artifacts_stroke_width"]
 
         if level == OK:
             arrow.style["stroke"] = NOTE_COLOR
@@ -572,10 +572,10 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
         for k in style:
             arrow.style[k.replace("_", "-")] = style[k]
-        self.artefact_group.add(arrow)
+        self.artifact_group.add(arrow)
 
-        # Add the artefact to the error group (inside the error layer)
-        self.artefact_group.add(arrow)
+        # Add the artifact to the error group (inside the error layer)
+        self.artifact_group.add(arrow)
 
         # convert stroke-width to actual mm
         arrow.style["stroke-width"] = self.mm_to_svg(arrow.style["stroke-width"])

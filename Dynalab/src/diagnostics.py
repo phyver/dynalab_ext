@@ -40,18 +40,18 @@ class Battery(dynalab.Ext):
                           default=True, help="mark objects outside the page", dest="outside_objects")
 
         for ext in EXTENSIONS.values():
-            inst = ext(reset_artefacts=False)
+            inst = ext(reset_artifacts=False)
             inst.add_arguments(pars)
 
     def effect(self):
-        reset_artefacts = True
+        reset_artifacts = True
         inst = None
         counter = 0
         bbs = {}
         for name, ext in EXTENSIONS.items():
             if getattr(self.options, name):
-                inst = ext(reset_artefacts=reset_artefacts)
-                reset_artefacts = False
+                inst = ext(reset_artifacts=reset_artifacts)
+                reset_artifacts = False
                 inst.options = self.options
                 inst.document = self.document
                 inst.svg = self.svg

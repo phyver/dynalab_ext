@@ -12,7 +12,7 @@ class Clean(dynalab.Ext):
         pass
 
     def effect(self):
-        self.extract_non_artefacts()
+        self.extract_non_artifacts()
         self.clean(force=True)
 
 

@@ -37,7 +37,7 @@ class MarkBlobs(dynalab.Ext):
     def effect(self, clean=True):
         self.message("looking for bounding boxes blobs",
                      verbosity=3)
-        self.init_artefact_layer()
+        self.init_artifact_layer()
 
         BB = []
         for elem, tr in self.selected_or_all(skip_groups=True):
