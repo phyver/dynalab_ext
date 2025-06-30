@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>dynalab.fill_stroke_palettes</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <effects-menu>
+            <submenu name=" Dynalab">
+                <submenu name="9 - expert">
+                    <submenu name="3 - misc"/>
+                </submenu>
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>1 - display stroke and/or width palettes</name>
+
+    <param name="stroke" type="bool" value="true" gui-text="display a small square for each different stroke color"></param>
+    <param name="fill" type="bool" value="true" gui-text="display a small square for each different fill color"></param>
+
+    <script>
+        <command location="inx" interpreter="python">../src/misc_palettes.py</command>
+    </script>
+</inkscape-extension>
