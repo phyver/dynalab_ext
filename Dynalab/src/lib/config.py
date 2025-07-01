@@ -3,6 +3,7 @@
 
 import json
 import os
+from collections import OrderedDict
 
 from gettext import gettext as _
 
@@ -11,21 +12,21 @@ import inkex
 DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "default_config.json"))
 CURRENT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
-DEFAULT_CONFIG = {
-    "verbosity": 1,
-    "artifacts_locked": False,
-    "artifacts_grouped": True,
-    "artifacts_stroke_width": 1,
-    "artifacts_opacity": 75,
-    "artifacts_overlay_opacity": 5,
+DEFAULT_CONFIG = OrderedDict({
+    "verbosity": (1, "verbosity level: {verbosity}"),
+    "artifacts_locked": (False, "artifacts layer is locked (non selectable): {artifacts_locked}"),
+    "artifacts_grouped": (True, "artifacts are put in a single group: {artifacts_grouped}"),
+    "artifacts_stroke_width": (1, "stroke width for artifacts: {artifacts_stroke_width}mm"),
+    "artifacts_opacity": (75, "artifacts opacity: {artifacts_opacity}%"),
+    "artifacts_overlay_opacity": (5, "artifacts overlay stripes opacity: {artifacts_overlay_opacity}%"),
     #
-    "laser_diameter": 0.2,
-    "laser_mode_cut_color": "#ff0000",
-    "laser_mode_fill_color": "#0000ff",
-    "laser_mode_line_color": "#000000",
+    "laser_diameter": (0.2, "laser diameter: {laser_diameter:.2f}mm"),
+    "laser_mode_cut_color": ("#ff0000", "laser cut mode color: {laser_mode_cut_color:s}"),
+    "laser_mode_fill_color": ("#0000ff", "laser fill mode color: {laser_mode_fill_color:s}"),
+    "laser_mode_line_color": ("#000000", "laser line mode color: {laser_mode_line_color:s}"),
     #
-    "size_tiny_element": 0.5,
-}
+    "size_tiny_element": (0.5, "size for 'tiny' elements: {size_tiny_element}mm"),
+})
 
 
 class Ext():
@@ -47,7 +48,7 @@ class Ext():
 
         except FileNotFoundError as err:
             if os.path.realpath(filename) == DEFAULT_CONFIG_FILE or os.path.realpath(filename) == CURRENT_CONFIG_FILE:
-                self.config = DEFAULT_CONFIG.copy()
+                self.config = {o: v[0] for o, v in DEFAULT_CONFIG.items()}
             else:
                 msg = _("FILE NOT FOUND:")
                 raise inkex.AbortExtension(f"\n{msg} {filename}\n{err}")
@@ -60,7 +61,7 @@ class Ext():
 
         for k, v in DEFAULT_CONFIG.items():
             if k not in self.config:
-                self.config[k] = v
+                self.config[k] = v[0]
 
         for k in list(self.config.keys()):
             if k not in DEFAULT_CONFIG:
@@ -84,19 +85,8 @@ class Ext():
         except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as err:
             raise inkex.AbortExtension(f"CANNOT SAVE CONFIG TO {filename}: {err}")
 
-    def show_config(self):
-        self.msg("""
-  - laser diameter: {laser_diameter:.2f}mm
-  - laser cut mode color: {laser_mode_cut_color:s}
-  - laser fill mode color: {laser_mode_fill_color:s}
-  - laser line mode color: {laser_mode_line_color:s}
-
-  - size for "tiny" elements: {size_tiny_element}mm
-
-  - artifacts layer is locked (non selectable): {artifacts_locked}
-  - artifacts are put in a single group: {artifacts_grouped}
-  - artifacts opacity: {artifacts_opacity}%
-  - artifacts overlay stripes opacity: {artifacts_overlay_opacity}%
-  - stroke width for artifacts: {artifacts_stroke_width}mm
-  - verbosity level: {verbosity}
-""".format(**self.config))
+    def show_config(self, args=None):
+        if args is None:
+            args = DEFAULT_CONFIG.keys()
+        for arg in args:
+            self.msg("  - " + DEFAULT_CONFIG[arg][1].format(**self.config))

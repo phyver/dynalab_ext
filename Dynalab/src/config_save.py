@@ -50,19 +50,25 @@ class SaveConfig(dynalab.Ext):
 
     def effect(self):
 
+        changed = []
         options = vars(self.options)
         for k in config.DEFAULT_CONFIG:
-            if options[k] is not None:
-                self.config[k] = options[k]
+            if options[k] is not None and options[k] != "":
+                if options[k] != self.config[k]:
+                    self.config[k] = options[k]
+                    changed.append(k)
+
+        if len(changed) == 0:
+            self.message("No configuration option has been changed!")
+        else:
+            self.save_config(config.CURRENT_CONFIG_FILE)
+            self.message("The following configuration options have been changed:")
+            self.show_config(changed)
 
         if self.options.save_file:
             self.save_config(self.options.save_file)
-            self.msg(f"""
-### The following configuration was saved to {self.options.save_file}
-                     """)
-
-        self.save_config(config.CURRENT_CONFIG_FILE)
-        self.show_config()
+            self.message("")
+            self.message(f"The configuration was saved to {self.options.save_file}")
 
 
 if __name__ == "__main__":
