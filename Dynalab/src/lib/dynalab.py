@@ -70,7 +70,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         i18n.Ext.__init__(self)
         config.Ext.__init__(self)
         self.reset_artifacts = reset_artifacts
-        self._start_time = time.perf_counter()
+        self._time = {}
+        self.set_timer("init")
         self.BB = {}
 
     ################
@@ -97,9 +98,13 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             header = "Error encountered while running extension, aborting.\n\ndetails:\n"
         raise inkex.AbortExtension(header + sep.join(str(a) for a in args if a is not None) + end)
 
-    def running_time(self):
-        """return the running time (in milliseconds) of the extension since its initialisation"""
-        return 1000*(time.perf_counter() - self._start_time)
+    def get_timer(self, name="init"):
+        """return the running time (in milliseconds) since the last call to set_timer(name)"""
+        return 1000*(time.perf_counter() - self._time[name])
+
+    def set_timer(self, s):
+        """record the current time for easy timing"""
+        self._time[s] = time.perf_counter()
 
     def selected_or_all(self, skip_groups=False):
         """iterates over the selected elements (recursively if needs be), or
@@ -164,12 +169,11 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             return bb
         else:
             # we only call get_all_inkscape_bboxes when this computation failed
-            start = time.perf_counter()
+            self.set_timer("get_bb")     # start timer
             self.message(">>> calling external inkscape command to retrieve bounding boxes",
                          verbosity=4)
             self.BB = self.get_all_inkscape_bboxes()
-            t = 1000*(time.perf_counter() - start)
-            self.message(f">>> running time for external inkscape command: {t:.0f}ms",
+            self.message(f">>> running time for external inkscape command: {self.get_timer('get_bb'):.0f}ms",
                          verbosity=4)
             bb = self.BB.get(k, inkex.BoundingBox())
             return bb
@@ -234,18 +238,19 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             self._new_marker("NoteArrowheadMarker", NOTE_COLOR)
 
         # define the overlay pattern
-        artifact_pattern = svg.getElementById(ARTIFACT_OVERLAY_PATTERN_ID)
-        if artifact_pattern is None:
-            artifact_pattern = inkex.Pattern(id=ARTIFACT_OVERLAY_PATTERN_ID)
-            artifact_pattern.set("patternUnits", "userSpaceOnUse")
-            artifact_pattern.set("width", 2)
-            artifact_pattern.set("height", 1)
-            artifact_pattern.set("patternTransform", "rotate(30) scale(5)")
-            rect = inkex.Rectangle.new(0, 0, 1, 1)
-            rect.style["fill"] = "red"
-            rect.style["stroke"] = "none"
-            artifact_pattern.add(rect)
-            self.svg.defs.add(artifact_pattern)
+        if self.config["artifacts_overlay_opacity"] > 0:
+            artifact_pattern = svg.getElementById(ARTIFACT_OVERLAY_PATTERN_ID)
+            if artifact_pattern is None:
+                artifact_pattern = inkex.Pattern(id=ARTIFACT_OVERLAY_PATTERN_ID)
+                artifact_pattern.set("patternUnits", "userSpaceOnUse")
+                artifact_pattern.set("width", 2)
+                artifact_pattern.set("height", 1)
+                artifact_pattern.set("patternTransform", "rotate(30) scale(5)")
+                rect = inkex.Rectangle.new(0, 0, 1, 1)
+                rect.style["fill"] = "red"
+                rect.style["stroke"] = "none"
+                artifact_pattern.add(rect)
+                self.svg.defs.add(artifact_pattern)
 
     def clean_artifacts(self, force=False):
         """remove the artifact layer / group if it is empty
@@ -309,6 +314,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                              verbosity=1)
 
     def update_overlay(self, bb):
+        if self.config["artifacts_overlay_opacity"] == 0:
+            return
         rect = self.svg.getElementById(ARTIFACT_OVERLAY_ID)
         if rect is None:
             w = self.svg.unittouu(self.svg.viewport_width)

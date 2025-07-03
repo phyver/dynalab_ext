@@ -65,13 +65,13 @@ class Export(dynalab.Ext):
             self.clean_artifacts(force=True)
 
         counter = 0
-        if self.options.pdf:
+        if self.options.svg:
             counter += 1
             self.message("\t-", f"saving to svg: {savefile+'.svg'}",
                          verbosity=1)
-            start_time = time.perf_counter()
+            self.set_timer("export_svg")
             self.export_with_inkscape(savefile+".svg", "svg")
-            self.message("\t\t", f"running time {1000*(time.perf_counter()-start_time):.0f}ms",
+            self.message("\t\t", f"running time {self.get_timer('export_svg'):.0f}ms",
                          verbosity=3)
 
         if self.options.dxf:
@@ -83,24 +83,24 @@ class Export(dynalab.Ext):
             counter += 1
             self.message("\t-", f"exporting to dxf14: {savefile+'.dxf'}",
                          verbosity=1)
-            start_time = time.perf_counter()
+            self.set_timer("export_dxf")
             self.export_with_inkscape(savefile+".dxf", "dxf",
                                       "--export-extension=org.ekips.output.dxf_outlines",
                                       )
-            self.message("\t\t", f"running time {1000*(time.perf_counter()-start_time):.0f}ms",
+            self.message("\t\t", f"running time {self.get_timer('export_dxf'):.0f}ms",
                          verbosity=3)
 
         if self.options.pdf:
             counter += 1
             self.message("\t-", f"exporting to pdf: {savefile+'.pdf'}",
                          verbosity=1)
-            start_time = time.perf_counter()
+            self.set_timer("export_pdf")
             self.export_with_inkscape(savefile+".pdf", "pdf")
-            self.message("\t\t", f"running time {1000*(time.perf_counter()-start_time):.0f}ms",
+            self.message("\t\t", f"running time {self.get_timer('export_pdf'):.0f}ms",
                          verbosity=3)
 
         self.message(f"{counter} document(s) exported")
-        self.message(f"total running time = {self.running_time():.0f}ms",
+        self.message(f"total running time = {self.get_timer():.0f}ms",
                      verbosity=3)
         self.message("",
                      verbosity=1)

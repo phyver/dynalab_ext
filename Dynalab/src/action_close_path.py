@@ -89,7 +89,7 @@ class MarkOpen(dynalab.Ext):
                      "\n",
                      f"{counter_subpaths_not_closed} subpath(s) remained open their endpoints were too far away",
                      verbosity=1)
-        self.message(f"closing subpaths: running time = {self.running_time():.0f}ms",
+        self.message(f"closing subpaths: running time = {self.get_timer():.0f}ms",
                      verbosity=3)
         self.message("",
                      verbosity=1)

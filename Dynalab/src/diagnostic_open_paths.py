@@ -56,7 +56,7 @@ class MarkOpenPaths(dynalab.Ext):
 
         self.message(f"{counter_subpaths} open subpath(s) found inside {counter_paths} path object(s)",
                      verbosity=1)
-        self.message(f"looking for open paths: running time = {self.running_time():.0f}ms",
+        self.message(f"looking for open paths: running time = {self.get_timer():.0f}ms",
                      verbosity=3)
         self.message("",
                      verbosity=1)

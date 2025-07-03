@@ -72,7 +72,7 @@ class Battery(dynalab.Ext):
 
         self.message(f"{counter} diagnostic extension(s) were run",
                      verbosity=1)
-        self.message(f"total running time = {self.running_time():.0f}ms",
+        self.message(f"total running time = {self.get_timer():.0f}ms",
                      verbosity=3)
         self.message("",
                      verbosity=1)

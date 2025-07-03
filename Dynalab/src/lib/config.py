@@ -80,6 +80,7 @@ class Ext():
                 for k, v in kwargs:
                     self.config[k] = v
                     # TODO: should I validate that keys and values are valid???
+                    # colors => ^$|^#[0-9a-fA-F]{6}$|^#[0-9a-fA-F]{3}$
 
                 f.write(json.dumps(self.config, indent=2, sort_keys=True))
         except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as err:

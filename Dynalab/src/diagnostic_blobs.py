@@ -66,7 +66,7 @@ class MarkBlobs(dynalab.Ext):
 
         self.message(f"{len(BBB)} bounding boxes blob(s) found",
                      verbosity=1)
-        self.message(f"looking for bounding boxes blobs: running time = {self.running_time():.0f}ms",
+        self.message(f"looking for bounding boxes blobs: running time = {self.get_timer():.0f}ms",
                      verbosity=3)
         self.message("",
                      verbosity=1)
