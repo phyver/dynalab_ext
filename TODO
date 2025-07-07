@@ -1,3 +1,33 @@
+QUESTIONS
+=========
+
+Julien
+------
+
+  - pertinence de l'extension "suppression des groupes" ?
+  - pertinence d'une extension "transformer la sélection en chemin" ?
+  - configuration par défaut
+  - lancement automatique des diagnostiques avant l'export ? (=> ajouter
+    l'option)
+  - lancement automatique de "tout transformer en chemin" avant l'export ?
+    (Attention, pas de vérification possible.)
+  - recherche d'objets dupliqués :
+      - object (text, forme) / version vectorisée ?
+      - problème cercle / cercle avec transformation de rotation pas détecté
+
+
+Inkex / Inkscape
+----------------
+
+  - querying inkscape for the bounding boxes of nested groups doesn't work
+  - add a get_all_inkscape_bboxes method
+  - guarantee that the external inkscape command is the same as the calling
+    one? => inkscape should define env variable INKSCAPE_COMMAND when calling
+    an extension?
+  - method for calling performing inkscape actions (--action) directly from
+    inkex?
+
+
 GENERAL
 =======
 
