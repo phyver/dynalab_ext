@@ -251,6 +251,9 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 rect.style["stroke"] = "none"
                 artifact_pattern.add(rect)
                 self.svg.defs.add(artifact_pattern)
+            artifact_overlay = svg.getElementById(ARTIFACT_OVERLAY_GROUP_ID)
+            if artifact_overlay is not None:
+                artifact_overlay.getparent().remove(artifact_overlay)
 
     def clean_artifacts(self, force=False):
         """remove the artifact layer / group if it is empty
