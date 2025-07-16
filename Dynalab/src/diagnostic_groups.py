@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 import inkex
 
 from lib import dynalab
@@ -8,8 +10,10 @@ from lib.dynalab import WARNING
 
 class MarkGroups(dynalab.Ext):
     """
-    show the bounding boxes of groups and layers found in the document
+    mark the bounding boxes of groups and layers
     """
+
+    name = _("mark groups and layers")
 
     def add_arguments(self, pars):
         pars.add_argument("--mark-layers", type=inkex.Boolean,
@@ -56,12 +60,19 @@ class MarkGroups(dynalab.Ext):
             self.clean_artifacts(force=False)
 
         if self.options.mark_groups:
-            self.message(f"{counter_groups} group(s) found",
+            counter = counter_groups
+            self.message(ngettext("{counter} group found",
+                                  "{counter} groups found",
+                                  counter).format(counter=counter),
                          verbosity=1)
         if self.options.mark_layers:
-            self.message(f"{counter_layers} layer(s) found",
+            counter = counter_layers
+            self.message(ngettext("{counter} layer found",
+                                  "{counter} layers found",
+                                  counter).format(counter=counter),
                          verbosity=1)
-        self.message(f"looking for groups and layers: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

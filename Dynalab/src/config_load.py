@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-from gettext import gettext as _
 
 from lib import dynalab
 

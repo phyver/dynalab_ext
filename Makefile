@@ -28,7 +28,7 @@ i18n: i18n/dynalab.pot i18n/fr.po Dynalab/src/locales/fr/LC_MESSAGES/dynalab.mo
 
 i18n/dynalab.pot: $(PYTHON_FILES)
 	@#xgettext -language=Python --from-code=UTF-8 -omit-header --indent --no-wrap --sort-by-file --join-existing --output $@ $?
-	xgettext -language=Python --from-code=UTF-8 -omit-header --indent --no-wrap --sort-by-file --output $@ $?
+	xgettext -language=Python --from-code=UTF-8 -omit-header --indent --no-wrap --sort-by-file --output $@ $^
 
 i18n/fr.po: i18n/dynalab.pot
 	msgmerge --quiet --update --indent --no-wrap --sort-by-file $@ $<

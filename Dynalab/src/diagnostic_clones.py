@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 import inkex
 
 from lib import dynalab
@@ -10,6 +12,8 @@ class MarkClones(dynalab.Ext):
     """
     mark clones
     """
+
+    name = _("mark clones")
 
     def add_arguments(self, pars):
         pass
@@ -33,9 +37,12 @@ class MarkClones(dynalab.Ext):
         if clean:
             self.clean_artifacts(force=False)
 
-        self.message(f"{counter} clone(s) found",
+        self.message(ngettext("{counter} clone found",
+                              "{counter} clones found",
+                              counter).format(counter=counter),
                      verbosity=1)
-        self.message(f"looking for clones: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

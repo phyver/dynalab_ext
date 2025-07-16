@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from collections import defaultdict
+from gettext import gettext as _, ngettext
 
 import inkex
 
@@ -9,10 +10,11 @@ from lib import dynalab
 
 class MiscPalettes(dynalab.Ext):
     """
-    constantly changing dummy extension to test features for upcoming
-    extensions
-    Can serve as a basis for new extensions.
+    display small squares with border / fill for each border color and fill
+    color of selected objects
     """
+
+    name = _("border and fill palettes")
 
     def add_arguments(self, pars):
         pars.add_argument("--stroke", type=inkex.Boolean,
@@ -85,13 +87,22 @@ class MiscPalettes(dynalab.Ext):
             self.clean_artifacts(force=False)
 
         if self.options.stroke:
-            self.message(f"{len(stroke_colors)} stroke color(s) found",
+            counter = len(stroke_colors)
+            self.message(ngettext("{counter} stroke color found",
+                                  "{counter} stroke colors found",
+                                  counter
+                                  ).format(counter=counter),
                          verbosity=1)
         if self.options.fill:
-            self.message(f"{len(fill_colors)} fill color(s) found",
+            counter = len(fill_colors)
+            self.message(ngettext("{counter} fill color found",
+                                  "{counter} fill colors found",
+                                  counter
+                                  ).format(counter=counter),
                          verbosity=1)
 
-        self.message(f"looking for stroke and fill colors: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 from lib import dynalab, utils
 from lib.dynalab import WARNING, ERROR
 
@@ -8,6 +10,8 @@ class MarkEffects(dynalab.Ext):
     """
     mark effects
     """
+
+    name = _("mark objects with effects")
 
     def add_arguments(self, pars):
         pass
@@ -39,9 +43,12 @@ class MarkEffects(dynalab.Ext):
         if clean:
             self.clean_artifacts(force=False)
 
-        self.message(f"{counter} clone(s) found",
+        self.message(ngettext("{counter} object with effect(s) found",
+                              "{counter} objects with effect(s) found",
+                              counter).format(counter=counter),
                      verbosity=1)
-        self.message(f"looking for clones: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from gettext import gettext as _
+
 import inkex
 
 from lib import dynalab, utils
@@ -10,6 +11,8 @@ class ChangeStyle(dynalab.Ext):
     """
     apply some new style (stroke-width, color and fill-color) to the selection
     """
+
+    name = _("change style")
 
     def add_arguments(self, pars):
         pars.add_argument("--stroke-width", type=float,
@@ -92,7 +95,8 @@ class ChangeStyle(dynalab.Ext):
 
         self.message(f"the style of {counter} objects was modified",
                      verbosity=1)
-        self.message(f"remove groups: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 import inkex
 
 from lib import dynalab
@@ -10,6 +12,8 @@ class MarkImages(dynalab.Ext):
     """
     mark image objects
     """
+
+    name = _("mark images")
 
     def add_arguments(self, pars):
         pass
@@ -32,9 +36,12 @@ class MarkImages(dynalab.Ext):
         if clean:
             self.clean_artifacts(force=False)
 
-        self.message(f"{counter} image(s) found",
+        self.message(ngettext("{counter} image found",
+                              "{counter} images found",
+                              counter).format(counter=counter),
                      verbosity=1)
-        self.message(f"looking for images: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

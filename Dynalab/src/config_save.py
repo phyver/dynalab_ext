@@ -59,16 +59,16 @@ class SaveConfig(dynalab.Ext):
                     changed.append(k)
 
         if len(changed) == 0:
-            self.message("No configuration option has been changed!")
+            self.message(_("No configuration option has been changed!"))
         else:
             self.save_config(config.CURRENT_CONFIG_FILE)
-            self.message("The following configuration options have been changed:")
+            self.message(_("The following configuration options have been changed:"))
             self.show_config(changed)
 
         if self.options.save_file:
             self.save_config(self.options.save_file)
             self.message("")
-            self.message(f"The configuration was saved to {self.options.save_file}")
+            self.message(_("The configuration was saved to {file:s}").format(file=self.options.save_file))
 
 
 if __name__ == "__main__":

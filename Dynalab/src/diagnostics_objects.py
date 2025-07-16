@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 import inkex
 
 from lib import dynalab
@@ -21,10 +23,10 @@ EXTENSIONS = {
 
 class Battery(dynalab.Ext):
     """
-    constantly changing dummy extension to test features for upcoming
-    extensions
-    Can serve as a basis for new extensions.
+    battery of diagnostics to mark non vectorized objects
     """
+
+    name = _("non vectorized objects")
 
     def add_arguments(self, pars):
         pars.add_argument("--text", type=inkex.Boolean,
@@ -61,9 +63,12 @@ class Battery(dynalab.Ext):
         if inst:
             inst.clean_artifacts(force=False)
 
-        self.message(f"{counter} diagnostic extension(s) were run",
+        self.message(ngettext("{counter} diagnostic extension(s) were run",
+                              "{counter} diagnostic extension(s) were run",
+                              counter).format(counter=counter),
                      verbosity=1)
-        self.message(f"total running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

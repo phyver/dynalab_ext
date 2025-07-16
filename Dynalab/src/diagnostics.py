@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 import inkex
 
 from lib import dynalab
@@ -9,9 +11,7 @@ from diagnostic_images import MarkImages
 from diagnostic_shapes import MarkShapes
 from diagnostic_clones import MarkClones
 from diagnostic_effects import MarkEffects
-
 from diagnostic_groups import MarkGroups
-
 from diagnostic_tiny import MarkTiny
 from diagnostic_open_paths import MarkOpenPaths
 from diagnostic_outside_page import MarkOutside
@@ -28,10 +28,10 @@ EXTENSIONS = {
 
 class Battery(dynalab.Ext):
     """
-    constantly changing dummy extension to test features for upcoming
-    extensions
-    Can serve as a basis for new extensions.
+    battery of simple diagnostics run sequentially
     """
+
+    name = _("diagnostics")
 
     def add_arguments(self, pars):
         pars.add_argument("--non-paths", type=inkex.Boolean,
@@ -70,9 +70,12 @@ class Battery(dynalab.Ext):
         if inst:
             inst.clean_artifacts(force=False)
 
-        self.message(f"{counter} diagnostic extension(s) were run",
+        self.message(ngettext("{counter} diagnostic extension was run",
+                              "{counter} diagnostic extensions were run",
+                              counter).format(counter=counter),
                      verbosity=1)
-        self.message(f"total running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

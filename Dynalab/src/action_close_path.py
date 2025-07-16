@@ -7,7 +7,13 @@ import inkex
 from lib import dynalab
 
 
-class MarkOpen(dynalab.Ext):
+class CloseOpen(dynalab.Ext):
+    """
+    close open subpaths whose endpoints are close
+    """
+
+    name = _("close open paths")
+
     def add_arguments(self, pars):
         pars.add_argument("--close-distance", type=float,
                           default=5, help="distance under which we close open path (mm)",
@@ -89,11 +95,12 @@ class MarkOpen(dynalab.Ext):
                      "\n",
                      f"{counter_subpaths_not_closed} subpath(s) remained open their endpoints were too far away",
                      verbosity=1)
-        self.message(f"closing subpaths: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)
 
 
 if __name__ == '__main__':
-    MarkOpen().run()
+    CloseOpen().run()

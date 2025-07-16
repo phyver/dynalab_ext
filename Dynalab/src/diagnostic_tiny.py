@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 from lib import dynalab
 from lib.dynalab import ERROR
 
 
 class MarkTiny(dynalab.Ext):
     """
-    tags the "tiny" elements found in the document
+    mark the "tiny" elements found in the document
     """
+
+    name = _("mark tiny objects")
 
     def add_arguments(self, pars):
         pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
@@ -32,9 +36,12 @@ class MarkTiny(dynalab.Ext):
         if clean:
             self.clean_artifacts(force=False)
 
-        self.message(f"{counter} tiny object(s) found",
+        self.message(ngettext("{counter} tiny object found",
+                              "{counter} tiny objects found",
+                              counter).format(counter=counter),
                      verbosity=1)
-        self.message(f"looking for tiny objects: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

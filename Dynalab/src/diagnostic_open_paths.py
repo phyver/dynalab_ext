@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, negettext
+
 import inkex
 
 from lib import dynalab
@@ -7,6 +9,12 @@ from lib.dynalab import WARNING
 
 
 class MarkOpenPaths(dynalab.Ext):
+    """
+    mark paths with open subpaths
+    """
+
+    name = _("mark open paths")
+
     def add_arguments(self, pars):
         pars.add_argument("--only-fill-mode-paths", type=inkex.Boolean,
                           default=True, help="restrict to paths with 'fill mode' color",
@@ -56,7 +64,8 @@ class MarkOpenPaths(dynalab.Ext):
 
         self.message(f"{counter_subpaths} open subpath(s) found inside {counter_paths} path object(s)",
                      verbosity=1)
-        self.message(f"looking for open paths: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

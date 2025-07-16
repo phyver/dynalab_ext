@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from gettext import gettext as _, ngettext
+
 import inkex
 
 from lib import dynalab
@@ -7,10 +9,10 @@ from lib import dynalab
 
 class Ungroups(dynalab.Ext):
     """
-    constantly changing dummy extension to test features for upcoming
-    extensions
-    Can serve as a basis for new extensions.
+    ungroup objects
     """
+
+    name = _("ungroup objects")
 
     def add_arguments(self, pars):
         pars.add_argument("--remove-layers", type=inkex.Boolean,
@@ -66,12 +68,19 @@ using the "Arrange" => "deep-ungroup" extension.)
             gr.getparent().remove(gr)
 
         if self.options.remove_groups:
-            self.message(f"{counter_groups} group(s) removed",
+            counter = counter_groups
+            self.message(ngettext("{counter} group removed",
+                                  "{counter} groups removed",
+                                  counter).format(counter=counter),
                          verbosity=1)
         if self.options.remove_layers:
-            self.message(f"{counter_layers} layer(s) removed",
+            counter = counter_layers
+            self.message(ngettext("{counter} layer removed",
+                                  "{counter} layers removed",
+                                  counter).format(counter=counter),
                          verbosity=1)
-        self.message(f"remove groups: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

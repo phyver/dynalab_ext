@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
-from lib.intervaltree import IntervalTree
+from gettext import gettext as _, ngettext
 
 import inkex
 
-from lib import dynalab, utils
+from lib.intervaltree import IntervalTree
+
+from lib import dynalab
 from lib.dynalab import NOTE
 
 
@@ -30,6 +32,11 @@ def compute_blobs(BB):
 
 
 class MarkBlobs(dynalab.Ext):
+    """
+    aggregate bounding boxes into blobs and mark disconnected blobs
+    """
+
+    name = _("mark blobs")
 
     def add_arguments(self, pars):
         pars.add_argument("--padding", type=float, default=10, help="padding added to boxes to check overlap (mm)")
@@ -64,9 +71,13 @@ class MarkBlobs(dynalab.Ext):
         if clean:
             self.clean_artifacts(force=False)
 
-        self.message(f"{len(BBB)} bounding boxes blob(s) found",
+        counter = len(BBB)
+        self.message(ngettext("{counter} bounding boxes blob found",
+                              "{counter} bounding boxes blobs found",
+                              counter).format(counter=counter),
                      verbosity=1)
-        self.message(f"looking for bounding boxes blobs: running time = {self.get_timer():.0f}ms",
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)

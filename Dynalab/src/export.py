@@ -3,7 +3,7 @@
 import re
 import os
 import sys
-import time
+from gettext import gettext as _, ngettext
 
 import inkex
 
@@ -12,10 +12,10 @@ from lib import dynalab
 
 class Export(dynalab.Ext):
     """
-    constantly changing dummy extension to test features for upcoming
-    extensions
-    Can serve as a basis for new extensions.
+    export SVG document to different formats
     """
+
+    name = _("export document")
 
     def add_arguments(self, pars):
         pars.add_argument("--clean", type=inkex.Boolean, default=True, help="remove artifacts")
@@ -71,7 +71,8 @@ class Export(dynalab.Ext):
                          verbosity=1)
             self.set_timer("export_svg")
             self.export_with_inkscape(savefile+".svg", "svg")
-            self.message("\t\t", f"running time {self.get_timer('export_svg'):.0f}ms",
+            self.message("\t\t", _("{extension:s}: running time = {time:.0f}ms")
+                         .format(extension=self.name, time=self.get_timer("export_svg")),
                          verbosity=3)
 
         if self.options.dxf:
@@ -87,7 +88,8 @@ class Export(dynalab.Ext):
             self.export_with_inkscape(savefile+".dxf", "dxf",
                                       "--export-extension=org.ekips.output.dxf_outlines",
                                       )
-            self.message("\t\t", f"running time {self.get_timer('export_dxf'):.0f}ms",
+            self.message("\t\t", _("{extension:s}: running time = {time:.0f}ms")
+                         .format(extension=self.name, time=self.get_timer("export_dxf")),
                          verbosity=3)
 
         if self.options.pdf:
@@ -96,11 +98,15 @@ class Export(dynalab.Ext):
                          verbosity=1)
             self.set_timer("export_pdf")
             self.export_with_inkscape(savefile+".pdf", "pdf")
-            self.message("\t\t", f"running time {self.get_timer('export_pdf'):.0f}ms",
+            self.message("\t\t", _("{extension:s}: running time = {time:.0f}ms")
+                         .format(extension=self.name, time=self.get_timer("export_pdf")),
                          verbosity=3)
 
-        self.message(f"{counter} document(s) exported")
-        self.message(f"total running time = {self.get_timer():.0f}ms",
+        self.message(ngettext("{counter} document exported",
+                              "{counter} document exported",
+                              counter).format(counter=counter))
+        self.message(_("{extension:s}: running time = {time:.0f}ms")
+                     .format(extension=self.name, time=self.get_timer()),
                      verbosity=3)
         self.message("",
                      verbosity=1)
