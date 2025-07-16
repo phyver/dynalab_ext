@@ -11,10 +11,10 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - stroke and/or fill palettes</name>
+    <name>1 - palette pour les couleurs des traits / remplissage</name>
 
-    <param name="stroke" type="bool" value="true" gui-text="display a small square for each stroke color of selected objects"></param>
-    <param name="fill" type="bool" value="true" gui-text="display a small square for each fill color of selected objects"></param>
+    <param name="stroke" type="bool" value="true" gui-text="affiche un petit carré pour chaque couleur de trait des objets sélectionnés"></param>
+    <param name="fill" type="bool" value="true" gui-text="affiche un petit carré pour chaque couleur de remplissage des objets sélectionnés"></param>
 
     <script>
         <command location="inx" interpreter="python">../src/misc_palettes.py</command>

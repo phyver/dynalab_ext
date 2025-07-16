@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>dynalab.new_config</id>
+
+    <effect needs-live-preview="false">
+        <effects-menu>
+            <submenu name=" Dynalab">
+                <submenu name="9 - expert">
+                    <submenu name="9 - configuration"/>
+                </submenu>
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>1 - modifie (et sauvegarde) la configuration</name>
+
+    <label>
+        Les paramètres sans valeurs conserveront leur valeur actuelle.
+    </label>
+
+    <param name="tabs" type="notebook">
+        <page name="laser-tab" gui-text="option pour les fonctionnalités 'laser'">
+            <param name="laser-diameter" type="string" gui-text="diamètre du laser (mm):"></param>
+
+            <param name="cut-color" type="string" gui-text="couleur pour le mode 'découpe'"></param>
+            <param name="fill-color" type="string" gui-text="couleur pour le mode 'gravure remplissage'"></param>
+            <param name="line-color" type="string" gui-text="couleur pour le mode 'gravure contour'"></param>
+
+            <param name="size-tiny-element" type="string" gui-text="taille des éléments 'minuscules' (mm):"></param>
+        </page>
+
+        <page name="artifact-tab" gui-text="options générales pour l'extension Dynalab">
+            <param name="lock-artifacts" type="bool" value="false" gui-text="verrouille le calque des artéfacts"/>
+            <param name="group-artifacts" type="bool" value="true" gui-text="groupe les artéfacts pour faciliter leur suppression"/>
+            <param name="artifacts-opacity" type="int" min="0" max="100" value="75" gui-text="opacité des artéfacts (%)"/>
+            <param name="artifacts-overlay-opacity" type="int" min="0" max="100" value="5" gui-text="opacité des rayures en surimpression (%)"/>
+            <param name="artifacts-stroke-width" type="string" gui-text="épaisseur des traits pour les artéfacts (mm)"/>
+            <param name="verbosity" type="int" min="0" max="4" value="1" gui-text="verbosité des messages"/>
+        </page>
+
+        <page name="save-tab" gui-text="export du fichier">
+            <param name="save-file" type="path" mode="file_new" gui-text="Sauvegarder les options dans le fichier :" />
+            <label>
+                Si le nom de fichier est vide, la configuration est modifiée
+                mais n'est pas sauvegardée dans un fichier externe.
+            </label>
+        </page>
+    </param>
+
+    <script>
+        <command location="inx" interpreter="python">../src/config_save.py</command>
+    </script>
+</inkscape-extension>

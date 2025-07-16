@@ -14,13 +14,13 @@ class ChangeStyle(dynalab.Ext):
     def add_arguments(self, pars):
         pars.add_argument("--stroke-width", type=float,
                           default=-1, dest="stroke_width",
-                          help=_("stroke width (mm)"))
-        pars.add_argument("--stroke", type=str, default="#000000", help=_("stroke color"))
-        pars.add_argument("--fill", type=str, default="none", help=_("fill color"))
-        pars.add_argument("--fill-opacity", type=float, default=100, help=_("opacity (%)"), dest="fill_opacity")
-        pars.add_argument("--extra-style", type=str, default="", help=_("extra style options"))
+                          help="stroke width (mm)")
+        pars.add_argument("--stroke", type=str, default="#000000", help="stroke color")
+        pars.add_argument("--fill", type=str, default="none", help="fill color")
+        pars.add_argument("--fill-opacity", type=float, default=100, help="opacity (%)", dest="fill_opacity")
+        pars.add_argument("--extra-style", type=str, default="", help="extra style options")
         pars.add_argument("--only-paths", type=inkex.Boolean, default=True,
-                          help=_("only apply to path like objects"), dest="only_paths")
+                          help="only apply to path like objects", dest="only_paths")
 
     def effect(self):
         if not self.svg.selected:

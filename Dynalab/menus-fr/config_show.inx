@@ -11,7 +11,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - show current configuration</name>
+    <name>4 - affiche la configuration actuelle</name>
 
     <script>
         <command location="inx" interpreter="python">../src/config_show.py</command>

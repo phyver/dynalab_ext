@@ -13,19 +13,19 @@ DEFAULT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.real
 CURRENT_CONFIG_FILE = os.path.realpath(os.path.join(os.path.dirname(os.path.realpath(__file__)), "current_config.json"))
 
 DEFAULT_CONFIG = OrderedDict({
-    "verbosity": (1, "verbosity level: {verbosity}"),
-    "artifacts_locked": (False, "artifacts layer is locked (non selectable): {artifacts_locked}"),
-    "artifacts_grouped": (True, "artifacts are put in a single group: {artifacts_grouped}"),
-    "artifacts_stroke_width": (1, "stroke width for artifacts: {artifacts_stroke_width}mm"),
-    "artifacts_opacity": (75, "artifacts opacity: {artifacts_opacity}%"),
-    "artifacts_overlay_opacity": (5, "artifacts overlay stripes opacity: {artifacts_overlay_opacity}%"),
+    "verbosity": (1, _("verbosity level: {verbosity}")),
+    "artifacts_locked": (False, _("artifacts layer is locked (non selectable): {artifacts_locked}")),
+    "artifacts_grouped": (True, _("artifacts are put in a single group: {artifacts_grouped}")),
+    "artifacts_stroke_width": (1, _("stroke width for artifacts: {artifacts_stroke_width}mm")),
+    "artifacts_opacity": (75, _("artifacts opacity: {artifacts_opacity}%")),
+    "artifacts_overlay_opacity": (5, _("artifacts overlay stripes opacity: {artifacts_overlay_opacity}%")),
     #
-    "laser_diameter": (0.2, "laser diameter: {laser_diameter:.2f}mm"),
-    "laser_mode_cut_color": ("#ff0000", "laser cut mode color: {laser_mode_cut_color:s}"),
-    "laser_mode_fill_color": ("#0000ff", "laser fill mode color: {laser_mode_fill_color:s}"),
-    "laser_mode_line_color": ("#000000", "laser line mode color: {laser_mode_line_color:s}"),
+    "laser_diameter": (0.2, _("laser diameter: {laser_diameter:.2f}mm")),
+    "laser_mode_cut_color": ("#ff0000", _("laser cut mode color: {laser_mode_cut_color:s}")),
+    "laser_mode_fill_color": ("#0000ff", _("laser fill mode color: {laser_mode_fill_color:s}")),
+    "laser_mode_line_color": ("#000000", _("laser line mode color: {laser_mode_line_color:s}")),
     #
-    "size_tiny_element": (0.5, "size for 'tiny' elements: {size_tiny_element}mm"),
+    "size_tiny_element": (0.5, _("size for 'tiny' elements: {size_tiny_element}mm")),
 })
 
 
@@ -50,14 +50,22 @@ class Ext():
             if os.path.realpath(filename) == DEFAULT_CONFIG_FILE or os.path.realpath(filename) == CURRENT_CONFIG_FILE:
                 self.config = {o: v[0] for o, v in DEFAULT_CONFIG.items()}
             else:
-                msg = _("FILE NOT FOUND:")
-                raise inkex.AbortExtension(f"\n{msg} {filename}\n{err}")
+                raise inkex.AbortExtension("""
+{}
+  => {}
+""".format(_("FILE NOT FOUND: {filename:s}").format(filename=filename), err))
+
         except (IOError, OSError) as err:
-            msg = _("ERROR READING FILE:")
-            raise inkex.AbortExtension(f"\n{msg} {filename}\n{err}")
+            raise inkex.AbortExtension("""
+{}
+  => {}
+""".format(_("ERROR READING FILE: {filename:s}").format(filename=filename), err))
+
         except json.JSONDecodeError as err:
-            msg = _("INVALID CONFIG FILE:")
-            raise inkex.AbortExtension(f"\n{msg} {filename}\n{err}")
+            raise inkex.AbortExtension("""
+{}
+  => {}
+""".format(_("INVALID CONFIG FILE: {filename:s}").format(filename=filename), err))
 
         for k, v in DEFAULT_CONFIG.items():
             if k not in self.config:
@@ -73,7 +81,7 @@ class Ext():
     def save_config(self, filename, **kwargs):
         filename = os.path.realpath(filename)
         if filename == DEFAULT_CONFIG_FILE:
-            raise inkex.AbortExtension(f"CANNOT OVERWRITE DEFAULT CONFIG FILE {filename}")
+            raise inkex.AbortExtension(_("CANNOT OVERWRITE DEFAULT CONFIG FILE: {filename}").format(filename=filename))
 
         try:
             with open(filename, mode="wt") as f:
@@ -85,6 +93,10 @@ class Ext():
                 f.write(json.dumps(self.config, indent=2, sort_keys=True))
         except (FileNotFoundError, PermissionError, IsADirectoryError, OSError) as err:
             raise inkex.AbortExtension(f"CANNOT SAVE CONFIG TO {filename}: {err}")
+            raise inkex.AbortExtension("""
+{}
+  => {}
+""".format(_("CANNOT SAVE CONFIG TO {filename:s}").format(filename=filename), err))
 
     def show_config(self, args=None):
         if args is None:

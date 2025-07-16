@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO: translate -->
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>dynalab.make_contour</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <effects-menu>
+            <submenu name=" Dynalab">
+                <submenu name="2 - Modify selected objects"/>
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>2 - change to "line engraving" mode</name>
+
+    <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
+    <param name="stroke" type="string" gui-hidden="true">LINE_MODE</param>
+    <param name="fill" type="string" gui-hidden="true">none</param>
+    <param name="fill-opacity" type="float" min="0" max="100" gui-hidden="true">100</param>
+
+    <script>
+        <command location="inx" interpreter="python">../src/action_change_style.py</command>
+    </script>
+</inkscape-extension>

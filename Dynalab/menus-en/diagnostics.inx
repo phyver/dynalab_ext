@@ -11,9 +11,9 @@
     <name>1 - Diagnostics</name>
 
     <param name="non-paths" type="bool" gui-text="1 - mark non path objects">true</param>
-    <param name="groups" type="bool" gui-text="2 - mark groups, layers and symbols">true</param>
-    <param name="tiny" type="bool" gui-text="3 - mark tiny elements">true</param>
-    <param name="open-paths" type="bool" gui-text="4 - mark open paths WITH FILL-MODE STYLE">true</param>
+    <param name="groups" type="bool" gui-text="2 - mark groups and layers">true</param>
+    <param name="tiny" type="bool" gui-text="3 - mark 'tiny' elements">true</param>
+    <param name="open-paths" type="bool" gui-text="4 - mark open paths BUT ONLY IF THEY ARE IN 'FILL-ENGRAVING' MODE">true</param>
     <param name="outside-objects" type="bool" gui-text="5 - mark objects outside the page">true</param>
 
     <script>

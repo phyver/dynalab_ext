@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
-    <id>dynalab.show_config</id>
+    <id>dynalab.reset_config</id>
 
     <effect needs-live-preview="false">
         <effects-menu>
@@ -11,9 +11,9 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - show current configuration</name>
+    <name>3 - réinitialisation à la configuration par défaut</name>
 
     <script>
-        <command location="inx" interpreter="python">../src/config_show.py</command>
+        <command location="inx" interpreter="python">../src/config_default.py</command>
     </script>
 </inkscape-extension>

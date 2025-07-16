@@ -21,26 +21,27 @@
         <page name="laser-tab" gui-text="laser related options">
             <param name="laser-diameter" type="string" gui-text="laser diameter (mm):"></param>
 
-            <param name="cut-color" type="string" gui-text="color for cutting"></param>
-            <param name="fill-color" type="string" gui-text="color for fill engraving"></param>
-            <param name="line-color" type="string" gui-text="color for line engraving"></param>
+            <param name="cut-color" type="string" gui-text="color for the 'cutting' mode"></param>
+            <param name="fill-color" type="string" gui-text="color for the 'fill engraving' mode"></param>
+            <param name="line-color" type="string" gui-text="color for the 'line engraving' mode"></param>
 
-            <param name="size-tiny-element" type="string" gui-text="size of tiny elements (mm):"></param>
+            <param name="size-tiny-element" type="string" gui-text="size of 'tiny' elements (mm):"></param>
         </page>
 
-        <page name="artifact-tab" gui-text="extension related options">
+        <page name="artifact-tab" gui-text="general Dynalab extension options">
             <param name="lock-artifacts" type="bool" value="false" gui-text="lock the artifacts' layer"/>
             <param name="group-artifacts" type="bool" value="true" gui-text="group artifacts for easy removal"/>
             <param name="artifacts-opacity" type="int" min="0" max="100" value="75" gui-text="artifacts opacity (%)"/>
-            <param name="artifacts-overlay-opacity" type="int" min="0" max="100" value="5" gui-text="artifacts overlay opacity (%)"/>
+            <param name="artifacts-overlay-opacity" type="int" min="0" max="100" value="5" gui-text="artifacts stripes overlay opacity (%)"/>
             <param name="artifacts-stroke-width" type="string" gui-text="stroke width for artifacts (mm)"/>
-            <param name="verbosity" type="int" min="0" max="4" value="1" gui-text="verbosity"/>
+            <param name="verbosity" type="int" min="0" max="4" value="1" gui-text="message verbosity"/>
         </page>
 
         <page name="save-tab" gui-text="save file">
             <param name="save-file" type="path" mode="file_new" gui-text="Save values in file:" />
             <label>
-                If empty, the configuration is changed but not saved to a file.
+                If the filename is empty, the configuration is changed but not
+                saved to a external file.
             </label>
         </page>
     </param>

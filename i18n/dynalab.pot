@@ -7,99 +7,92 @@
 msgid   ""
 msgstr  "Project-Id-Version: PACKAGE VERSION\n"
         "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-06-02 15:11+0200\n"
+        "POT-Creation-Date: 2025-07-16 13:21+0200\n"
         "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
         "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
         "Language-Team: LANGUAGE <LL@li.org>\n"
         "Language: \n"
         "MIME-Version: 1.0\n"
-        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Type: text/plain; charset=CHARSET\n"
         "Content-Transfer-Encoding: 8bit\n"
 
-#: src/action_change_style.py:18
-msgid   "stroke width (mm)"
-msgstr  ""
-
-#: src/action_change_style.py:19
-msgid   "stroke color"
-msgstr  ""
-
-#: src/action_change_style.py:20
-msgid   "fill color"
-msgstr  ""
-
-#: src/action_change_style.py:21
-msgid   "opacity (%)"
-msgstr  ""
-
-#: src/action_change_style.py:22
-msgid   "extra style options"
-msgstr  ""
-
-#: src/action_change_style.py:24
-msgid   "only apply to path like objects"
-msgstr  ""
-
-#: src/action_change_style.py:28 src/action_close_path.py:21
+#: Dynalab/src/action_change_style.py:27 Dynalab/src/action_close_path.py:21
 msgid   "You must select at least one element."
 msgstr  ""
 
-#: src/action_change_style.py:56 src/action_change_style.py:72
+#: Dynalab/src/action_change_style.py:71
 msgid   "cannot parse extra style: "
 msgstr  ""
 
-#: src/config_load.py:18
-msgid   "Load file"
+#: Dynalab/src/lib/config.py:16
+#, python-brace-format
+msgid   "verbosity level: {verbosity}"
 msgstr  ""
 
-#: src/config_save.py:23
-msgid   "laser diameter (mm)"
+#: Dynalab/src/lib/config.py:17
+#, python-brace-format
+msgid   "artifacts layer is locked (non selectable): {artifacts_locked}"
 msgstr  ""
 
-#: src/config_save.py:26
-msgid   "cutting color (#RGB)"
+#: Dynalab/src/lib/config.py:18
+#, python-brace-format
+msgid   "artifacts are put in a single group: {artifacts_grouped}"
 msgstr  ""
 
-#: src/config_save.py:28
-msgid   "fill engraving color (#RGB)"
+#: Dynalab/src/lib/config.py:19
+#, python-brace-format
+msgid   "stroke width for artifacts: {artifacts_stroke_width}mm"
 msgstr  ""
 
-#: src/config_save.py:30
-msgid   "line engraving color (#RGB)"
+#: Dynalab/src/lib/config.py:20
+#, python-brace-format
+msgid   "artifacts opacity: {artifacts_opacity}%"
 msgstr  ""
 
-#: src/config_save.py:33
-msgid   "size for tiny elements (mm)"
+#: Dynalab/src/lib/config.py:21
+#, python-brace-format
+msgid   "artifacts overlay stripes opacity: {artifacts_overlay_opacity}%"
 msgstr  ""
 
-#: src/config_save.py:36
-msgid   "lock artefacts layer"
+#: Dynalab/src/lib/config.py:23
+#, python-brace-format
+msgid   "laser diameter: {laser_diameter:.2f}mm"
 msgstr  ""
 
-#: src/config_save.py:38
-msgid   "group artefacts"
+#: Dynalab/src/lib/config.py:24
+msgid   "laser cut mode color: {laser_mode_cut_color:s}"
 msgstr  ""
 
-#: src/config_save.py:40
-msgid   "stroke width for artefacts (mm)"
+#: Dynalab/src/lib/config.py:25
+msgid   "laser fill mode color: {laser_mode_fill_color:s}"
 msgstr  ""
 
-#: src/config_save.py:41
-msgid   "verbosity"
+#: Dynalab/src/lib/config.py:26
+msgid   "laser line mode color: {laser_mode_line_color:s}"
 msgstr  ""
 
-#: src/config_save.py:43
-msgid   "Save file"
+#: Dynalab/src/lib/config.py:28
+#, python-brace-format
+msgid   "size for 'tiny' elements: {size_tiny_element}mm"
 msgstr  ""
 
-#: src/lib/config.py:50
-msgid   "FILE NOT FOUND:"
+#: Dynalab/src/lib/config.py:56
+msgid   "FILE NOT FOUND: {filename:s}"
 msgstr  ""
 
-#: src/lib/config.py:53
-msgid   "ERROR READING FILE:"
+#: Dynalab/src/lib/config.py:62
+msgid   "ERROR READING FILE: {filename:s}"
 msgstr  ""
 
-#: src/lib/config.py:56
-msgid   "INVALID CONFIG FILE:"
+#: Dynalab/src/lib/config.py:68
+msgid   "INVALID CONFIG FILE: {filename:s}"
+msgstr  ""
+
+#: Dynalab/src/lib/config.py:84
+#, python-brace-format
+msgid   "CANNOT OVERWRITE DEFAULT CONFIG FILE: {filename}"
+msgstr  ""
+
+#: Dynalab/src/lib/config.py:99
+msgid   "CANNOT SAVE CONFIG TO {filename:s}"
 msgstr  ""

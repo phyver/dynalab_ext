@@ -20,33 +20,33 @@ class SaveConfig(dynalab.Ext):
         pars.add_argument("--tabs")      # to ignore the dummy parameter used for tabs
 
         pars.add_argument("--laser-diameter", type=float, dest="laser_diameter",
-                          help=_("laser diameter (mm)"))
+                          help="laser diameter (mm)")
 
         pars.add_argument("--cut-color", type=str, dest="laser_mode_cut_color",
-                          help=_("cutting color (#RGB)"))
+                          help="cutting color (#RGB)")
         pars.add_argument("--fill-color", type=str, dest="laser_mode_fill_color",
-                          help=_("fill engraving color (#RGB)"))
+                          help="fill engraving color (#RGB)")
         pars.add_argument("--line-color", type=str, dest="laser_mode_line_color",
-                          help=_("line engraving color (#RGB)"))
+                          help="line engraving color (#RGB)")
 
         pars.add_argument("--size-tiny-element", type=float, dest="size_tiny_element",
-                          help=_("size for tiny elements (mm)"))
+                          help="size for tiny elements (mm)")
 
         pars.add_argument("--lock-artifacts", type=inkex.Boolean, dest="artifacts_locked",
-                          help=_("lock artifacts layer"))
+                          help="lock artifacts layer")
         pars.add_argument("--group-artifacts", type=inkex.Boolean, dest="artifacts_grouped",
-                          help=_("group artifacts"))
+                          help="group artifacts")
         pars.add_argument("--artifacts-opacity", type=int, default=75,
                           dest="artifacts_opacity",
-                          help=_("artifacts opacity (%)"))
+                          help="artifacts opacity (%)")
         pars.add_argument("--artifacts-overlay-opacity", type=int, default=5,
                           dest="artifacts_overlay_opacity",
-                          help=_("artifacts overlay opacity (%)"))
+                          help="artifacts overlay opacity (%)")
         pars.add_argument("--artifacts-stroke-width", type=float, dest="artifacts_stroke_width",
-                          help=_("stroke width for artifacts (mm)"))
-        pars.add_argument("--verbosity", type=int, help=_("verbosity"))
+                          help="stroke width for artifacts (mm)")
+        pars.add_argument("--verbosity", type=int, help="verbosity")
 
-        pars.add_argument("--save-file", dest="save_file", help=_("Save file"))
+        pars.add_argument("--save-file", dest="save_file", help="Save file")
 
     def effect(self):
 

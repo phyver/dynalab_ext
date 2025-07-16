@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <id>dynalab.diagnostics</id>
+
+    <effect needs-live-preview="false" needs-document="true">
+        <effects-menu>
+            <submenu name=" Dynalab">
+            </submenu>
+        </effects-menu>
+    </effect>
+    <name>1 - Diagnostiques</name>
+
+    <param name="non-paths" type="bool" gui-text="1 - marque les objets non vectorisés">true</param>
+    <param name="groups" type="bool" gui-text="2 - marque les groupes et les calques">true</param>
+    <param name="tiny" type="bool" gui-text="3 - marque les éléments 'minuscules'">true</param>
+    <param name="open-paths" type="bool" gui-text="4 - marque les chemins ouverts, MAIS SEULEMENT S'ILS SONT EN MODE 'GRAVURE REMPLISSAGE'">true</param>
+    <param name="outside-objects" type="bool" gui-text="5 - marque les objets en dehors de la page">true</param>
+
+    <script>
+        <command location="inx" interpreter="python">../src/diagnostics.py</command>
+    </script>
+</inkscape-extension>
