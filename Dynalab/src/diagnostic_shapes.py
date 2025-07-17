@@ -19,16 +19,17 @@ class MarkShapes(dynalab.Ext):
         pass
 
     def effect(self, clean=True):
-        self.message("looking for shapes",
-                     verbosity=3)
+        self.message(self.name, verbosity=3)
         self.init_artifact_layer()
 
         counter = 0
         for elem in self.selected_or_all(skip_groups=True):
-            desc = f"object with id={elem.get_id()} of type {elem.tag_name}"
+            desc = _("object with id={id} of type {tag}").format(
+                id=elem.get_id(),
+                tag=elem.tag_name)
             if isinstance(elem, (inkex.Line, inkex.Polyline, inkex.Polygon,
                                  inkex.Rectangle, inkex.Ellipse, inkex.Circle)):
-                desc += " is a shape"
+                desc += " " + _("is a simple shape")
                 counter += 1
                 self.message("\t-", desc, verbosity=2)
                 self.outline_bounding_box(OK, elem, msg=desc)

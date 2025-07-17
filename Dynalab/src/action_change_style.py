@@ -71,7 +71,7 @@ class ChangeStyle(dynalab.Ext):
                 style[a] = v
             except TypeError:
                 raise self.abort(
-                    _("cannot parse extra style: "),
+                    _("cannot parse extra style:"),
                     self.options.extra_style,
                 )
 

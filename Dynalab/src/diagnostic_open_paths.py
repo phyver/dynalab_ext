@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from gettext import gettext as _, negettext
+from gettext import gettext as _, ngettext
 
 import inkex
 
@@ -21,8 +21,7 @@ class MarkOpenPaths(dynalab.Ext):
                           dest="only_fill_mode_paths")
 
     def effect(self, clean=True):
-        self.message("looking for open paths",
-                     verbosity=3)
+        self.message(self.name, verbosity=3)
         self.init_artifact_layer()
 
         counter_paths = 0
@@ -37,7 +36,8 @@ class MarkOpenPaths(dynalab.Ext):
 
             # skip paths with path effects
             if elem.get("inkscape:path-effect") is not None:
-                self.message("\t-", "path with id={elem.get_id()} uses path effects, SKIP",
+                self.message("\t-",
+                             _("path with id={id} uses path effects, SKIP").format(id=elem.get_id()),
                              verbosity=1)
                 continue
 
@@ -54,7 +54,12 @@ class MarkOpenPaths(dynalab.Ext):
                 # the final subpath is not closed
                 c += 1
             if c > 0:
-                desc = f"path with id={elem.get_id()} contains {c} open subpath(s)"
+                desc = _("object with id={id} of type {tag}").format(
+                    id=elem.get_id(),
+                    tag=elem.tag_name)
+                desc += " " + ngettext("contains {counter} open subpath",
+                                       "contains {counter} open subpaths",
+                                       c).format(counter=c)
                 counter_paths += 1
                 self.message("\t-", desc, verbosity=2)
                 self.outline_bounding_box(WARNING, elem, msg=desc)
@@ -62,7 +67,13 @@ class MarkOpenPaths(dynalab.Ext):
         if clean:
             self.clean_artifacts(force=False)
 
-        self.message(f"{counter_subpaths} open subpath(s) found inside {counter_paths} path object(s)",
+        "{counter_subpaths} open subpath(s) found inside {counter_paths} path object(s)"
+        self.message(ngettext("{counter} open subpath found",
+                              "{counter} open subpaths found",
+                              counter_subpaths).format(counter=counter_subpaths),
+                     ngettext("inside {counter} path object",
+                              "inside {counter} path objects",
+                              counter_paths).format(counter=counter_paths),
                      verbosity=1)
         self.message(_("{extension:s}: running time = {time:.0f}ms")
                      .format(extension=self.name, time=self.get_timer()),

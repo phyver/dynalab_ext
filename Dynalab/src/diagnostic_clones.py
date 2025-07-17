@@ -19,16 +19,19 @@ class MarkClones(dynalab.Ext):
         pass
 
     def effect(self, clean=True):
-        self.message("looking for clones",
-                     verbosity=3)
+        self.message(self.name, verbosity=3)
         self.init_artifact_layer()
 
         counter = 0
         for elem in self.selected_or_all(skip_groups=True):
-            desc = f"object with id={elem.get_id()} of type {elem.tag_name}"
+            desc = _("object with id={id} of type {tag}").format(
+                id=elem.get_id(),
+                tag=elem.tag_name)
             if isinstance(elem, inkex.Use):
                 ref = elem.href
-                desc += f" is a clone of object {ref.get_id()} of type {ref.tag_name}"
+                desc += " " + _("is a clone of object {id} of type {tag}").format(
+                    id=ref.get_id(),
+                    tag=ref.tag_name)
                 counter += 1
                 self.message("\t-", desc, verbosity=2)
                 self.outline_bounding_box(WARNING, elem, msg=desc)

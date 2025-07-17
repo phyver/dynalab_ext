@@ -1,6 +1,6 @@
 msgid   ""
 msgstr  "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-07-17 15:24+0200\n"
+        "POT-Creation-Date: 2025-07-17 23:06+0200\n"
         "Language: fr\n"
         "MIME-Version: 1.0\n"
         "Content-Type: text/plain; charset=UTF-8\n"
@@ -9,12 +9,12 @@ msgstr  "Report-Msgid-Bugs-To: \n"
 
 #: Dynalab/src/TEST.py:80 Dynalab/src/action_change_style.py:98
 #: Dynalab/src/action_close_path.py:98 Dynalab/src/action_ungroup.py:82
-#: Dynalab/src/diagnostic_blobs.py:79 Dynalab/src/diagnostic_clones.py:44
-#: Dynalab/src/diagnostic_effects.py:50 Dynalab/src/diagnostic_groups.py:74
-#: Dynalab/src/diagnostic_images.py:43 Dynalab/src/diagnostic_open_paths.py:67
-#: Dynalab/src/diagnostic_outside_page.py:51
-#: Dynalab/src/diagnostic_shapes.py:44 Dynalab/src/diagnostic_text.py:43
-#: Dynalab/src/diagnostic_tiny.py:43 Dynalab/src/diagnostics.py:77
+#: Dynalab/src/diagnostic_blobs.py:78 Dynalab/src/diagnostic_clones.py:47
+#: Dynalab/src/diagnostic_effects.py:51 Dynalab/src/diagnostic_groups.py:75
+#: Dynalab/src/diagnostic_images.py:44 Dynalab/src/diagnostic_open_paths.py:78
+#: Dynalab/src/diagnostic_outside_page.py:52
+#: Dynalab/src/diagnostic_shapes.py:45 Dynalab/src/diagnostic_text.py:44
+#: Dynalab/src/diagnostic_tiny.py:44 Dynalab/src/diagnostics.py:77
 #: Dynalab/src/diagnostics_objects.py:70 Dynalab/src/export.py:75
 #: Dynalab/src/export.py:94 Dynalab/src/export.py:106 Dynalab/src/export.py:114
 #: Dynalab/src/misc_palettes.py:104
@@ -50,8 +50,8 @@ msgid   "You must select at least one object."
 msgstr  "Vous devez sélectionner au moins un objet."
 
 #: Dynalab/src/action_change_style.py:74
-msgid   "cannot parse extra style: "
-msgstr  "impossible de parser le style additionel"
+msgid   "cannot parse extra style:"
+msgstr  "impossible de parser le style additionel :"
 
 #: Dynalab/src/action_close_path.py:15
 msgid   "close open paths"
@@ -91,7 +91,11 @@ msgstr  "La configuration a été sauvegardée dans le fichier {file:s}"
 msgid   "mark blobs"
 msgstr  "marque les aggrégats"
 
-#: Dynalab/src/diagnostic_blobs.py:75
+#: Dynalab/src/diagnostic_blobs.py:65
+msgid   "the following object(s) form an isolated blob:"
+msgstr  "les objets suivant(s) forment un aggrégat isolé:"
+
+#: Dynalab/src/diagnostic_blobs.py:74
 #, python-brace-format
 msgid   "{counter} bounding boxes blob found"
 msgid_plural    "{counter} bounding boxes blobs found"
@@ -102,7 +106,21 @@ msgstr[1]       "{counter} aggrégats de boites englobantes trouvés"
 msgid   "mark clones"
 msgstr  "marque les clones"
 
-#: Dynalab/src/diagnostic_clones.py:40
+#: Dynalab/src/diagnostic_clones.py:27 Dynalab/src/diagnostic_effects.py:25
+#: Dynalab/src/diagnostic_images.py:27 Dynalab/src/diagnostic_open_paths.py:57
+#: Dynalab/src/diagnostic_outside_page.py:33
+#: Dynalab/src/diagnostic_shapes.py:27 Dynalab/src/diagnostic_text.py:27
+#: Dynalab/src/diagnostic_tiny.py:27
+#, python-brace-format
+msgid   "object with id={id} of type {tag}"
+msgstr  "objet avec l'id={id} de type {tag}"
+
+#: Dynalab/src/diagnostic_clones.py:32
+#, python-brace-format
+msgid   "is a clone of object {id} of type {tag}"
+msgstr  "est un clone de l'objet {id} de type {tag}"
+
+#: Dynalab/src/diagnostic_clones.py:43
 #, python-brace-format
 msgid   "{counter} clone found"
 msgid_plural    "{counter} clones found"
@@ -113,7 +131,11 @@ msgstr[1]       "{counter} clones trouvés"
 msgid   "mark objects with effects"
 msgstr  "marque les objets avec effets"
 
-#: Dynalab/src/diagnostic_effects.py:46
+#: Dynalab/src/diagnostic_effects.py:33
+msgid   "uses the following effect(s):"
+msgstr  "utile les effets suivants: "
+
+#: Dynalab/src/diagnostic_effects.py:47
 #, python-brace-format
 msgid   "{counter} object with effect(s) found"
 msgid_plural    "{counter} objects with effect(s) found"
@@ -124,14 +146,24 @@ msgstr[1]       "{counter} objets avec effect(s) trouvés"
 msgid   "mark groups and layers"
 msgstr  "marque les groupes et les calques"
 
-#: Dynalab/src/diagnostic_groups.py:64
+#: Dynalab/src/diagnostic_groups.py:39
+#, python-brace-format
+msgid   "object with id={id} is a layer"
+msgstr  "objet avec l'id={id} est un calque"
+
+#: Dynalab/src/diagnostic_groups.py:51
+#, python-brace-format
+msgid   "object with id={id} is a group"
+msgstr  "objet avec l'id={id} est un groupe"
+
+#: Dynalab/src/diagnostic_groups.py:65
 #, python-brace-format
 msgid   "{counter} group found"
 msgid_plural    "{counter} groups found"
 msgstr[0]       "{counter} groupe trouvé"
 msgstr[1]       "{counter} groupes trouvés"
 
-#: Dynalab/src/diagnostic_groups.py:70
+#: Dynalab/src/diagnostic_groups.py:71
 #, python-brace-format
 msgid   "{counter} layer found"
 msgid_plural    "{counter} layers found"
@@ -142,7 +174,11 @@ msgstr[1]       "{counter} calques trouvés"
 msgid   "mark images"
 msgstr  "marque les images"
 
-#: Dynalab/src/diagnostic_images.py:39
+#: Dynalab/src/diagnostic_images.py:31
+msgid   "is a non vectorized image"
+msgstr  "est une image non vectorisée"
+
+#: Dynalab/src/diagnostic_images.py:40
 #, python-brace-format
 msgid   "{counter} image found"
 msgid_plural    "{counter} images found"
@@ -153,11 +189,41 @@ msgstr[1]       "{counter} images trouvées"
 msgid   "mark open paths"
 msgstr  "marque les chemins ouverts"
 
+#: Dynalab/src/diagnostic_open_paths.py:40
+#, python-brace-format
+msgid   "path with id={id} uses path effects, SKIP"
+msgstr  "chemin avec id={id} utilise des effets, IGNORÉ"
+
+#: Dynalab/src/diagnostic_open_paths.py:60
+#, python-brace-format
+msgid   "contains {counter} open subpath"
+msgid_plural    "contains {counter} open subpaths"
+msgstr[0]       "contient {counter} chemin ouvert"
+msgstr[1]       "contient {counter} chemins ouverts"
+
+#: Dynalab/src/diagnostic_open_paths.py:71
+#, python-brace-format
+msgid   "{counter} open subpath found"
+msgid_plural    "{counter} open subpaths found"
+msgstr[0]       "{counter} chemin ouvert trouvé"
+msgstr[1]       "{counter} chemins ouverts trouvés"
+
+#: Dynalab/src/diagnostic_open_paths.py:74
+#, python-brace-format
+msgid   "inside {counter} path object"
+msgid_plural    "inside {counter} path objects"
+msgstr[0]       "dans {counter} objet chemin"
+msgstr[1]       "dans {counter} objets chemins"
+
 #: Dynalab/src/diagnostic_outside_page.py:16
 msgid   "mark object outside page"
 msgstr  "marque les objets en dehors de la page"
 
-#: Dynalab/src/diagnostic_outside_page.py:47
+#: Dynalab/src/diagnostic_outside_page.py:40
+msgid   "lies outside the page"
+msgstr  "est en dehors de la page"
+
+#: Dynalab/src/diagnostic_outside_page.py:48
 #, python-brace-format
 msgid   "{counter} object lies outside the SVG page"
 msgid_plural    "{counter} objects lie outside the SVG page"
@@ -168,7 +234,11 @@ msgstr[1]       "{counter} objets sont en dehors de la page SVG"
 msgid   "mark shapes"
 msgstr  "marque les formes simples"
 
-#: Dynalab/src/diagnostic_shapes.py:40
+#: Dynalab/src/diagnostic_shapes.py:32
+msgid   "is a simple shape"
+msgstr  "est une forme simple"
+
+#: Dynalab/src/diagnostic_shapes.py:41
 #, python-brace-format
 msgid   "{counter} shape found"
 msgid_plural    "{counter} shapes found"
@@ -179,7 +249,11 @@ msgstr[1]       "{counter} formes simples trouvées"
 msgid   "mark text"
 msgstr  "marque le texte"
 
-#: Dynalab/src/diagnostic_text.py:39
+#: Dynalab/src/diagnostic_text.py:31
+msgid   "is a text object"
+msgstr  "est un objet chemin"
+
+#: Dynalab/src/diagnostic_text.py:40
 #, python-brace-format
 msgid   "{counter} text object found"
 msgid_plural    "{counter} text objects found"
@@ -190,7 +264,11 @@ msgstr[1]       "{counter} objets texte trouvés"
 msgid   "mark tiny objects"
 msgstr  "marque les objets minuscules"
 
-#: Dynalab/src/diagnostic_tiny.py:39
+#: Dynalab/src/diagnostic_tiny.py:32
+msgid   "is 'tiny'"
+msgstr  "est 'minuscule'"
+
+#: Dynalab/src/diagnostic_tiny.py:40
 #, python-brace-format
 msgid   "{counter} tiny object found"
 msgid_plural    "{counter} tiny objects found"
@@ -338,6 +416,27 @@ msgstr  "NE PEUT PAS ÉCRASER LE FICHIER DE CONFIGURATION PAR DÉFAUT : {filenam
 #: Dynalab/src/lib/config.py:99
 msgid   "CANNOT SAVE CONFIG TO {filename:s}"
 msgstr  "NE PEUT PAS SAUVER LE FICHIER {filename:s}"
+
+#: Dynalab/src/lib/dynalab.py:174
+msgid   "calling external inkscape command to retrieve bounding boxes"
+msgstr  "appel à la commande inkscape externe pour calculer les boites englobantes"
+
+#: Dynalab/src/lib/dynalab.py:178
+#, python-brace-format
+msgid   "running time for external inkscape command: {time:.0f}ms"
+msgstr  "temps d'exécution de la commande inkscape externe : {time:.0f}ms"
+
+#: Dynalab/src/lib/dynalab.py:313
+#, python-brace-format
+msgid   "object with id={id} was moved out of the artifact layer"
+msgstr  "objet avec l'id={id} a été déplacé en dehors du calques des artéfacts"
+
+#: Dynalab/src/lib/dynalab.py:321
+#, python-brace-format
+msgid   "{counter} object was moved out of the artifact layer"
+msgid_plural    "{counter} object was moved out of the artifact layer"
+msgstr[0]       "{counter} objet a été déplacé en dehors du calque des artéfacts"
+msgstr[1]       "{counter} objets ont été déplacés en dehors du calque des artéfacts"
 
 #: Dynalab/src/misc_palettes.py:17
 msgid   "border and fill palettes"

@@ -27,8 +27,7 @@ class MarkGroups(dynalab.Ext):
         if not self.options.mark_layers and not self.options.mark_groups:
             self.abort("", "nothing to do: you must select to mark layers and/or groups")
 
-        self.message("looking for groups and/or layers",
-                     verbosity=3)
+        self.message(self.name, verbosity=3)
         self.init_artifact_layer()
 
         counter_groups = 0
@@ -37,7 +36,8 @@ class MarkGroups(dynalab.Ext):
 
             if isinstance(elem, inkex.Layer):
                 if self.options.mark_layers:
-                    desc = f"object with id={elem.get_id()} is a layer"
+                    desc = _("object with id={id} is a layer").format(
+                        id=elem.get_id())
                     counter_layers += 1
                     self.message("\t-", desc, verbosity=2)
                     w = self.config["artifacts_stroke_width"]
@@ -48,7 +48,8 @@ class MarkGroups(dynalab.Ext):
 
             elif isinstance(elem, inkex.Group):
                 if self.options.mark_groups:
-                    desc = f"object witd id={elem.get_id()} is a group"
+                    desc = _("object with id={id} is a group").format(
+                        id=elem.get_id())
                     counter_groups += 1
                     self.message("\t-", desc, verbosity=2)
                     w = self.config["artifacts_stroke_width"]

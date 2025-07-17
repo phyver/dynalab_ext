@@ -2,6 +2,7 @@
 
 from tempfile import TemporaryDirectory
 import time
+from gettext import gettext as _, ngettext
 
 import inkex
 from inkex.paths import Move, Line
@@ -73,6 +74,8 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self._time = {}
         self.set_timer("init")
         self.BB = {}
+        if self.name:
+            self.name = _(self.name)
 
     ################
     # misc methods #
@@ -170,10 +173,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         else:
             # we only call get_all_inkscape_bboxes when this computation failed
             self.set_timer("get_bb")     # start timer
-            self.message(">>> calling external inkscape command to retrieve bounding boxes",
+            self.message(">>>", _("calling external inkscape command to retrieve bounding boxes"),
                          verbosity=4)
             self.BB = self.get_all_inkscape_bboxes()
-            self.message(f">>> running time for external inkscape command: {self.get_timer('get_bb'):.0f}ms",
+            self.message(">>>",
+                         _("running time for external inkscape command: {time:.0f}ms")
+                         .format(time=self.get_timer("get_bb")),
                          verbosity=4)
             bb = self.BB.get(k, inkex.BoundingBox())
             return bb
@@ -306,14 +311,18 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
                 if cl and ARTIFACT_CLASS in cl:
                     continue
                 counter += 1
-                self.message("\t-", f"object with id=#{elem.get_id()} was moved out of the artifact layer",
+                self.message("\t-",
+                             _("object with id={id} was moved out of the artifact layer")
+                             .format(id=elem.get_id()),
                              verbosity=2)
                 tr = elem.getparent().composed_transform()
                 elem.getparent().remove(elem)
                 elem.transform = tr @ elem.transform
                 self.svg.add(elem)
             if counter > 0:
-                self.message(f"{counter} object(s) were moved out of the artifact layer",
+                self.message(ngettext("{counter} object was moved out of the artifact layer",
+                                      "{counter} object was moved out of the artifact layer",
+                                      counter).format(counter=counter),
                              verbosity=1)
 
     def update_overlay(self, bb):

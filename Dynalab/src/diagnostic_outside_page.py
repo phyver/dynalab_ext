@@ -19,8 +19,7 @@ class MarkOutside(dynalab.Ext):
         pass
 
     def effect(self, clean=True):
-        self.message("looking for objects lying outside the SVG page",
-                     verbosity=3)
+        self.message(self.name, verbosity=3)
         self.init_artifact_layer()
 
         w = self.svg.unittouu(self.svg.viewport_width)
@@ -31,12 +30,14 @@ class MarkOutside(dynalab.Ext):
         counter = 0
         for elem in self.selected_or_all(skip_groups=True):
 
-            desc = f"object with id={elem.get_id()} of type {elem.tag_name}"
+            desc = _("object with id={id} of type {tag}").format(
+                id=elem.get_id(),
+                tag=elem.tag_name)
 
             bb = self.bounding_box(elem)
             if not (bb & viewbox):
                 counter += 1
-                desc += " lies outside the page"
+                desc += " " + _("lies outside the page")
                 self.message("\t-", desc, verbosity=2)
                 self.outline_bounding_box(WARNING, elem, bb=bb, msg=desc)
                 continue

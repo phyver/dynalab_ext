@@ -42,8 +42,7 @@ class MarkBlobs(dynalab.Ext):
         pars.add_argument("--padding", type=float, default=10, help="padding added to boxes to check overlap (mm)")
 
     def effect(self, clean=True):
-        self.message("looking for bounding boxes blobs",
-                     verbosity=3)
+        self.message(self.name, verbosity=3)
         self.init_artifact_layer()
 
         BB = []
@@ -63,8 +62,8 @@ class MarkBlobs(dynalab.Ext):
         # don't mark anything if there is only one blob
         if len(BBB) > 1:
             for ids, bbb in BBB:
-                desc = "the following objects form an isolated blob: "
-                desc += ", ".join(ids)
+                desc = _("the following object(s) form an isolated blob:")
+                desc += " " + ", ".join(ids)
                 self.outline_bounding_box(NOTE, None, bb=bbb, margin=0,
                                           msg=desc)
 
