@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: translate -->
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <id>dynalab.close_path</id>
 
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="2 - Modify selected objects"/>
+                <submenu name="2 - Modifier les objets sélectionnés"/>
             </submenu>
         </effects-menu>
     </effect>
-    <name>5 - close open paths</name>
+    <name>5 - fermer les chemins</name>
 
-    <param name="close-distance" type="float" min="0" max="1000" gui-text="distance under which we close open path (mm):">5</param>
-    <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>
+    <param name="close-distance" type="float" min="0" max="1000" gui-text="distance en dessous de laquelle on ferme les chemins (mm):">5</param>
+    <param name="only-fill-mode-paths" type="bool" value="true" gui-text="appliquer uniquement aux chemins de couleur 'gravure remplissage'"/>
 
     <script>
         <command location="inx" interpreter="python">../src/action_close_path.py</command>

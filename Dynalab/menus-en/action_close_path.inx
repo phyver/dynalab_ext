@@ -12,7 +12,7 @@
     <name>5 - close open paths</name>
 
     <param name="close-distance" type="float" min="0" max="1000" gui-text="distance under which we close open path (mm):">5</param>
-    <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>
+    <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill engraving' color"/>
 
     <script>
         <command location="inx" interpreter="python">../src/action_close_path.py</command>

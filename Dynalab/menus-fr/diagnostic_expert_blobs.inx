@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: translate -->
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <id>dynalab.blobs_expert</id>
 
@@ -7,14 +6,14 @@
         <effects-menu>
             <submenu name=" Dynalab">
                 <submenu name="9 - expert">
-                    <submenu name="1 - diagnostics"/>
+                    <submenu name="1 - diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>9 - mark bounding boxes blobs</name>
+    <name>9 - marquer les agrégats de boites englobantes</name>
 
-    <param name="padding" type="float" min="0" max="1000" gui-text="padding added to boxes to check overlap (mm):">10</param>
+    <param name="padding" type="float" min="0" max="1000" gui-text="marge ajoutée aux boites englobantes pour vérifier le chevauchement (mm):">10</param>
 
     <script>
         <command location="inx" interpreter="python">../src/diagnostic_blobs.py</command>

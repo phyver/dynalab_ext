@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: translate -->
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <id>dynalab.objects_expert</id>
 
@@ -7,18 +6,18 @@
         <effects-menu>
             <submenu name=" Dynalab">
                 <submenu name="9 - expert">
-                    <submenu name="1 - diagnostics"/>
+                    <submenu name="1 - diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - mark non path objects</name>
+    <name>1 - marquer les objets non vectorisés</name>
 
-    <param name="text" type="bool" gui-text="a - mark text objects">true</param>
-    <param name="images" type="bool" gui-text="b - mark images">true</param>
-    <param name="shapes" type="bool" gui-text="c - mark non-path shapes">true</param>
-    <param name="effects" type="bool" gui-text="d - mark objects with effects">true</param>
-    <param name="clones" type="bool" gui-text="e - mark clones">true</param>
+    <param name="text" type="bool" gui-text="a - marquer les objets texte">true</param>
+    <param name="images" type="bool" gui-text="b - marquer les images">true</param>
+    <param name="shapes" type="bool" gui-text="c - marquer les formes simples">true</param>
+    <param name="effects" type="bool" gui-text="d - marquer les objets avec effets">true</param>
+    <param name="clones" type="bool" gui-text="e - marquer les clones">true</param>
 
     <script>
         <command location="inx" interpreter="python">../src/diagnostics_objects.py</command>

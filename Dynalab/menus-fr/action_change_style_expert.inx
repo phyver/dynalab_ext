@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: translate -->
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <id>dynalab.change_style_expert</id>
 
@@ -12,14 +11,14 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 2 3 - change style of selected objects</name>
+    <name>1 2 3 - changer le style des objets sélectionnés</name>
 
-    <param name="stroke-width" type="float" min="0" gui-text="stroke width (mm)"></param>
-    <param name="stroke" type="string" gui-text="stroke color"></param>
-    <param name="fill" type="string" gui-text="fill color"></param>
-    <param name="fill-opacity" type="float" min="0" max="100" gui-text="opacity (%)">100</param>
-    <param name="extra-style" type="string" gui-text="extra style options"></param>
-    <param name="only-paths" type="bool" gui-text="only apply to path and simple shapes">true</param>
+    <param name="stroke-width" type="float" min="0" gui-text="épaisseur du trait (mm)"></param>
+    <param name="stroke" type="string" gui-text="couleur du trait (#RRGGBB)"></param>
+    <param name="fill" type="string" gui-text="couleur de remplissage (#RRGGBB)"></param>
+    <param name="fill-opacity" type="float" min="0" max="100" gui-text="opacité (%)">100</param>
+    <param name="extra-style" type="string" gui-text="autres options de style"></param>
+    <param name="only-paths" type="bool" gui-text="applique le nouveau style uniquement aux chemins et formes">true</param>
 
     <script>
         <command location="inx" interpreter="python">../src/action_change_style.py</command>

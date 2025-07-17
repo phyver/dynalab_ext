@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: translate -->
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <id>dynalab.ungroup_expert</id>
 
@@ -12,10 +11,10 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - remove groups and/or layers</name>
+    <name>4 - supprimer les groupes et/ou les calques</name>
 
-    <param name="remove-layers" type="bool" value="true" gui-text="remove layers"></param>
-    <param name="remove-groups" type="bool" value="true" gui-text="remove groups"></param>
+    <param name="remove-groups" type="bool" value="true" gui-text="supprimer les groupes"></param>
+    <param name="remove-layers" type="bool" value="true" gui-text="supprimer les calques"></param>
 
     <script>
         <command location="inx" interpreter="python">../src/action_ungroup.py</command>

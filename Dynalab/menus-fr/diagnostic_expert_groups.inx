@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: translate -->
 <inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
     <id>dynalab.groups_expert</id>
 
@@ -7,15 +6,15 @@
         <effects-menu>
             <submenu name=" Dynalab">
                 <submenu name="9 - expert">
-                    <submenu name="1 - diagnostics"/>
+                    <submenu name="1 - diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>2 - mark groups and layers</name>
+    <name>2 - marquer les groupes et/ou les calques</name>
 
-    <param name="mark-layers" type="bool" value="true" gui-text="mark layers"/>
-    <param name="mark-groups" type="bool" value="true" gui-text="mark groups"/>
+    <param name="mark-groups" type="bool" value="true" gui-text="marquer les groupes"/>
+    <param name="mark-layers" type="bool" value="true" gui-text="marquer les calques"/>
 
     <script>
         <command location="inx" interpreter="python">../src/diagnostic_groups.py</command>

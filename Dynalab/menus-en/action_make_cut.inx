@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - change to "cut mode" style</name>
+    <name>1 - change color to 'cut mode'</name>
 
     <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
     <param name="stroke" type="string" gui-hidden="true">CUT_MODE</param>
