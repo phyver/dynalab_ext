@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostiques"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="1 - Diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - marquer les objets "minuscules"</name>
+    <name>3 - Marquer les objets "minuscules"</name>
 
     <param name="size-tiny-element" type="float" min="0.01" gui-text="taille pour les objets minuscules (mm):">0.5</param>
 

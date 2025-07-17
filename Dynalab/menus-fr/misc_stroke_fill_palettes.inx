@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="3 - misc"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="3 - Divers"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - palette pour les couleurs des traits / remplissage</name>
+    <name>1 - Palette pour les couleurs des traits / remplissage</name>
 
     <param name="stroke" type="bool" value="true" gui-text="affiche un petit carré pour chaque couleur de trait des objets sélectionnés"></param>
     <param name="fill" type="bool" value="true" gui-text="affiche un petit carré pour chaque couleur de remplissage des objets sélectionnés"></param>

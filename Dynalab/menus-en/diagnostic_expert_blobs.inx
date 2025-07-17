@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostics"/>
+                <submenu name="9 - Expert mode">
+                    <submenu name="1 - Diagnostics"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>9 - mark bounding boxes blobs</name>
+    <name>9 - Mark bounding boxes blobs</name>
 
     <param name="padding" type="float" min="0" max="1000" gui-text="padding added to boxes to check overlap (mm):">10</param>
 

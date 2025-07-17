@@ -8,6 +8,9 @@ LANG=en
 fr:
 	$(eval LANG=fr)
 
+en:
+	$(eval LANG=en)
+
 install: version
 	@test -d "$(EXTENSION_DIR)" || ( echo "le répertoire $(EXTENSION_DIR) n'existe pas" && false )
 	mkdir -p "$(EXTENSION_DIR)"/Dynalab
@@ -43,4 +46,4 @@ clean:
 very-clean: clean
 	rm -rf  "$(EXTENSION_DIR)"/Dynalab/
 
-.PHONY: clean very-clean install restore_test_svg i18n archive FORCE fr
+.PHONY: clean very-clean install restore_test_svg i18n archive FORCE fr en

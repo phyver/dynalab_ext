@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - supprimer les groupes et les calques</name>
+    <name>4 - Supprimer les groupes et les calques</name>
 
     <param name="remove-layers" type="bool" value="true" gui-hidden="true"></param>
     <param name="remove-groups" type="bool" value="true" gui-hidden="true"></param>

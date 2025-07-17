@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostics"/>
+                <submenu name="9 - Expert mode">
+                    <submenu name="1 - Diagnostics"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - mark paths containing open components</name>
+    <name>4 - Mark paths containing open components</name>
 
     <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restrict to paths with 'fill mode' color"/>
 

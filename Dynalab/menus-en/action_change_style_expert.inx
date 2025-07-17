@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="2 - actions"/>
+                <submenu name="9 - Expert mode">
+                    <submenu name="2 - Actions"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 2 3 - change style of selected objects</name>
+    <name>1 2 3 - Change style of selected objects</name>
 
     <param name="stroke-width" type="float" min="0" gui-text="stroke width (mm)"></param>
     <param name="stroke" type="string" gui-text="stroke color"></param>

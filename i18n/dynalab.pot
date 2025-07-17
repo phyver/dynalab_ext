@@ -7,7 +7,7 @@
 msgid   ""
 msgstr  "Project-Id-Version: PACKAGE VERSION\n"
         "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-07-17 00:18+0200\n"
+        "POT-Creation-Date: 2025-07-17 15:31+0200\n"
         "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
         "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
         "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,8 +25,8 @@ msgstr  "Project-Id-Version: PACKAGE VERSION\n"
 #: Dynalab/src/diagnostic_outside_page.py:51
 #: Dynalab/src/diagnostic_shapes.py:44 Dynalab/src/diagnostic_text.py:43
 #: Dynalab/src/diagnostic_tiny.py:43 Dynalab/src/diagnostics.py:77
-#: Dynalab/src/diagnostics_objects.py:70 Dynalab/src/export.py:74
-#: Dynalab/src/export.py:91 Dynalab/src/export.py:101 Dynalab/src/export.py:108
+#: Dynalab/src/diagnostics_objects.py:70 Dynalab/src/export.py:75
+#: Dynalab/src/export.py:94 Dynalab/src/export.py:106 Dynalab/src/export.py:114
 #: Dynalab/src/misc_palettes.py:104
 msgid   "{extension:s}: running time = {time:.0f}ms"
 msgstr  ""
@@ -48,7 +48,7 @@ msgid   "change style"
 msgstr  ""
 
 #: Dynalab/src/action_change_style.py:30 Dynalab/src/action_close_path.py:27
-msgid   "You must select at least one element."
+msgid   "You must select at least one object."
 msgstr  ""
 
 #: Dynalab/src/action_change_style.py:74
@@ -203,7 +203,7 @@ msgstr[1]       ""
 msgid   "diagnostics"
 msgstr  ""
 
-#: Dynalab/src/diagnostics.py:73
+#: Dynalab/src/diagnostics.py:73 Dynalab/src/diagnostics_objects.py:66
 #, python-brace-format
 msgid   "{counter} diagnostic extension was run"
 msgid_plural    "{counter} diagnostic extensions were run"
@@ -214,23 +214,58 @@ msgstr[1]       ""
 msgid   "non vectorized objects"
 msgstr  ""
 
-#: Dynalab/src/diagnostics_objects.py:66
-#, python-brace-format
-msgid   "{counter} diagnostic extension(s) were run"
-msgid_plural    "{counter} diagnostic extension(s) were run"
-msgstr[0]       ""
-msgstr[1]       ""
-
 #: Dynalab/src/export.py:18
 msgid   "export document"
 msgstr  ""
 
-#: Dynalab/src/export.py:105
+#: Dynalab/src/export.py:32
+msgid   "nothing to do: you must select at least one export format"
+msgstr  ""
+
+#: Dynalab/src/export.py:35
+msgid   "no savedir given"
+msgstr  ""
+
+#: Dynalab/src/export.py:38
+#, python-brace-format
+msgid   "{savedir} isn't a directory"
+msgstr  ""
+
+#: Dynalab/src/export.py:40
+#, python-brace-format
+msgid   "not enough permissions to write to {savedir}"
+msgstr  ""
+
+#: Dynalab/src/export.py:49
+msgid   "filename not given"
+msgstr  ""
+
+#: Dynalab/src/export.py:53
+msgid   "invalid filename, use only ASCII letters and digits (A-Z, a-z, 0-9),\n"
+        "\"underscore\" (_) and minus sign (-)"
+msgstr  ""
+
+#: Dynalab/src/export.py:60
+#, python-brace-format
+msgid   "exporting SVG document to {savefile} (with additional extension)"
+msgstr  ""
+
+#: Dynalab/src/export.py:71 Dynalab/src/export.py:76 Dynalab/src/export.py:88
+#: Dynalab/src/export.py:95 Dynalab/src/export.py:102 Dynalab/src/export.py:107
+#, python-brace-format
+msgid   "exporting to {format}"
+msgstr  ""
+
+#: Dynalab/src/export.py:111
 #, python-brace-format
 msgid   "{counter} document exported"
-msgid_plural    "{counter} document exported"
+msgid_plural    "{counter} documents exported"
 msgstr[0]       ""
 msgstr[1]       ""
+
+#: Dynalab/src/export.py:122
+msgid   "You must save your project."
+msgstr  ""
 
 #: Dynalab/src/lib/config.py:16
 #, python-brace-format
@@ -307,6 +342,10 @@ msgstr  ""
 
 #: Dynalab/src/misc_palettes.py:17
 msgid   "border and fill palettes"
+msgstr  ""
+
+#: Dynalab/src/misc_palettes.py:31
+msgid   "choose at least one of stroke / fill color"
 msgstr  ""
 
 #: Dynalab/src/misc_palettes.py:91

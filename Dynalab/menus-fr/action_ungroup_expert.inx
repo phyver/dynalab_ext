@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="2 - actions"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="2 - Actions"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - supprimer les groupes et/ou les calques</name>
+    <name>4 - Supprimer les groupes et/ou les calques</name>
 
     <param name="remove-groups" type="bool" value="true" gui-text="supprimer les groupes"></param>
     <param name="remove-layers" type="bool" value="true" gui-text="supprimer les calques"></param>

@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostiques"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="1 - Diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>2 - marquer les groupes et/ou les calques</name>
+    <name>2 - Marquer les groupes et/ou les calques</name>
 
     <param name="mark-groups" type="bool" value="true" gui-text="marquer les groupes"/>
     <param name="mark-layers" type="bool" value="true" gui-text="marquer les calques"/>

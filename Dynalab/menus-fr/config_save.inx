@@ -5,13 +5,13 @@
     <effect needs-live-preview="false">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="9 - configuration"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="9 - Configuration"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - modifie (et sauvegarde) la configuration</name>
+    <name>1 - Modifier (et sauvegarder) la configuration</name>
 
     <label>
         Les paramètres sans valeurs conserveront leur valeur actuelle.

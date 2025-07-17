@@ -29,15 +29,15 @@ class Export(dynalab.Ext):
     def effect(self):
 
         if not any([self.options.dxf, self.options.pdf, self.options.svg]):
-            self.abort("", "nothing to do: you must select at least one export format")
+            self.abort("", _("nothing to do: you must select at least one export format"))
 
         if not self.options.savedir:
-            self.abort("", "empty savedir")
+            self.abort("", _("no savedir given"))
 
         if not os.path.isdir(self.options.savedir):
-            self.abort("", f"{self.options.savedir} isn't a directory")
+            self.abort("", _("{savedir} isn't a directory").format(savedir=self.options.savedir))
         if not os.access(self.options.savedir, os.R_OK | os.W_OK):
-            self.abort("", f"not enough permissions to write to {self.options.savedir}")
+            self.abort("", _("not enough permissions to write to {savedir}").format(savedir=self.options.savedir))
 
         if not self.options.filename:
             self.options.filename = self.svg.attrib.get('sodipodi:docname') or ""
@@ -46,19 +46,19 @@ class Export(dynalab.Ext):
         self.options.filename = re.sub(r"\.*?$", "", self.options.filename)
 
         if not self.options.filename:
-            self.abort("", "empty filename")
+            self.abort("", _("filename not given"))
 
         if not re.match("[-_a-zA-Z0-9]*", self.options.filename):
             self.abort("",
-                       "invalid filename, use only ASCII letters and digits (A-Z, a-z, 0-9),",
-                       "underscore (_) and minus sign (-)",
+                       _("""invalid filename, use only ASCII letters and digits (A-Z, a-z, 0-9),
+"underscore" (_) and minus sign (-)"""),
                        sep="\n",
                        )
 
         savefile = os.path.join(self.options.savedir, self.options.filename)
 
-        self.message(f"exporting svg document to {savefile}",
-                     "(with additional extension)",
+        self.message(_("exporting SVG document to {savefile} (with additional extension)")
+                     .format(savefile=savefile),
                      verbosity=1)
 
         if self.options.clean:
@@ -67,12 +67,14 @@ class Export(dynalab.Ext):
         counter = 0
         if self.options.svg:
             counter += 1
-            self.message("\t-", f"saving to svg: {savefile+'.svg'}",
+            self.message("\t-",
+                         _("exporting to {format}").format(format="SVG") + ": " + savefile+".svg",
                          verbosity=1)
             self.set_timer("export_svg")
             self.export_with_inkscape(savefile+".svg", "svg")
             self.message("\t\t", _("{extension:s}: running time = {time:.0f}ms")
-                         .format(extension=self.name, time=self.get_timer("export_svg")),
+                         .format(extension=_("exporting to {format}").format(format="SVG"),
+                                 time=self.get_timer("export_svg")),
                          verbosity=3)
 
         if self.options.dxf:
@@ -82,28 +84,32 @@ class Export(dynalab.Ext):
             # so there shouldn't be any need to specify "units:mm"
             # which is great because I don't know how to do that.
             counter += 1
-            self.message("\t-", f"exporting to dxf14: {savefile+'.dxf'}",
+            self.message("\t-",
+                         _("exporting to {format}").format(format="DXF14") + ": " + savefile+".dxf",
                          verbosity=1)
             self.set_timer("export_dxf")
             self.export_with_inkscape(savefile+".dxf", "dxf",
                                       "--export-extension=org.ekips.output.dxf_outlines",
                                       )
             self.message("\t\t", _("{extension:s}: running time = {time:.0f}ms")
-                         .format(extension=self.name, time=self.get_timer("export_dxf")),
+                         .format(extension=_("exporting to {format}").format(format="DXF14"),
+                                 time=self.get_timer("export_dxf")),
                          verbosity=3)
 
         if self.options.pdf:
             counter += 1
-            self.message("\t-", f"exporting to pdf: {savefile+'.pdf'}",
+            self.message("\t-",
+                         _("exporting to {format}").format(format="PDF") + ": " + savefile+".pdf",
                          verbosity=1)
             self.set_timer("export_pdf")
             self.export_with_inkscape(savefile+".pdf", "pdf")
             self.message("\t\t", _("{extension:s}: running time = {time:.0f}ms")
-                         .format(extension=self.name, time=self.get_timer("export_pdf")),
+                         .format(extension=_("exporting to {format}").format(format="PDF"),
+                                 time=self.get_timer("export_dxf")),
                          verbosity=3)
 
         self.message(ngettext("{counter} document exported",
-                              "{counter} document exported",
+                              "{counter} documents exported",
                               counter).format(counter=counter))
         self.message(_("{extension:s}: running time = {time:.0f}ms")
                      .format(extension=self.name, time=self.get_timer()),
@@ -113,7 +119,7 @@ class Export(dynalab.Ext):
 
     def export_with_inkscape(self, savefile, export_format, *args):
         if not self.options.input_file:
-            self.abort("save your project first")
+            self.abort(_("You must save your project."))
 
         try:
             inkex.command.inkscape(

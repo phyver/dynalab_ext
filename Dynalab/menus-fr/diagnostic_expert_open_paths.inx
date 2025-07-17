@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostiques"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="1 - Diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - marquer les chemins contenant des sous chemins ouverts</name>
+    <name>4 - Marquer les chemins contenant des sous chemins ouverts</name>
 
     <param name="only-fill-mode-paths" type="bool" value="true" gui-text="restreindre aux chemins de couleur 'gravure remplissage'"/>
 

@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostics"/>
+                <submenu name="9 - Expert mode">
+                    <submenu name="1 - Diagnostics"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - mark tiny elements</name>
+    <name>3 - Mark tiny elements</name>
 
     <param name="size-tiny-element" type="float" min="0.01" gui-text="size of tiny elements (mm):">0.5</param>
 

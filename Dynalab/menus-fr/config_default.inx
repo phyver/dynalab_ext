@@ -5,13 +5,13 @@
     <effect needs-live-preview="false">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="9 - configuration"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="9 - Configuration"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - réinitialisation à la configuration par défaut</name>
+    <name>3 - Réinitialisation à la configuration par défaut</name>
 
     <script>
         <command location="inx" interpreter="python">../src/config_default.py</command>

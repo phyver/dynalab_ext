@@ -28,7 +28,7 @@ class MiscPalettes(dynalab.Ext):
         self.init_artifact_layer()
 
         if not self.options.stroke and not self.options.fill:
-            self.abort("choose at least one of stroke / fill color")
+            self.abort(_("choose at least one of stroke / fill color"))
 
         stroke_colors = defaultdict(set)
         fill_colors = defaultdict(set)

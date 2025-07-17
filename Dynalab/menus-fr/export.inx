@@ -8,7 +8,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - export</name>
+    <name>4 - Exporter</name>
 
     <param name="clean" type="bool" gui-text="0 - supprime les artéfacts">true</param>
     <spacer/>

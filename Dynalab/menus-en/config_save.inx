@@ -5,13 +5,13 @@
     <effect needs-live-preview="false">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="9 - configuration"/>
+                <submenu name="9 - Expert mode">
+                    <submenu name="9 - Configuration"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - change (and save) configuration</name>
+    <name>1 - Change (and save) configuration</name>
 
     <label>
         Parameters that are unset will keep their current value.

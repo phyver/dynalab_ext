@@ -5,13 +5,13 @@
     <effect needs-live-preview="false">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="9 - configuration"/>
+                <submenu name="9 - Expert mode">
+                    <submenu name="9 - Configuration"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>4 - show current configuration</name>
+    <name>4 - Show current configuration</name>
 
     <script>
         <command location="inx" interpreter="python">../src/config_show.py</command>

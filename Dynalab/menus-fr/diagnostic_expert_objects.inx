@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostiques"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="1 - Diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - marquer les objets non vectorisés</name>
+    <name>1 - Marquer les objets non vectorisés</name>
 
     <param name="text" type="bool" gui-text="a - marquer les objets texte">true</param>
     <param name="images" type="bool" gui-text="b - marquer les images">true</param>

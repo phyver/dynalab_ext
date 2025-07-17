@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>2 - passer en couleur 'gravure contour'</name>
+    <name>2 - Passer en couleur 'gravure contour'</name>
 
     <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
     <param name="stroke" type="string" gui-hidden="true">LINE_MODE</param>

@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostiques"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="1 - Diagnostiques"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>9 - marquer les agrégats de boites englobantes</name>
+    <name>9 - Marquer les agrégats de boites englobantes</name>
 
     <param name="padding" type="float" min="0" max="1000" gui-text="marge ajoutée aux boites englobantes pour vérifier le chevauchement (mm):">10</param>
 

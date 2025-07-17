@@ -27,7 +27,7 @@ class ChangeStyle(dynalab.Ext):
 
     def effect(self):
         if not self.svg.selected:
-            self.abort(_("You must select at least one element."))
+            self.abort(_("You must select at least one object."))
 
         self.message("change style of selected objects:",
                      verbosity=3)

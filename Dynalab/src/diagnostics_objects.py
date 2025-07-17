@@ -63,8 +63,8 @@ class Battery(dynalab.Ext):
         if inst:
             inst.clean_artifacts(force=False)
 
-        self.message(ngettext("{counter} diagnostic extension(s) were run",
-                              "{counter} diagnostic extension(s) were run",
+        self.message(ngettext("{counter} diagnostic extension was run",
+                              "{counter} diagnostic extensions were run",
                               counter).format(counter=counter),
                      verbosity=1)
         self.message(_("{extension:s}: running time = {time:.0f}ms")

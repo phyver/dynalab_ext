@@ -5,13 +5,13 @@
     <effect needs-live-preview="false">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="9 - configuration"/>
+                <submenu name="9 - Mode expert">
+                    <submenu name="9 - Configuration"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>2 - charge un fichier de configuration</name>
+    <name>2 - Charger un fichier de configuration</name>
 
     <param name="config-file" type="path" mode="file" gui-text="Charger le fichier :" />
 

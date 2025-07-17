@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>3 - passer en couleur 'gravure remplissage'</name>
+    <name>3 - Passer en couleur 'gravure remplissage'</name>
 
     <param name="stroke-width" type="float" min="-1.0" gui-hidden="true">-1.0</param>
     <param name="stroke" type="string" gui-hidden="true">FILL_MODE</param>

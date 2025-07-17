@@ -9,7 +9,7 @@
             </submenu>
         </effects-menu>
     </effect>
-    <name>5 - fermer les chemins</name>
+    <name>5 - Fermer les chemins</name>
 
     <param name="close-distance" type="float" min="0" max="1000" gui-text="distance en dessous de laquelle on ferme les chemins (mm):">5</param>
     <param name="only-fill-mode-paths" type="bool" value="true" gui-text="appliquer uniquement aux chemins de couleur 'gravure remplissage'"/>

@@ -5,13 +5,13 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
-                    <submenu name="1 - diagnostics"/>
+                <submenu name="9 - Expert mode">
+                    <submenu name="1 - Diagnostics"/>
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>1 - mark non path objects</name>
+    <name>1 - Mark non path objects</name>
 
     <param name="text" type="bool" gui-text="a - mark text objects">true</param>
     <param name="images" type="bool" gui-text="b - mark images">true</param>

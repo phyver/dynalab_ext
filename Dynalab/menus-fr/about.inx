@@ -5,12 +5,12 @@
     <effect needs-live-preview="false" needs-document="true">
         <effects-menu>
             <submenu name=" Dynalab">
-                <submenu name="9 - expert">
+                <submenu name="9 - Mode expert">
                 </submenu>
             </submenu>
         </effects-menu>
     </effect>
-    <name>à propos de l'extension Dynalab</name>
+    <name>À propos de l'extension Dynalab</name>
 
     <script>
         <command location="inx" interpreter="python">../src/about.py</command>
