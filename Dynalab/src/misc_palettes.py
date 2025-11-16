@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 from collections import defaultdict
-from gettext import gettext as _, ngettext
+from gettext import gettext as _
+from gettext import ngettext
 
 import inkex
 
@@ -17,14 +18,11 @@ class MiscPalettes(dynalab.Ext):
     name = _("border and fill palettes")
 
     def add_arguments(self, pars):
-        pars.add_argument("--stroke", type=inkex.Boolean,
-                          default=True, help="look for stroke colors")
-        pars.add_argument("--fill", type=inkex.Boolean,
-                          default=True, help="look for fill colors")
+        pars.add_argument("--stroke", type=inkex.Boolean, default=True, help="look for stroke colors")
+        pars.add_argument("--fill", type=inkex.Boolean, default=True, help="look for fill colors")
 
     def effect(self, clean=True):
-        self.message("looking for stroke colors",
-                     verbosity=3)
+        self.message("looking for stroke colors", verbosity=3)
         self.init_artifact_layer()
 
         if not self.options.stroke and not self.options.fill:
@@ -47,40 +45,44 @@ class MiscPalettes(dynalab.Ext):
                     fill_colors[c].add(elem.get_id())
 
         artifact_layer = self.svg.getElementById(dynalab.ARTIFACT_LAYER_ID)
-        side = self.mm_to_svg(10)       # side of representing square
-        w = self.mm_to_svg(1)           # stroke width of representing square
+        side = self.mm_to_svg(10)  # side of representing square
+        w = self.mm_to_svg(1)  # stroke width of representing square
 
-        x = 0   # current representing square position
-        y = 0   # ...
+        x = 0  # current representing square position
+        y = 0  # ...
 
         if self.options.stroke:
             x = 0
-            y -= 2*side
+            y -= 2 * side
             for c in sorted(stroke_colors.keys()):
                 rect = inkex.Rectangle.new(x, y, side, side)
                 rect.set("class", dynalab.ARTIFACT_CLASS)
-                x += 1.5*side
-                rect.style = inkex.Style({
-                    "stroke": c,
-                    "fill": c,
-                    "fill-opacity": 0.25,
-                    "stroke-width": w,
-                })
+                x += 1.5 * side
+                rect.style = inkex.Style(
+                    {
+                        "stroke": c,
+                        "fill": c,
+                        "fill-opacity": 0.25,
+                        "stroke-width": w,
+                    }
+                )
                 artifact_layer.add(rect)
 
         if self.options.fill:
             x = 0
-            y -= 2*side
+            y -= 2 * side
             for c in sorted(fill_colors.keys()):
                 rect = inkex.Rectangle.new(x, y, side, side)
                 rect.set("class", dynalab.ARTIFACT_CLASS)
-                x += 1.5*side
-                rect.style = inkex.Style({
-                    "fill": c,
-                    "stroke": c,
-                    "stroke-opacity": 0.25,
-                    "stroke-width": w,
-                })
+                x += 1.5 * side
+                rect.style = inkex.Style(
+                    {
+                        "fill": c,
+                        "stroke": c,
+                        "stroke-opacity": 0.25,
+                        "stroke-width": w,
+                    }
+                )
                 artifact_layer.add(rect)
 
         if clean:
@@ -88,25 +90,25 @@ class MiscPalettes(dynalab.Ext):
 
         if self.options.stroke:
             counter = len(stroke_colors)
-            self.message(ngettext("{counter} stroke color found",
-                                  "{counter} stroke colors found",
-                                  counter
-                                  ).format(counter=counter),
-                         verbosity=1)
+            self.message(
+                ngettext("{counter} stroke color found", "{counter} stroke colors found", counter).format(
+                    counter=counter
+                ),
+                verbosity=1,
+            )
         if self.options.fill:
             counter = len(fill_colors)
-            self.message(ngettext("{counter} fill color found",
-                                  "{counter} fill colors found",
-                                  counter
-                                  ).format(counter=counter),
-                         verbosity=1)
+            self.message(
+                ngettext("{counter} fill color found", "{counter} fill colors found", counter).format(counter=counter),
+                verbosity=1,
+            )
 
-        self.message(_("{extension:s}: running time = {time:.0f}ms")
-                     .format(extension=self.name, time=self.get_timer()),
-                     verbosity=3)
-        self.message("",
-                     verbosity=1)
+        self.message(
+            _("{extension:s}: running time = {time:.0f}ms").format(extension=self.name, time=self.get_timer()),
+            verbosity=3,
+        )
+        self.message("", verbosity=1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     MiscPalettes().run()

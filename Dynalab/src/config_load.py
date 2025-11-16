@@ -13,8 +13,7 @@ class LoadConfig(dynalab.Ext):
 
     def add_arguments(self, pars):
         default_path = os.path.dirname(os.path.realpath(__file__))
-        pars.add_argument("--config-file", default=default_path, dest="config_file",
-                          help="Load file")
+        pars.add_argument("--config-file", default=default_path, dest="config_file", help="Load file")
 
     def effect(self):
         self.load_config(self.options.config_file)

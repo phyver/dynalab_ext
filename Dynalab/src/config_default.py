@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from lib import dynalab, config
+from lib import config, dynalab
 
 
 class LoadConfig(dynalab.Ext):

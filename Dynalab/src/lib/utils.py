@@ -24,8 +24,9 @@ def is_path(elem, strict=False):
     if isinstance(elem, inkex.PathElement):
         return True
 
-    if not strict and isinstance(elem, (inkex.Line, inkex.Polyline, inkex.Polygon,
-                                        inkex.Rectangle, inkex.Ellipse, inkex.Circle)):
+    if not strict and isinstance(
+        elem, (inkex.Line, inkex.Polyline, inkex.Polygon, inkex.Rectangle, inkex.Ellipse, inkex.Circle)
+    ):
         return True
 
     return False
@@ -39,15 +40,15 @@ def bounding_box(elem, transform):
         return None
 
     if isinstance(elem, inkex.Use):
-        return bounding_box(elem.href, transform@elem.transform)
+        return bounding_box(elem.href, transform @ elem.transform)
 
-    if isinstance(elem, inkex.Group):   # also works for layers
+    if isinstance(elem, inkex.Group):  # also works for layers
         # return elem.bounding_box(transform=transform)
         return None
 
 
 def effects(elem):
-    E = []      # list of effects
+    E = []  # list of effects
 
     if elem.get("inkscape:path-effect") is not None:
         E.append("path-effect")
@@ -62,7 +63,7 @@ def effects(elem):
     # NOTE: apparently, some style attribute can end up in 2 places: as an
     # attribute of the element, or as a field in the style attribute.
     # We check both, to make sure we don't miss an effect.
-    style = inkex.Style(elem.attrib.get("style", ''))
+    style = inkex.Style(elem.attrib.get("style", ""))
     attrs = elem.attrib
 
     dash1 = attrs.get("stroke-dasharray", "none")

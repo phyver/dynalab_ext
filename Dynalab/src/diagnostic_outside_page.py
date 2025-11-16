@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from gettext import gettext as _, ngettext
+from gettext import gettext as _
+from gettext import ngettext
 
 import inkex
 
@@ -30,9 +31,7 @@ class MarkOutside(dynalab.Ext):
         counter = 0
         for elem in self.selected_or_all(skip_groups=True):
 
-            desc = _("object with id={id} of type {tag}").format(
-                id=elem.get_id(),
-                tag=elem.tag_name)
+            desc = _("object with id={id} of type {tag}").format(id=elem.get_id(), tag=elem.tag_name)
 
             bb = self.bounding_box(elem)
             if not (bb & viewbox):
@@ -45,16 +44,18 @@ class MarkOutside(dynalab.Ext):
         if clean:
             self.clean_artifacts(force=False)
 
-        self.message(ngettext("{counter} object lies outside the SVG page",
-                              "{counter} objects lie outside the SVG page",
-                              counter).format(counter=counter),
-                     verbosity=1)
-        self.message(_("{extension:s}: running time = {time:.0f}ms")
-                     .format(extension=self.name, time=self.get_timer()),
-                     verbosity=3)
-        self.message("",
-                     verbosity=1)
+        self.message(
+            ngettext(
+                "{counter} object lies outside the SVG page", "{counter} objects lie outside the SVG page", counter
+            ).format(counter=counter),
+            verbosity=1,
+        )
+        self.message(
+            _("{extension:s}: running time = {time:.0f}ms").format(extension=self.name, time=self.get_timer()),
+            verbosity=3,
+        )
+        self.message("", verbosity=1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     MarkOutside().run()

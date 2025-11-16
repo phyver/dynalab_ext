@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-from tempfile import TemporaryDirectory
 import time
-from gettext import gettext as _, ngettext
+from gettext import gettext as _
+from gettext import ngettext
+from tempfile import TemporaryDirectory
 
 import inkex
-from inkex.paths import Move, Line
+from inkex.paths import Line, Move
 
-from lib import i18n, config, utils
-
+from lib import config, i18n, utils
 
 ARTIFACT_CLASS = "artifact"
 ARTIFACT_LAYER_ID = "ArtifactLayer"
@@ -24,23 +24,26 @@ NOTE = 1
 WARNING = 2
 ERROR = 3
 
-NOTE_COLOR = "#00ff00"      # green
-WARNING_COLOR = "#ffa500"   # orange
-ERROR_COLOR = "#ff0000"     # red
+NOTE_COLOR = "#00ff00"  # green
+WARNING_COLOR = "#ffa500"  # orange
+ERROR_COLOR = "#ff0000"  # red
 
 
 # It might be better to use a white list of tags rather than a black list.
 def _skip_meta(elem):
     """return true if the elem should be skipped as part of metadata"""
-    return any((isinstance(elem, cls) for cls in
-                [inkex.Defs, inkex.Desc, inkex.Metadata,
-                 inkex.NamedView, inkex.Script, inkex.Style]))
+    return any(
+        (
+            isinstance(elem, cls)
+            for cls in [inkex.Defs, inkex.Desc, inkex.Metadata, inkex.NamedView, inkex.Script, inkex.Style]
+        )
+    )
 
 
 def _iter_elements(
-    elem,                       # current element
-    skip_groups=False,          # should we return group elements
-    skip_artifacts=True,        # should we skip artifacts?
+    elem,  # current element
+    skip_groups=False,  # should we return group elements
+    skip_artifacts=True,  # should we skip artifacts?
 ):
     """recursively iterates over elements"""
     # skip artifacts
@@ -59,9 +62,7 @@ def _iter_elements(
     if isinstance(elem, inkex.Group):
         # recurse into groups
         for e in elem:
-            yield from _iter_elements(e,
-                                      skip_groups=skip_groups,
-                                      skip_artifacts=skip_artifacts)
+            yield from _iter_elements(e, skip_groups=skip_groups, skip_artifacts=skip_artifacts)
 
 
 class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
@@ -74,8 +75,9 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         self._time = {}
         self.set_timer("init")
         self.BB = {}
-        if self.name:
-            self.name = _(self.name)
+        # if self.name:
+        #     # FIXME: is there a better way to do that?
+        #     type(self).__name__ = _(type(self).__name__)
 
     ################
     # misc methods #
@@ -103,7 +105,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
     def get_timer(self, name="init"):
         """return the running time (in milliseconds) since the last call to set_timer(name)"""
-        return 1000*(time.perf_counter() - self._time[name])
+        return 1000 * (time.perf_counter() - self._time[name])
 
     def set_timer(self, s):
         """record the current time for easy timing"""
@@ -114,8 +116,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         all the element if the selection is empty"""
         if not self.svg.selected:
             for elem in self.svg:
-                yield from _iter_elements(elem,
-                                          skip_groups=skip_groups)
+                yield from _iter_elements(elem, skip_groups=skip_groups)
         else:
             for elem in self.svg.selected:
                 parent = elem.getparent()
@@ -140,12 +141,16 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             svg_file = inkex.command.write_svg(self.svg.root, tmpdir, "input.svg")
             out = inkex.command.inkscape(svg_file, "--query-all").splitlines()
             for line in out:
-                id, x, y, w, h = line.split(",")
-                x = self.svg.viewport_to_unit(x)
-                y = self.svg.viewport_to_unit(y)
-                w = self.svg.viewport_to_unit(w)
-                h = self.svg.viewport_to_unit(h)
-                BB[id] = inkex.BoundingBox.new_xywh(x, y, w, h)
+                try:
+                    id, x, y, w, h = line.split(",")
+                    x = self.svg.viewport_to_unit(x)
+                    y = self.svg.viewport_to_unit(y)
+                    w = self.svg.viewport_to_unit(w)
+                    h = self.svg.viewport_to_unit(h)
+                    BB[id] = inkex.BoundingBox.new_xywh(x, y, w, h)
+                except ValueError:
+                    # the output may contain empty lines!
+                    pass
         return BB
 
     def bounding_box(self, elem):
@@ -172,14 +177,14 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             return bb
         else:
             # we only call get_all_inkscape_bboxes when this computation failed
-            self.set_timer("get_bb")     # start timer
-            self.message(">>>", _("calling external inkscape command to retrieve bounding boxes"),
-                         verbosity=4)
+            self.set_timer("get_bb")  # start timer
+            self.message(">>>", _("calling external inkscape command to retrieve bounding boxes"), verbosity=4)
             self.BB = self.get_all_inkscape_bboxes()
-            self.message(">>>",
-                         _("running time for external inkscape command: {time:.0f}ms")
-                         .format(time=self.get_timer("get_bb")),
-                         verbosity=4)
+            self.message(
+                ">>>",
+                _("running time for external inkscape command: {time:.0f}ms").format(time=self.get_timer("get_bb")),
+                verbosity=4,
+            )
             bb = self.BB.get(k, inkex.BoundingBox())
             return bb
 
@@ -217,7 +222,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             artifact_layer.set("class", ARTIFACT_CLASS)
             if self.config["artifacts_locked"]:
                 artifact_layer.set_sensitive(False)
-            root.add(artifact_layer)           # insert last, ie at top
+            root.add(artifact_layer)  # insert last, ie at top
             # to insert first, ie on the bottom, use
             # root.insert(0, artifact_layer)
 
@@ -303,27 +308,33 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         for layer in [artifact_layer, artifact_bg_layer]:
             if layer is None:
                 continue
-            for elem in _iter_elements(layer,
-                                       skip_groups=False,
-                                       skip_artifacts=False,
-                                       ):
+            for elem in _iter_elements(
+                layer,
+                skip_groups=False,
+                skip_artifacts=False,
+            ):
                 cl = elem.get("class")
                 if cl and ARTIFACT_CLASS in cl:
                     continue
                 counter += 1
-                self.message("\t-",
-                             _("object with id={id} was moved out of the artifact layer")
-                             .format(id=elem.get_id()),
-                             verbosity=2)
+                self.message(
+                    "\t-",
+                    _("object with id={id} was moved out of the artifact layer").format(id=elem.get_id()),
+                    verbosity=2,
+                )
                 tr = elem.getparent().composed_transform()
                 elem.getparent().remove(elem)
                 elem.transform = tr @ elem.transform
                 self.svg.add(elem)
             if counter > 0:
-                self.message(ngettext("{counter} object was moved out of the artifact layer",
-                                      "{counter} object was moved out of the artifact layer",
-                                      counter).format(counter=counter),
-                             verbosity=1)
+                self.message(
+                    ngettext(
+                        "{counter} object was moved out of the artifact layer",
+                        "{counter} object was moved out of the artifact layer",
+                        counter,
+                    ).format(counter=counter),
+                    verbosity=1,
+                )
 
     def update_overlay(self, bb):
         if self.config["artifacts_overlay_opacity"] == 0:
@@ -336,12 +347,14 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             rect.set("id", ARTIFACT_OVERLAY_ID)
             rect.set("class", ARTIFACT_CLASS)
             rect.set_sensitive(False)
-            rect.style = inkex.Style({
-                "fill": f"url(#{ARTIFACT_OVERLAY_PATTERN_ID})",
-                "opacity": self.config["artifacts_overlay_opacity"]/100,
-                "stroke": "none",
-                "stroke-width": "1px",
-            })
+            rect.style = inkex.Style(
+                {
+                    "fill": f"url(#{ARTIFACT_OVERLAY_PATTERN_ID})",
+                    "opacity": self.config["artifacts_overlay_opacity"] / 100,
+                    "stroke": "none",
+                    "stroke-width": "1px",
+                }
+            )
 
             g = inkex.Group(id=ARTIFACT_OVERLAY_GROUP_ID)
             g.set("class", ARTIFACT_CLASS)
@@ -351,14 +364,16 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
             # add a border for easy selection of overlay
             m = self.mm_to_svg(10)
-            border = inkex.Rectangle.new(-m/2, -m/2, w+m, h+m)
+            border = inkex.Rectangle.new(-m / 2, -m / 2, w + m, h + m)
             border.set("id", ARTIFACT_OVERLAY_BORDER_ID)
             border.set("class", ARTIFACT_CLASS)
-            border.style = inkex.Style({
-                "fill": "none",
-                "stroke": f"url(#{ARTIFACT_OVERLAY_PATTERN_ID})",
-                "stroke-width": m,
-            })
+            border.style = inkex.Style(
+                {
+                    "fill": "none",
+                    "stroke": f"url(#{ARTIFACT_OVERLAY_PATTERN_ID})",
+                    "stroke-width": m,
+                }
+            )
             g.add(border)
 
         border = self.svg.getElementById(ARTIFACT_OVERLAY_BORDER_ID)
@@ -372,10 +387,10 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
             assert border is not None
             m = self.mm_to_svg(10)
-            border.set("x", bb.left-m/2)
-            border.set("y", bb.top-m/2)
-            border.set("width", bb.width+m)
-            border.set("height", bb.height+m)
+            border.set("x", bb.left - m / 2)
+            border.set("y", bb.top - m / 2)
+            border.set("width", bb.width + m)
+            border.set("height", bb.height + m)
 
     def outline_bounding_box(self, level, elem, bb=None, msg=None, margin=1, **style):
         """outline the bounding box of elem
@@ -405,12 +420,14 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             margin = self.mm_to_svg(margin)
             x, y = bb.left, bb.top
             w, h = bb.width, bb.height
-            rect = inkex.Rectangle.new(x-margin, y-margin, w+2*margin, h+2*margin)
+            rect = inkex.Rectangle.new(x - margin, y - margin, w + 2 * margin, h + 2 * margin)
             rect.set("id", id)
             rect.set("class", ARTIFACT_CLASS)
-            rect.style = inkex.Style({
-                "error-level": -1,       # custom style attribute
-            })
+            rect.style = inkex.Style(
+                {
+                    "error-level": "-1",  # custom style attribute
+                }
+            )
 
         # add the message in the description
         if msg is not None:
@@ -422,9 +439,9 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             # existing bounding box has higher error-level: keep existing style
             return
 
-        rect.style["error-level"] = level
+        rect.style["error-level"] = str(level)
         rect.style["fill"] = "none"
-        rect.style["stroke-opacity"] = self.config["artifacts_opacity"]/100
+        rect.style["stroke-opacity"] = self.config["artifacts_opacity"] / 100
         rect.style["stroke-width"] = self.config["artifacts_stroke_width"]
 
         if level == OK:
@@ -446,8 +463,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
         # convert stroke-width to actual mm
         rect.style["stroke-width"] = self.mm_to_svg(rect.style["stroke-width"])
 
-    def outline_arrow(self, level, elem, p=None, msg=None, margin=1,
-                      **style):
+    def outline_arrow(self, level, elem, p=None, msg=None, margin=1, **style):
         if elem is None and p is None:
             self.abort("ERROR: method `outline_arrow` needs either an SVG element or an explicit point")
 
@@ -469,7 +485,7 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
 
     def __new_artifact_arrow(self, level, x, y, id, msg=None, length=10, margin=1, **style):
         """add an artifact arrow in the error layer
-           elem is the element the arrow should be pointing to
+        elem is the element the arrow should be pointing to
         """
         arrow = self.svg.getElementById(id)
         if arrow is None:
@@ -478,11 +494,12 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             arrow = inkex.PathElement()
             arrow.set("id", id)
             arrow.set("class", ARTIFACT_CLASS)
-            arrow.path = [Move(x-side, y+side),
-                          Line(x-margin, y+margin)]
-            arrow.style = inkex.Style({
-                "error-level": -1,       # custom style attribute
-            })
+            arrow.path = [Move(x - side, y + side), Line(x - margin, y + margin)]
+            arrow.style = inkex.Style(
+                {
+                    "error-level": -1,  # custom style attribute
+                }
+            )
 
         # add the message in the description
         if msg is not None:
@@ -494,9 +511,9 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
             # existing arrow has higher error-level: keep existing style
             return
 
-        arrow.style["error-level"] = level
+        arrow.style["error-level"] = str(level)
         arrow.style["fill"] = "none"
-        arrow.style["opacity"] = self.config["artifacts_opacity"]/100
+        arrow.style["opacity"] = self.config["artifacts_opacity"] / 100
         arrow.style["stroke-width"] = self.config["artifacts_stroke_width"]
 
         if level == OK:
@@ -529,23 +546,27 @@ class Ext(inkex.EffectExtension, config.Ext, i18n.Ext):
     # misc initialisation methods #
     def _new_marker(self, id, color):
         """define an arrowhead marker for the arrow artifacts"""
-        marker = inkex.Marker(id=id,
-                              orient="auto",    # orient='auto-start-reverse',
-                              markerWidth="3",
-                              markerHeight="3",
-                              )
+        marker = inkex.Marker(
+            id=id,
+            orient="auto",  # orient='auto-start-reverse',
+            markerWidth="3",
+            markerHeight="3",
+        )
         marker.set("class", ARTIFACT_CLASS)
 
         arrow = inkex.PathElement()
         arrow.set("class", ARTIFACT_CLASS)
         arrow.path = [Move(-3, 3), Line(0, 0), Line(-3, -3)]
-        arrow.style = inkex.Style({
-            "stroke": color,
-            "stroke-width": 1,
-            "fill": "none",
-            # "stroke-opacity": self.config["artifacts_opacity"]/100,
-        })
+        arrow.style = inkex.Style(
+            {
+                "stroke": color,
+                "stroke-width": 1,
+                "fill": "none",
+                # "stroke-opacity": self.config["artifacts_opacity"]/100,
+            }
+        )
         marker.append(arrow)
         self.svg.defs.append(marker)
+
 
 # vim: textwidth=120 foldmethod=indent foldlevel=0

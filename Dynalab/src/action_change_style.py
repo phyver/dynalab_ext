@@ -15,22 +15,20 @@ class ChangeStyle(dynalab.Ext):
     name = _("change style")
 
     def add_arguments(self, pars):
-        pars.add_argument("--stroke-width", type=float,
-                          default=-1, dest="stroke_width",
-                          help="stroke width (mm)")
+        pars.add_argument("--stroke-width", type=float, default=-1, dest="stroke_width", help="stroke width (mm)")
         pars.add_argument("--stroke", type=str, default="#000000", help="stroke color")
         pars.add_argument("--fill", type=str, default="none", help="fill color")
         pars.add_argument("--fill-opacity", type=float, default=100, help="opacity (%)", dest="fill_opacity")
         pars.add_argument("--extra-style", type=str, default="", help="extra style options")
-        pars.add_argument("--only-paths", type=inkex.Boolean, default=True,
-                          help="only apply to path like objects", dest="only_paths")
+        pars.add_argument(
+            "--only-paths", type=inkex.Boolean, default=True, help="only apply to path like objects", dest="only_paths"
+        )
 
     def effect(self):
         if not self.svg.selected:
             self.abort(_("You must select at least one object."))
 
-        self.message("change style of selected objects:",
-                     verbosity=3)
+        self.message("change style of selected objects:", verbosity=3)
 
         style = inkex.Style()
 
@@ -60,12 +58,12 @@ class ChangeStyle(dynalab.Ext):
         if not self.options.fill_opacity:
             style["fill-opacity"] = 1
         else:
-            style["fill-opacity"] = self.options.fill_opacity/100
+            style["fill-opacity"] = self.options.fill_opacity / 100
 
         for s in self.options.extra_style.split(";"):
             s = s.strip()
             if not s:
-                continue    # ignore empty options
+                continue  # ignore empty options
             try:
                 a, v = s.split(":")
                 style[a] = v
@@ -89,18 +87,17 @@ class ChangeStyle(dynalab.Ext):
                     elem.style[a] = style[a]
             if msg_style:
                 counter += 1
-                self.message("\t-", f"object with id={elem.get_id()} modified with style:",
-                             ", ".join(msg_style),
-                             verbosity=2)
+                self.message(
+                    "\t-", f"object with id={elem.get_id()} modified with style:", ", ".join(msg_style), verbosity=2
+                )
 
-        self.message(f"the style of {counter} objects was modified",
-                     verbosity=1)
-        self.message(_("{extension:s}: running time = {time:.0f}ms")
-                     .format(extension=self.name, time=self.get_timer()),
-                     verbosity=3)
-        self.message("",
-                     verbosity=1)
+        self.message(f"the style of {counter} objects was modified", verbosity=1)
+        self.message(
+            _("{extension:s}: running time = {time:.0f}ms").format(extension=self.name, time=self.get_timer()),
+            verbosity=3,
+        )
+        self.message("", verbosity=1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ChangeStyle().run()

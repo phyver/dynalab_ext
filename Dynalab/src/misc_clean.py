@@ -16,5 +16,5 @@ class Clean(dynalab.Ext):
         self.clean_artifacts(force=True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Clean().run()

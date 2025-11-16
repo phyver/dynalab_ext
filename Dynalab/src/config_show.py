@@ -15,5 +15,5 @@ class ShowConfig(dynalab.Ext):
         self.show_config()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ShowConfig().run()

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
-import os
 import gettext
+import os
 
 GETTEXT_DOMAIN = "dynalab"
 
 
-class Ext():
+class Ext:
 
     def __init__(self):
         super().__init__()
