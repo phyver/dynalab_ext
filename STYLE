@@ -24,3 +24,7 @@ That includes:
 
 Lines up to 120 caracters long are OK.
 
+I automatically format my code using "black" (https://github.com/psf/black)
+with "--line-length=120" and sort imports using "isort"
+(https://github.com/pycqa/isort/).
+

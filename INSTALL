@@ -1,12 +1,1 @@
-
- 0- get the path to Inkscape's user extensions directory: from a running
-    inkscape:
-      menu Edit
-      => Preferences
-         => System
-            => User extensions
-
- 1- copy the folder `Dynalab` into Inkscape's user extensions directory
-
- 2- restart inkscape
-
+see README.md

@@ -3,13 +3,7 @@ EXTENSION_DIR="$(HOME)"/.config/inkscape/extensions/
 PYTHON_FILES=$(wildcard Dynalab/src/*.py Dynalab/src/lib/*.py)
 MENU_FILES=$(wildcard Dynalab/menus-*/*.inx)
 
-LANG=en
-
-fr:
-	$(eval LANG=fr)
-
-en:
-	$(eval LANG=en)
+LANG ?= en
 
 install: version
 	@test -d "$(EXTENSION_DIR)" || ( echo "le répertoire $(EXTENSION_DIR) n'existe pas" && false )
@@ -19,9 +13,9 @@ install: version
 version: FORCE
 	printf 'tag = "%s"\n' "$$(git describe --always --dirty)" > Dynalab/src/version.py
 
-archive: dynalab.zip
+archive: dynalab-$(LANG).zip
 
-dynalab.zip: $(PYTHON_FILES) $(MENU_FILES) version
+dynalab-$(LANG).zip: $(PYTHON_FILES) $(MENU_FILES) version
 	zip -x "*/TEST.*" -x "*/__pycache__" -x "*/current_config.json" -r $@ Dynalab/src Dynalab/menus-$(LANG)
 
 restore_svg:
@@ -41,9 +35,9 @@ Dynalab/src/locales/fr/LC_MESSAGES/dynalab.mo: i18n/fr.po
 
 clean:
 	rm -rf Dynalab/src/lib/__pycache__
-	rm -f dynalab.zip
+	rm -f dynalab.zip dynalab-*.zip
 
 very-clean: clean
 	rm -rf  "$(EXTENSION_DIR)"/Dynalab/
 
-.PHONY: clean very-clean install restore_test_svg i18n archive FORCE fr en
+.PHONY: clean very-clean install restore_test_svg i18n archive FORCE

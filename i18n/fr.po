@@ -1,13 +1,13 @@
 msgid   ""
 msgstr  "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2025-11-16 14:08+0100\n"
+        "POT-Creation-Date: 2025-11-25 16:04+0100\n"
         "Language: fr\n"
         "MIME-Version: 1.0\n"
         "Content-Type: text/plain; charset=UTF-8\n"
         "Content-Transfer-Encoding: 8bit\n"
         "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: Dynalab/src/TEST.py:81 Dynalab/src/action_change_style.py:96
+#: Dynalab/src/TEST.py:86 Dynalab/src/action_change_style.py:96
 #: Dynalab/src/action_close_path.py:106 Dynalab/src/action_ungroup.py:83
 #: Dynalab/src/diagnostic_blobs.py:78 Dynalab/src/diagnostic_clones.py:44
 #: Dynalab/src/diagnostic_effects.py:53 Dynalab/src/diagnostic_groups.py:66
