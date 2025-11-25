@@ -49,4 +49,23 @@ will create an `archive-fr.zip` that can be uncompressed inside Inkscape's
 user extension directory.
 
 
+Contributors
+------------
 
+The initial POC for this extension was written by
+  - Cassandre Kant
+  - [Morgane Farez](https://github.com/MorganeFar)
+  - [Cassiopee Gossin](https://github.com/ceedjy)
+  - [Lilian Cusumano](https://github.com/LilianCUSUMANO)
+  - [Jassem Bakouche]( https://github.com/jassemBAKHOUCHE)
+The original repository is https://github.com/jassemBAKHOUCHE/Path2Fab
+
+The extension has been rewritten and is currently being developed by
+  - [Pierre Hyvernat](https://github.com/phyver/)
+The current repository is https://github.com/phyver/dynalab_ext/tree/main.
+
+
+Licence
+-------
+
+This extension is released under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).
